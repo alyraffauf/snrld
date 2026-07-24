@@ -44,7 +44,7 @@ export async function getRepo(atUri: ResourceUri): Promise<Repo> {
     }),
   )
 
-  const value = repo.value
+  const value = normalizeRepoRecord(repo.value)
 
   const validation = safeParse(repoSchema, value)
   if (!validation.ok) {
@@ -61,7 +61,7 @@ export async function getRepoByRepoDid(did: Did): Promise<Repo> {
     }),
   )
 
-  const value = repo.value
+  const value = normalizeRepoRecord(repo.value)
 
   const validation = safeParse(repoSchema, value)
   if (!validation.ok) {
@@ -85,7 +85,7 @@ export async function listRepos(did: Did): Promise<RepoList> {
   }
 
   const items = listValidation.value.items.map((repo) => {
-    const validation = safeParse(repoSchema, repo.value)
+    const validation = safeParse(repoSchema, normalizeRepoRecord(repo.value))
     if (!validation.ok) {
       throw new Error(`Bobbin returned an invalid repo record: ${repo.uri}: ${validation.message}`)
     }
@@ -234,6 +234,26 @@ function normalizeTreeResponse(value: unknown): unknown {
 
   tree.lastCommit = normalizeCommit(tree.lastCommit)
   return tree
+}
+
+function normalizeRepoRecord(value: unknown): unknown {
+  if (!isRecord(value)) return value
+
+  const normalized = { ...value }
+  if (typeof normalized.description === 'string') {
+    const graphemes = Array.from(
+      new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(normalized.description),
+      ({ segment }) => segment,
+    )
+
+    if (graphemes.length === 0) {
+      delete normalized.description
+    } else if (graphemes.length > 140) {
+      normalized.description = graphemes.slice(0, 140).join('')
+    }
+  }
+
+  return normalized
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
