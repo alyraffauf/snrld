@@ -6,6 +6,7 @@ import rehypeSanitize from 'rehype-sanitize'
 import { countStars } from '../../lib/tangled/feed'
 import type { Repo } from '../../lib/tangled/index'
 import { getRepoName } from '../../lib/tangled/repo'
+import { IconStar } from '@tabler/icons-react'
 
 type RepoProps = {
   repo: Repo
@@ -41,8 +42,14 @@ export function RepoView({ repo }: RepoProps) {
         </div>
 
         {repoDid !== undefined && (
-          <span className="shrink-0 font-mono text-sm text-ctp-yellow">
-            ★ {starsFailed ? '—' : (stars ?? '…')}
+          <span className="shrink-0 font-mono text-sm leading-4 tabular-nums text-ctp-yellow">
+            <IconStar
+              size={16}
+              stroke={1.75}
+              aria-hidden="true"
+              className="mr-1 inline-block align-middle text-current"
+            />
+            {starsFailed ? '—' : (stars ?? '…')}
           </span>
         )}
       </header>

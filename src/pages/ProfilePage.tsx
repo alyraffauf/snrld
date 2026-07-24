@@ -95,7 +95,7 @@ export function ProfilePage() {
             <h2 className="text-xl font-bold">Pinned Repos</h2>
             {pinnedRepos?.length === 0 && <p>No repos found.</p>}
             {pinnedRepos && pinnedRepos.length > 0 && (
-              <div className="grid gap-4">
+              <div className="grid gap-4 lg:grid-cols-2">
                 {pinnedRepos.map((repo) => (
                   <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
                 ))}
