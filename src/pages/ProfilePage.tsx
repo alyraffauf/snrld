@@ -39,11 +39,6 @@ export function ProfilePage() {
             getRepoByRepoDid(repoDid as Did),
           ),
         )
-        const failedPinnedRepos = pinnedResults.filter((result) => result.status === 'rejected')
-        if (failedPinnedRepos.length > 0) {
-          throw new Error(`Unable to resolve ${failedPinnedRepos.length} pinned repos`)
-        }
-
         const pinnedRepos = pinnedResults.flatMap((result) =>
           result.status === 'fulfilled' ? [result.value] : [],
         )
