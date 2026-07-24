@@ -52,7 +52,7 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
   }, [miniDoc.did])
 
   return (
-    <article className="border-ctp-surface-1 p-5">
+    <article className="border-0 bg-transparent p-0 shadow-none">
       <div className="flex items-center gap-4">
         <ProfileAvatar miniDoc={miniDoc} profile={profile} bskyProfile={blueskyProfile} />
 

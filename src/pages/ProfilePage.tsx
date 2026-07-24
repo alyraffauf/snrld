@@ -2,6 +2,7 @@ import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { Did, Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
+import { IconPin } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
@@ -92,7 +93,13 @@ export function ProfilePage() {
         }
         pinnedRepos={
           <>
-            <h2 className="text-xl font-bold">Pinned Repos</h2>
+            <h2
+              id="pinned-repos"
+              className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
+            >
+              <IconPin size={14} stroke={1.75} aria-hidden="true" />
+              Pinned
+            </h2>
             {pinnedRepos?.length === 0 && <p>No repos found.</p>}
             {pinnedRepos && pinnedRepos.length > 0 && (
               <div className="grid gap-4 lg:grid-cols-2">
