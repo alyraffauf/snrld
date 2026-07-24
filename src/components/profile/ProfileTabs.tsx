@@ -1,4 +1,5 @@
 import type { Handle } from '@atcute/lexicons'
+import { IconArticle, IconNote, IconNotebook } from '@tabler/icons-react'
 import { Link, useSearchParams } from 'react-router-dom'
 
 type ProfileSection = 'overview' | 'repos' | 'strings'
@@ -7,11 +8,11 @@ type ProfileTabsProps = {
   handle: Handle
 }
 
-const PROFILE_TABS: Array<{ label: string; section: ProfileSection }> = [
-  { label: 'Overview', section: 'overview' },
-  { label: 'Repositories', section: 'repos' },
-  { label: 'Strings', section: 'strings' },
-]
+const PROFILE_TABS = [
+  { label: 'Overview', section: 'overview', Icon: IconArticle },
+  { label: 'Repositories', section: 'repos', Icon: IconNotebook },
+  { label: 'Strings', section: 'strings', Icon: IconNote },
+] as const
 
 export function ProfileTabs({ handle }: ProfileTabsProps) {
   const [searchParams] = useSearchParams()
@@ -23,18 +24,19 @@ export function ProfileTabs({ handle }: ProfileTabsProps) {
         {PROFILE_TABS.map((tab) => {
           const isActive = tab.section === activeSection
           const search = tab.section === 'overview' ? '' : `?view=${tab.section}`
+          const Icon = tab.Icon
 
           return (
             <Link
               key={tab.section}
               to={`/${handle}${search}`}
               aria-current={isActive ? 'page' : undefined}
-              className={`shrink-0 border-b-2 pb-3 text-sm transition-colors ${
-                isActive
-                  ? 'border-ctp-lavender font-semibold text-ctp-text'
-                  : 'border-transparent text-ctp-overlay-1 hover:border-ctp-surface-1 hover:text-ctp-text'
-              }`}
+              className={`flex shrink-0 items-center gap-2 border-b-2 pb-3 text-sm transition-colors ${isActive
+                ? 'border-ctp-lavender font-semibold text-ctp-text'
+                : 'border-transparent text-ctp-overlay-1 hover:border-ctp-surface-1 hover:text-ctp-text'
+                }`}
             >
+              <Icon size={15} stroke={1.75} aria-hidden="true" />
               {tab.label}
             </Link>
           )
