@@ -1,14 +1,16 @@
+import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { Handle, ResourceUri } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
-import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
+import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ProfileByline } from '../components/ProfileByline'
 import { RepoPageSkeleton } from '../components/PageSkeletons'
+import { ProfileByline } from '../components/ProfileByline'
 import { RepoReadme } from '../components/RepoReadme'
-import { RepoWorkspace } from '../components/RepoWorkspace'
 import { RepoView } from '../components/RepoView'
+import { RepoWorkspace } from '../components/RepoWorkspace'
+import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, type Profile } from '../lib/tangled'
 import { getRepo, type Repo } from '../lib/tangled/repo'
@@ -18,6 +20,7 @@ export function RepoPage() {
   const handle = parseHandle(routeHandle)
   const [identity, setIdentity] = useState<MiniDoc | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
   const [repo, setRepo] = useState<Repo | null>(null)
   const [rootTree, setRootTree] = useState<RepoTreeResponse | null>(null)
   const [error, setError] = useState<Error | null>(null)
@@ -32,11 +35,16 @@ export function RepoPage() {
         const miniDoc = await getMiniDoc(handle)
         const repoUri = `at://${miniDoc.did}/sh.tangled.repo/${routeRepo}` as ResourceUri
 
-        const [profile, repo] = await Promise.all([getProfile(miniDoc.did), getRepo(repoUri)])
+        const [profile, bskyProfile, repo] = await Promise.all([
+          getProfile(miniDoc.did),
+          getBskyProfile(miniDoc).catch(() => null),
+          getRepo(repoUri)
+        ])
 
         if (!cancelled) {
           setIdentity(miniDoc)
           setProfile(profile)
+          setBskyProfile(bskyProfile)
           setRepo(repo)
           setRootTree(null)
         }
@@ -68,7 +76,7 @@ export function RepoPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
-      <ProfileByline miniDoc={identity} profile={profile} repo={repo} />
+      <ProfileByline miniDoc={identity} profile={profile} bskyProfile={bskyProfile} repo={repo} />
 
       <section className="mt-8 space-y-6">
         <RepoView repo={repo} />

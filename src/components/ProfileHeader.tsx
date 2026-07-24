@@ -1,3 +1,4 @@
+import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { useEffect, useState } from 'react'
 import { getAvatarUrl } from '../lib/atproto/media'
@@ -7,13 +8,16 @@ import { countFollows, countFollowsBy } from '../lib/tangled/graph'
 type ProfileHeaderProps = {
   miniDoc: MiniDoc
   profile: Profile
+  blueskyProfile?: AppBskyActorProfile.Main | null
 }
 
-export function ProfileHeader({ miniDoc, profile }: ProfileHeaderProps) {
+export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeaderProps) {
   const { value } = profile
   const [followers, setFollowers] = useState<number | null>(null)
   const [follows, setFollows] = useState<number | null>(null)
-  const avatarUrl = value.avatar ? getAvatarUrl(miniDoc.did, value.avatar) : null
+  const avatar = profile.value.avatar ?? blueskyProfile?.avatar
+  const avatarUrl = avatar ? getAvatarUrl(miniDoc.did, avatar) : null
+
   const profileLinks = [
     ...(value.bluesky
       ? [{ href: `https://witchsky.app/profile/${miniDoc.handle}`, label: 'witchsky' }]

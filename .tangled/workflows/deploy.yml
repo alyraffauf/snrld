@@ -1,9 +1,9 @@
 when:
-  - event: ["push"]
-    branch: ["main"]
-  - event: ["manual"]
+  - event: ['push']
+    branch: ['main']
+  - event: ['manual']
 
-engine: "nixery"
+engine: 'nixery'
 
 dependencies:
   nixpkgs:
@@ -15,9 +15,9 @@ dependencies:
     - bun
 
 environment:
-  SITE_PATH: "dist"
-  SITE_NAME: "snrld"
-  WISP_HANDLE: "aly.codes"
+  SITE_PATH: 'dist'
+  SITE_NAME: 'snrld'
+  WISP_HANDLE: 'aly.codes'
 
 steps:
   - name: build site

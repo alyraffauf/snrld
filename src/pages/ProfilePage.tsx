@@ -1,12 +1,14 @@
 import type { Did, Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
+import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ProfilePageSkeleton } from '../components/PageSkeletons'
 import { ProfileHeader } from '../components/ProfileHeader'
 import { ProfileOverview } from '../components/ProfileOverview'
-import { ProfilePageSkeleton } from '../components/PageSkeletons'
 import { RepoListItem } from '../components/RepoListItem'
+import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, type Profile } from '../lib/tangled'
 import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
@@ -18,6 +20,7 @@ export function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [repos, setRepos] = useState<RepoList | null>(null)
   const [pinnedRepos, setPinnedRepos] = useState<Repo[] | null>(null)
+  const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
@@ -29,9 +32,10 @@ export function ProfilePage() {
         setError(null)
         const miniDoc = await getMiniDoc(handle)
 
-        const [profile, repos] = await Promise.all([
+        const [profile, repos, bskyProfile] = await Promise.all([
           getProfile(miniDoc.did),
           listRepos(miniDoc.did),
+          getBskyProfile(miniDoc).catch(() => null),
         ])
 
         const pinnedResults = await Promise.allSettled(
@@ -48,6 +52,7 @@ export function ProfilePage() {
           setProfile(profile)
           setRepos(repos)
           setPinnedRepos(pinnedRepos)
+          setBskyProfile(bskyProfile)
         }
       } catch (caught) {
         if (!cancelled) {
@@ -78,7 +83,8 @@ export function ProfilePage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
       <ProfileOverview
-        profile={<ProfileHeader miniDoc={identity} profile={profile} />}
+        profile={<ProfileHeader miniDoc={identity} profile={profile} blueskyProfile={bskyProfile}
+        />}
         pinnedRepos={
           <>
             <h2 className="text-xl font-bold">Pinned Repos</h2>

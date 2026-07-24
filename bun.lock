@@ -5,6 +5,7 @@
     "": {
       "name": "snrld",
       "dependencies": {
+        "@atcute/bluesky": "^4.0.15",
         "@atcute/client": "^5.1.1",
         "@atcute/lexicons": "^2.0.3",
         "@atcute/microcosm": "^2.0.2",
@@ -32,6 +33,8 @@
   },
   "packages": {
     "@atcute/atproto": ["@atcute/atproto@4.0.3", "", { "dependencies": { "@atcute/lexicons": "^2.0.2" } }, "sha512-BNylfO7nK0yYBpSpnGhOYgrJTeZWrXHPrb6tOQmp9A3Am0epctIWm6/5lPC4ZNPHpUbwr5w/LzH/v7kjAoKEDg=="],
+
+    "@atcute/bluesky": ["@atcute/bluesky@4.0.15", "", { "dependencies": { "@atcute/atproto": "^4.0.3", "@atcute/lexicons": "^2.0.3" } }, "sha512-+pYJihR5/0NF8kbPy2Sz3SjXExPXxNj8MakdIxcMtYS4qi2eSCU8UWMSp3rcBaP9pypURda0q/Q8TrDZNpvucg=="],
 
     "@atcute/client": ["@atcute/client@5.1.1", "", { "dependencies": { "@atcute/identity": "^2.0.1", "@atcute/lexicons": "^2.0.2" } }, "sha512-cn5/Zi/qo37WtQG6gzIC7JPs0RDzX9Z4eaceX45SpKgLZoc3fCFDJcE7C8xsbxBNfjry2T6PmUxWA8obebZsEQ=="],
 

@@ -1,9 +1,9 @@
 import { Client, ok, simpleFetchHandler } from '@atcute/client'
 import { isActorIdentifier } from '@atcute/lexicons/syntax'
-import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import type {} from '@atcute/microcosm'
+import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 
-const slingshot = new Client({
+export const slingshot = new Client({
   handler: simpleFetchHandler({ service: 'https://slingshot.microcosm.blue' }),
 })
 
