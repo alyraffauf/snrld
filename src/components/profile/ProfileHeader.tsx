@@ -1,9 +1,9 @@
 import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { useEffect, useState } from 'react'
-import { getAvatarUrl } from '../lib/atproto/media'
-import type { Profile } from '../lib/tangled'
-import { countFollows, countFollowsBy } from '../lib/tangled/graph'
+import type { Profile } from '../../lib/tangled'
+import { countFollows, countFollowsBy } from '../../lib/tangled/graph'
+import { ProfileAvatar } from './ProfileAvatar'
 
 type ProfileHeaderProps = {
   miniDoc: MiniDoc
@@ -15,9 +15,6 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
   const { value } = profile
   const [followers, setFollowers] = useState<number | null>(null)
   const [follows, setFollows] = useState<number | null>(null)
-  const avatar = profile.value.avatar ?? blueskyProfile?.avatar
-  const avatarUrl = avatar ? getAvatarUrl(miniDoc.did, avatar) : null
-
   const profileLinks = [
     ...(value.bluesky
       ? [{ href: `https://witchsky.app/profile/${miniDoc.handle}`, label: 'witchsky' }]
@@ -57,17 +54,7 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
   return (
     <article className="border-ctp-surface-1 p-5">
       <div className="flex items-center gap-4">
-        {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt={`${miniDoc.handle} avatar`}
-            className="size-16 shrink-0 rounded-full object-cover ring-2 ring-ctp-surface-1"
-          />
-        ) : (
-          <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-ctp-surface-1 font-mono text-xl text-ctp-lavender">
-            {miniDoc.handle[0].toUpperCase()}
-          </div>
-        )}
+        <ProfileAvatar miniDoc={miniDoc} profile={profile} bskyProfile={blueskyProfile} />
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

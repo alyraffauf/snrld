@@ -4,11 +4,11 @@ import { isHandle } from '@atcute/lexicons/syntax'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ProfilePageSkeleton } from '../components/PageSkeletons'
-import { ProfileHeader } from '../components/ProfileHeader'
-import { ProfileOverview } from '../components/ProfileOverview'
-import { RepoListItem } from '../components/RepoListItem'
-import { StringListItem } from '../components/StringListItem'
+import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
+import { ProfileHeader } from '../components/profile/ProfileHeader'
+import { ProfileOverview } from '../components/profile/ProfileOverview'
+import { RepoListItem } from '../components/repo/RepoListItem'
+import { StringListItem } from '../components/string/StringListItem'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, listStrings, type Profile, type StringList } from '../lib/tangled'
@@ -123,7 +123,7 @@ export function ProfilePage() {
         {strings.items.length > 0 && (
           <div className="grid gap-4 lg:grid-cols-2">
             {strings.items.map((string) => (
-              <StringListItem handle={identity.handle} stringRecord={string} />
+              <StringListItem key={string.uri} handle={identity.handle} stringRecord={string} />
             ))}
           </div>
         )}

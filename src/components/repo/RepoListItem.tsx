@@ -2,9 +2,9 @@ import type { Did, Handle } from '@atcute/lexicons'
 import { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
-import { countStars } from '../lib/tangled/feed'
-import type { Repo } from '../lib/tangled/index'
-import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
+import { countStars } from '../../lib/tangled/feed'
+import type { Repo } from '../../lib/tangled/index'
+import { getRepoName, getRepoRkey } from '../../lib/tangled/repo'
 
 type RepoListItemProps = {
   handle: Handle

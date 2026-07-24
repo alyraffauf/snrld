@@ -1,4 +1,4 @@
-import { type RepoCommit } from '../lib/tangled/repo'
+import { type RepoCommit } from '../../lib/tangled/repo'
 
 type RepoCommitProps = {
   commit: RepoCommit

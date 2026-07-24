@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { parseResourceUri } from '@atcute/lexicons'
-import type { StringRecord } from '../lib/tangled'
+import type { StringRecord } from '../../lib/tangled'
 
 type StringListItemProps = {
   handle: string

@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
-import { countStars } from '../lib/tangled/feed'
-import type { Repo } from '../lib/tangled/index'
-import { getRepoName } from '../lib/tangled/repo'
+import { countStars } from '../../lib/tangled/feed'
+import type { Repo } from '../../lib/tangled/index'
+import { getRepoName } from '../../lib/tangled/repo'
 
 type RepoProps = {
   repo: Repo

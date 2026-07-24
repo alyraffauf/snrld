@@ -1,5 +1,5 @@
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
-import type { Repo } from '../lib/tangled'
+import type { Repo } from '../../lib/tangled'
 import { RepoLog } from './RepoLog'
 import { RepoTree } from './RepoTree'
 

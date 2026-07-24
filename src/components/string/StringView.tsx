@@ -1,4 +1,4 @@
-import type { StringRecord } from '../lib/tangled/index'
+import type { StringRecord } from '../../lib/tangled/index'
 
 type StringProps = {
   string: StringRecord

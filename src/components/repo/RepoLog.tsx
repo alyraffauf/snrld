@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import type { Repo } from '../lib/tangled'
-import { getRecentCommits, type RepoCommit } from '../lib/tangled/repo'
-import { LoadingPanel } from './LoadingPanel'
+import type { Repo } from '../../lib/tangled'
+import { getRecentCommits, type RepoCommit } from '../../lib/tangled/repo'
+import { LoadingPanel } from '../shared/LoadingPanel'
 import { RepoCommit as RepoCommitComponent } from './RepoCommit'
+import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 
 type RepoLogProps = {
   repo: Repo
@@ -46,14 +47,7 @@ export function RepoLog({ repo }: RepoLogProps) {
   return (
     <section className="h-full font-mono" aria-labelledby="repository-commits">
       <div className="h-full overflow-hidden bg-ctp-mantle">
-        <div className="flex items-center justify-between border-b border-ctp-surface-1 px-4 py-3">
-          <h2 id="repository-commits" className="font-mono text-base font-semibold text-ctp-text">
-            Log
-          </h2>
-          {/* <span className="rounded bg-ctp-surface-0 px-2 py-1 font-mono text-xs text-ctp-subtext-1">
-                        {commits.length}
-                    </span> */}
-        </div>
+        <WorkspacePaneHeader labelledBy="repository-commits" title="Log" />
 
         {commits.length === 0 ? (
           <p className="px-4 py-4 text-sm text-ctp-subtext-1">No commits found.</p>

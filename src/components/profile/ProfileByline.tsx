@@ -1,8 +1,8 @@
 import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { Link } from 'react-router-dom'
-import { getAvatarUrl } from '../lib/atproto/media'
-import type { Profile } from '../lib/tangled'
+import type { Profile } from '../../lib/tangled'
+import { ProfileAvatar } from './ProfileAvatar'
 
 type ProfileBylineProps = {
   miniDoc: MiniDoc
@@ -12,10 +12,6 @@ type ProfileBylineProps = {
 }
 
 export function ProfileByline({ miniDoc, profile, bskyProfile, label }: ProfileBylineProps) {
-  const { value } = profile
-  const avatar = value.avatar ?? bskyProfile?.avatar
-  const avatarUrl = avatar ? getAvatarUrl(miniDoc.did, avatar) : null
-
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
       <ol className="flex items-center gap-2 font-mono text-sm">
@@ -24,17 +20,12 @@ export function ProfileByline({ miniDoc, profile, bskyProfile, label }: ProfileB
             to={`/${miniDoc.handle}`}
             className="flex items-center gap-2 whitespace-nowrap text-ctp-blue hover:text-ctp-sapphire"
           >
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={`${miniDoc.handle} avatar`}
-                className="size-8 shrink-0 rounded-full object-cover ring-2 ring-ctp-surface-1"
-              />
-            ) : (
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ctp-surface-1 font-mono text-sm text-ctp-lavender">
-                {miniDoc.handle[0].toUpperCase()}
-              </span>
-            )}
+            <ProfileAvatar
+              miniDoc={miniDoc}
+              profile={profile}
+              bskyProfile={bskyProfile}
+              size="small"
+            />
             {miniDoc.handle}
           </Link>
         </li>

@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import { PageLayout } from './components/PageLayout'
+import { PageLayout } from './components/layout/PageLayout'
 import { HomePage } from './pages/HomePage'
 import { ProfilePage } from './pages/ProfilePage'
 import { RepoPage } from './pages/RepoPage'

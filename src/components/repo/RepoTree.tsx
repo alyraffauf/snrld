@@ -1,8 +1,9 @@
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useState } from 'react'
-import type { Repo } from '../lib/tangled'
-import { getRepoTree } from '../lib/tangled/repo'
-import { LoadingPanel } from './LoadingPanel'
+import type { Repo } from '../../lib/tangled'
+import { getRepoTree } from '../../lib/tangled/repo'
+import { LoadingPanel } from '../shared/LoadingPanel'
+import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 
 type RepoTreeProps = {
   repo: Repo
@@ -67,17 +68,20 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
   return (
     <section className="flex h-full flex-col font-mono" aria-labelledby="repository-files">
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b border-ctp-surface-1 bg-ctp-mantle px-4 py-3">
-          <div className="flex items-baseline gap-3">
-            <h2 id="repository-files" className="font-mono text-base font-semibold text-ctp-text">
-              Tree
-            </h2>
-            <span className="font-mono text-sm text-ctp-overlay-1">/{path}</span>
-          </div>
-          <span className="rounded bg-ctp-surface-0 px-2 py-1 font-mono text-xs text-ctp-subtext-1">
-            {tree.ref}
-          </span>
-        </div>
+        <WorkspacePaneHeader
+          labelledBy="repository-files"
+          title={
+            <span className="flex items-baseline gap-3">
+              <span>Tree</span>
+              <span className="font-mono text-sm font-normal text-ctp-overlay-1">/{path}</span>
+            </span>
+          }
+          trailing={
+            <span className="rounded bg-ctp-surface-0 px-2 py-1 font-mono text-xs text-ctp-subtext-1">
+              {tree.ref}
+            </span>
+          }
+        />
 
         <ul className="flex-1 divide-y divide-ctp-surface-0 overflow-hidden bg-ctp-mantle">
           {(tree.parent ?? tree.dotdot) && (
