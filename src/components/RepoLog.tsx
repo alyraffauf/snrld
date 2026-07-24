@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Repo } from '../lib/tangled'
 import { getRecentCommits, type RepoCommit } from '../lib/tangled/repo'
+import { LoadingPanel } from './LoadingPanel'
 import { RepoCommit as RepoCommitComponent } from './RepoCommit'
 
 type RepoLogProps = {
@@ -39,7 +40,7 @@ export function RepoLog({ repo }: RepoLogProps) {
   }
 
   if (commits === null) {
-    return <p aria-busy="true">Loading commits...</p>
+    return <LoadingPanel label="Loading commits" className="h-64 rounded-none border-0" />
   }
 
   return (
@@ -59,7 +60,7 @@ export function RepoLog({ repo }: RepoLogProps) {
         ) : (
           <ul className="divide-y divide-ctp-surface-0">
             {commits.map((commit) => (
-              <RepoCommitComponent commit={commit} />
+              <RepoCommitComponent key={commit.hash} commit={commit} />
             ))}
           </ul>
         )}

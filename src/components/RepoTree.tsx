@@ -2,6 +2,7 @@ import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tre
 import { useEffect, useState } from 'react'
 import type { Repo } from '../lib/tangled'
 import { getRepoTree } from '../lib/tangled/repo'
+import { LoadingPanel } from './LoadingPanel'
 
 type RepoTreeProps = {
   repo: Repo
@@ -49,7 +50,7 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
   }
 
   if (tree === null) {
-    return <p aria-busy="true">Loading files…</p>
+    return <LoadingPanel label="Loading files" className="h-64 rounded-none border-0" />
   }
 
   const sortedFiles = [...tree.files].sort((a, b) => {

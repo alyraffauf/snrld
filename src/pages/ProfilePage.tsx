@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ProfileHeader } from '../components/ProfileHeader'
 import { ProfileOverview } from '../components/ProfileOverview'
+import { ProfilePageSkeleton } from '../components/PageSkeletons'
 import { RepoListItem } from '../components/RepoListItem'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, type Profile } from '../lib/tangled'
@@ -75,12 +76,8 @@ export function ProfilePage() {
     return <p role="alert">Could not load profile: {error.message}</p>
   }
 
-  if (identity === null) {
-    return <p>Loading identity…</p>
-  }
-
-  if (profile === null || repos === null) {
-    return <p>Loading profile…</p>
+  if (identity === null || profile === null || repos === null) {
+    return <ProfilePageSkeleton />
   }
 
   return (

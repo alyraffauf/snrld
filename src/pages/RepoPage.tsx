@@ -5,6 +5,7 @@ import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ProfileByline } from '../components/ProfileByline'
+import { RepoPageSkeleton } from '../components/PageSkeletons'
 import { RepoReadme } from '../components/RepoReadme'
 import { RepoWorkspace } from '../components/RepoWorkspace'
 import { RepoView } from '../components/RepoView'
@@ -61,16 +62,8 @@ export function RepoPage() {
     return <p role="alert">Could not load repository: {error.message}</p>
   }
 
-  if (profile === null) {
-    return <p>Loading profile…</p>
-  }
-
-  if (identity === null) {
-    return <p>Loading identity…</p>
-  }
-
-  if (repo === null) {
-    return <p>Loading profile…</p>
+  if (profile === null || identity === null || repo === null) {
+    return <RepoPageSkeleton />
   }
 
   return (
