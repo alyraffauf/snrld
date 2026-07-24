@@ -17,6 +17,7 @@
     "@atcute/lexicons": "^2.0.3",
     "@atcute/microcosm": "^2.0.2",
     "@atcute/tangled": "^2.0.13",
+    "@tabler/icons-react": "^3.45.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-markdown": "^10.1.0",
