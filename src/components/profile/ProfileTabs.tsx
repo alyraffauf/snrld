@@ -1,6 +1,7 @@
 import type { Handle } from '@atcute/lexicons'
 import { IconArticle, IconNote, IconNotebook } from '@tabler/icons-react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Tabs } from '../shared/Tabs'
 
 type ProfileSection = 'overview' | 'repos' | 'strings'
 
@@ -19,30 +20,22 @@ export function ProfileTabs({ handle }: ProfileTabsProps) {
   const activeSection = parseProfileSection(searchParams.get('view'))
 
   return (
-    <nav aria-label="Profile sections" className="mt-8 border-b border-ctp-surface-0">
-      <div className="flex gap-6 overflow-x-auto">
-        {PROFILE_TABS.map((tab) => {
-          const isActive = tab.section === activeSection
-          const search = tab.section === 'overview' ? '' : `?view=${tab.section}`
+    <div className="mt-8">
+      <Tabs
+        ariaLabel="Profile sections"
+        items={PROFILE_TABS.map((tab) => {
           const Icon = tab.Icon
+          const search = tab.section === 'overview' ? '' : `?view=${tab.section}`
 
-          return (
-            <Link
-              key={tab.section}
-              to={`/${handle}${search}`}
-              aria-current={isActive ? 'page' : undefined}
-              className={`flex shrink-0 items-center gap-2 border-b-2 pb-3 text-sm transition-colors ${isActive
-                ? 'border-ctp-lavender font-semibold text-ctp-text'
-                : 'border-transparent text-ctp-overlay-1 hover:border-ctp-surface-1 hover:text-ctp-text'
-                }`}
-            >
-              <Icon size={15} stroke={1.75} aria-hidden="true" />
-              {tab.label}
-            </Link>
-          )
+          return {
+            label: tab.label,
+            href: `/${handle}${search}`,
+            isActive: tab.section === activeSection,
+            icon: <Icon size={15} stroke={1.75} aria-hidden="true" />,
+          }
         })}
-      </div>
-    </nav>
+      />
+    </div>
   )
 }
 
