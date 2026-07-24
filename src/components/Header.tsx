@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isHandle } from '@atcute/lexicons/syntax'
 import { searchBlueskyActors, type BlueskyActorSearchResult } from '../lib/bsky/actorSearch'
@@ -8,13 +8,29 @@ export function Header() {
   const [isInvalid, setIsInvalid] = useState(false)
   const [results, setResults] = useState<BlueskyActorSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
+  const searchFormRef = useRef<HTMLFormElement>(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    function closeSuggestions(event: PointerEvent) {
+      if (!searchFormRef.current?.contains(event.target as Node)) {
+        setResults([])
+        setIsSearching(false)
+        setIsSuggestionsOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', closeSuggestions)
+    return () => document.removeEventListener('pointerdown', closeSuggestions)
+  }, [])
 
   useEffect(() => {
     const query = handleInput.trim()
     if (query.length < 2) {
       setResults([])
       setIsSearching(false)
+      setIsSuggestionsOpen(false)
       return
     }
 
@@ -41,8 +57,9 @@ export function Header() {
   }, [handleInput])
 
   function selectActor(actor: BlueskyActorSearchResult) {
-    setHandleInput(actor.handle)
+    setHandleInput('')
     setResults([])
+    setIsSuggestionsOpen(false)
     navigate(`/${actor.handle}`)
   }
 
@@ -60,9 +77,11 @@ export function Header() {
         </Link>
 
         <form
+          ref={searchFormRef}
           className="relative ml-auto flex w-full max-w-sm min-w-0 items-center border-b border-ctp-surface-1"
           onSubmit={(event) => {
             event.preventDefault()
+            setIsSuggestionsOpen(false)
 
             const handle = handleInput.trim()
             if (!isHandle(handle)) {
@@ -83,6 +102,7 @@ export function Header() {
             onChange={(event) => {
               setHandleInput(event.target.value)
               setIsInvalid(false)
+              setIsSuggestionsOpen(true)
             }}
             className="min-w-0 flex-1 bg-transparent py-1 font-mono text-sm text-ctp-text outline-none placeholder:text-ctp-overlay-0"
           />
@@ -94,7 +114,7 @@ export function Header() {
             →
           </button>
 
-          {(isSearching || results.length > 0) && (
+          {isSuggestionsOpen && (isSearching || results.length > 0) && (
             <div className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded border border-ctp-surface-1 bg-ctp-mantle shadow-lg">
               {isSearching ? (
                 <p className="px-3 py-2 text-sm text-ctp-overlay-1" role="status">
