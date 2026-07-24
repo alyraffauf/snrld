@@ -83,8 +83,9 @@ export function ProfilePage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
       <ProfileOverview
-        profile={<ProfileHeader miniDoc={identity} profile={profile} blueskyProfile={bskyProfile}
-        />}
+        profile={
+          <ProfileHeader miniDoc={identity} profile={profile} blueskyProfile={bskyProfile} />
+        }
         pinnedRepos={
           <>
             <h2 className="text-xl font-bold">Pinned Repos</h2>

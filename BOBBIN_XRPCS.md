@@ -120,12 +120,14 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.repo.branch`
 - [ ] `sh.tangled.repo.branches`
 - [ ] `sh.tangled.repo.compare`
-- [ ] `sh.tangled.repo.describeRepo`
+
+<!-- - [ ] `sh.tangled.repo.describeRepo` -->
+
 - [ ] `sh.tangled.repo.diff`
 - [ ] `sh.tangled.repo.getDefaultBranch`
 - [ ] `sh.tangled.repo.languages`
 - [ ] `sh.tangled.repo.listSecrets`
-- [ ] `sh.tangled.repo.log`
+- [x] `sh.tangled.repo.log`
 - [ ] `sh.tangled.repo.tag`
 - [ ] `sh.tangled.repo.tags`
 - [ ] `sh.tangled.repo.tree`

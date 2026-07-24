@@ -1,4 +1,4 @@
-import type { } from '@atcute/bluesky'
+import type {} from '@atcute/bluesky'
 import { AppBskyActorSearchActorsTypeahead } from '@atcute/bluesky'
 import { Client, ok, simpleFetchHandler } from '@atcute/client'
 import { safeParse } from '@atcute/lexicons'
@@ -9,8 +9,7 @@ const typeahead = new Client({
   handler: simpleFetchHandler({ service: TYPEAHEAD_URL }),
 })
 
-export type BlueskyActorSearchResult =
-  AppBskyActorSearchActorsTypeahead.$output['actors'][number]
+export type BlueskyActorSearchResult = AppBskyActorSearchActorsTypeahead.$output['actors'][number]
 
 export async function searchBlueskyActors(
   query: string,
@@ -27,10 +26,7 @@ export async function searchBlueskyActors(
     }),
   )
 
-  const validation = safeParse(
-    AppBskyActorSearchActorsTypeahead.mainSchema.output.schema,
-    response,
-  )
+  const validation = safeParse(AppBskyActorSearchActorsTypeahead.mainSchema.output.schema, response)
   if (!validation.ok) {
     throw new Error(`Typeahead returned an invalid actor search response: ${validation.message}`)
   }

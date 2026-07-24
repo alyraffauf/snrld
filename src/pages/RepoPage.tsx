@@ -38,7 +38,7 @@ export function RepoPage() {
         const [profile, bskyProfile, repo] = await Promise.all([
           getProfile(miniDoc.did),
           getBskyProfile(miniDoc).catch(() => null),
-          getRepo(repoUri)
+          getRepo(repoUri),
         ])
 
         if (!cancelled) {
