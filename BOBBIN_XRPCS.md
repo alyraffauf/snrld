@@ -41,7 +41,7 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.repo.countPulls`
 - [ ] `sh.tangled.repo.listCollaborators`
 - [ ] `sh.tangled.repo.countCollaborators`
-- [ ] `sh.tangled.repo.listRepos`
+- [x] `sh.tangled.repo.listRepos`
 - [ ] `sh.tangled.repo.countRepos`
 - [ ] `sh.tangled.repo.listArtifacts`
 - [ ] `sh.tangled.repo.countArtifacts`
@@ -67,7 +67,7 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.pipeline.countPipelines`
 - [ ] `sh.tangled.pipeline.listStatuses`
 - [ ] `sh.tangled.pipeline.countStatuses`
-- [ ] `sh.tangled.string.listStrings`
+- [ x `sh.tangled.string.listStrings`
 - [ ] `sh.tangled.string.countStrings`
 
 ## Reverse aggregations

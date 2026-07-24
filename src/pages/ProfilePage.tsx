@@ -1,6 +1,6 @@
+import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { Did, Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
-import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -8,9 +8,10 @@ import { ProfilePageSkeleton } from '../components/PageSkeletons'
 import { ProfileHeader } from '../components/ProfileHeader'
 import { ProfileOverview } from '../components/ProfileOverview'
 import { RepoListItem } from '../components/RepoListItem'
+import { StringListItem } from '../components/StringListItem'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
-import { getProfile, type Profile } from '../lib/tangled'
+import { getProfile, listStrings, type Profile, type StringList } from '../lib/tangled'
 import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
 
 export function ProfilePage() {
@@ -19,6 +20,7 @@ export function ProfilePage() {
   const [identity, setIdentity] = useState<MiniDoc | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [repos, setRepos] = useState<RepoList | null>(null)
+  const [strings, setStrings] = useState<StringList | null>(null)
   const [pinnedRepos, setPinnedRepos] = useState<Repo[] | null>(null)
   const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
   const [error, setError] = useState<Error | null>(null)
@@ -32,9 +34,10 @@ export function ProfilePage() {
         setError(null)
         const miniDoc = await getMiniDoc(handle)
 
-        const [profile, repos, bskyProfile] = await Promise.all([
+        const [profile, repos, strings, bskyProfile] = await Promise.all([
           getProfile(miniDoc.did),
           listRepos(miniDoc.did),
+          listStrings(miniDoc.did),
           getBskyProfile(miniDoc).catch(() => null),
         ])
 
@@ -52,6 +55,7 @@ export function ProfilePage() {
           setProfile(profile)
           setRepos(repos)
           setPinnedRepos(pinnedRepos)
+          setStrings(strings)
           setBskyProfile(bskyProfile)
         }
       } catch (caught) {
@@ -76,7 +80,7 @@ export function ProfilePage() {
     return <p role="alert">Could not load profile: {error.message}</p>
   }
 
-  if (identity === null || profile === null || repos === null) {
+  if (identity === null || profile === null || repos === null || strings === null) {
     return <ProfilePageSkeleton />
   }
 
@@ -108,6 +112,18 @@ export function ProfilePage() {
           <div className="grid gap-4 lg:grid-cols-2">
             {repos.items.map((repo) => (
               <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="mt-12 gap-4">
+        <h2 className="text-xl font-bold">Strings</h2>
+        {strings.items.length === 0 && <p>No strings found.</p>}
+        {strings.items.length > 0 && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            {strings.items.map((string) => (
+              <StringListItem handle={identity.handle} stringRecord={string} />
             ))}
           </div>
         )}

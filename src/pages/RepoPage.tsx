@@ -13,7 +13,7 @@ import { RepoWorkspace } from '../components/RepoWorkspace'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, type Profile } from '../lib/tangled'
-import { getRepo, type Repo } from '../lib/tangled/repo'
+import { getRepo, getRepoName, type Repo } from '../lib/tangled/repo'
 
 export function RepoPage() {
   const { handle: routeHandle, repo: routeRepo } = useParams()
@@ -76,7 +76,12 @@ export function RepoPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
-      <ProfileByline miniDoc={identity} profile={profile} bskyProfile={bskyProfile} repo={repo} />
+      <ProfileByline
+        miniDoc={identity}
+        profile={profile}
+        bskyProfile={bskyProfile}
+        label={getRepoName(repo)}
+      />
 
       <section className="mt-8 space-y-6">
         <RepoView repo={repo} />

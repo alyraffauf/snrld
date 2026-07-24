@@ -34,7 +34,7 @@ export function RepoListItem({ handle, repo }: RepoListItemProps) {
   }, [repoDid])
 
   return (
-    <Link to={`/${handle}/${rkey}`} className="block">
+    <Link to={`/${handle}/${encodeURIComponent(rkey)}`} className="block">
       <article className="group h-full border-ctp-surface-1 p-4 transition-colors hover:border-ctp-lavender">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">

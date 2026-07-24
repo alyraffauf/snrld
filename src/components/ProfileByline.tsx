@@ -2,17 +2,16 @@ import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { Link } from 'react-router-dom'
 import { getAvatarUrl } from '../lib/atproto/media'
-import type { Profile, Repo } from '../lib/tangled'
-import { getRepoName } from '../lib/tangled/repo'
+import type { Profile } from '../lib/tangled'
 
 type ProfileBylineProps = {
   miniDoc: MiniDoc
   profile: Profile
   bskyProfile?: AppBskyActorProfile.Main | null
-  repo: Repo
+  label: string
 }
 
-export function ProfileByline({ miniDoc, profile, bskyProfile, repo }: ProfileBylineProps) {
+export function ProfileByline({ miniDoc, profile, bskyProfile, label }: ProfileBylineProps) {
   const { value } = profile
   const avatar = value.avatar ?? bskyProfile?.avatar
   const avatarUrl = avatar ? getAvatarUrl(miniDoc.did, avatar) : null
@@ -44,7 +43,7 @@ export function ProfileByline({ miniDoc, profile, bskyProfile, repo }: ProfileBy
           /
         </li>
 
-        <li className="truncate font-semibold text-ctp-text">{getRepoName(repo)}</li>
+        <li className="truncate font-semibold text-ctp-text">{label}</li>
       </ol>
     </nav>
   )
