@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["@atcute/tangled"]
+  },
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+}
