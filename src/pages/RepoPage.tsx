@@ -1,8 +1,3 @@
-import type { AppBskyActorProfile } from '@atcute/bluesky'
-import type { Handle, ResourceUri } from '@atcute/lexicons'
-import { isHandle } from '@atcute/lexicons/syntax'
-import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
-import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { PageContainer } from '../components/layout/PageContainer'
@@ -14,20 +9,15 @@ import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
-import { getProfile as getBskyProfile } from '../lib/bsky/actor'
-import { getMiniDoc } from '../lib/microcosm'
-import { getProfile, type Profile } from '../lib/tangled'
-import { getRepo, getRepoName, getRepoRkey, getRepoTree, type Repo } from '../lib/tangled/repo'
+import { parseHandle } from '../lib/routes'
+import { loadRepoPage, type RepoPageData } from '../lib/repoPage'
+import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
 
 export function RepoPage() {
   const { handle: routeHandle, repo: routeRepo } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
-  const [identity, setIdentity] = useState<MiniDoc | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
-  const [repo, setRepo] = useState<Repo | null>(null)
-  const [rootTree, setRootTree] = useState<RepoTreeResponse | null>(null)
+  const [pageData, setPageData] = useState<RepoPageData | null>(null)
   const [error, setError] = useState<Error | null>(null)
   const [hasVisitedCode, setHasVisitedCode] = useState(false)
 
@@ -35,36 +25,26 @@ export function RepoPage() {
 
   useEffect(() => {
     const defaultIsCode =
-      requestedSection === null && rootTree !== null && rootTree.readme === undefined
+      requestedSection === null && pageData !== null && pageData.rootTree.readme === undefined
 
     if (requestedSection === 'code' || defaultIsCode) {
       setHasVisitedCode(true)
     }
-  }, [requestedSection, rootTree])
+  }, [requestedSection, pageData])
 
   useEffect(() => {
     if (handle === null || routeRepo === undefined) return
+    const ownerHandle = handle
+    const repoKey = routeRepo
     let cancelled = false
 
-    async function loadPage(handle: Handle) {
+    async function loadPage() {
       try {
         setError(null)
-        const miniDoc = await getMiniDoc(handle)
-        const repoUri = `at://${miniDoc.did}/sh.tangled.repo/${routeRepo}` as ResourceUri
-
-        const [profile, bskyProfile, repo] = await Promise.all([
-          getProfile(miniDoc.did),
-          getBskyProfile(miniDoc).catch(() => null),
-          getRepo(repoUri),
-        ])
-        const rootTree = await getRepoTree(repo)
+        const data = await loadRepoPage(ownerHandle, repoKey)
 
         if (!cancelled) {
-          setIdentity(miniDoc)
-          setProfile(profile)
-          setBskyProfile(bskyProfile)
-          setRepo(repo)
-          setRootTree(rootTree)
+          setPageData(data)
         }
       } catch (caught) {
         if (!cancelled) {
@@ -73,7 +53,7 @@ export function RepoPage() {
       }
     }
 
-    void loadPage(handle)
+    void loadPage()
 
     return () => {
       cancelled = true
@@ -88,10 +68,12 @@ export function RepoPage() {
     return <p role="alert">Could not load repository: {error.message}</p>
   }
 
-  if (profile === null || identity === null || repo === null || rootTree === null) {
+  if (pageData === null) {
     return <RepoPageSkeleton />
   }
 
+  const { actor, repo, rootTree } = pageData
+  const { miniDoc: identity, profile, bskyProfile } = actor
   const activeSection = parseRepoSection(requestedSection, rootTree.readme !== undefined)
   const shouldRenderWorkspace = hasVisitedCode || activeSection === 'code'
 
@@ -140,12 +122,4 @@ function RepoPlaceholder({ title }: RepoPlaceholderProps) {
       <p className="mt-2 text-sm text-ctp-subtext-0">{title} will be available here soon.</p>
     </SurfaceCard>
   )
-}
-
-function parseHandle(value: string | undefined): Handle | null {
-  if (value === undefined || !isHandle(value)) {
-    return null
-  }
-
-  return value
 }

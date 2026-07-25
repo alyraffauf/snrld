@@ -1,5 +1,4 @@
 import { type Handle } from '@atcute/lexicons'
-import { isHandle } from '@atcute/lexicons/syntax'
 import { IconPin, IconThumbUp } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
@@ -13,6 +12,7 @@ import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
 import { parseProfileSection } from '../lib/profile'
 import { loadProfilePage, type ProfilePageData } from '../lib/profilePage'
+import { parseHandle } from '../lib/routes'
 
 const MAX_RECENT_VOUCHES = 4
 
@@ -153,12 +153,4 @@ export function ProfilePage() {
       </PageContainer>
     </main>
   )
-}
-
-function parseHandle(value: string | undefined): Handle | null {
-  if (value === undefined || !isHandle(value)) {
-    return null
-  }
-
-  return value
 }

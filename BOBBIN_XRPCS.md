@@ -31,7 +31,7 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.feed.countReactions`
 - [ ] `sh.tangled.graph.listFollows`
 - [x] `sh.tangled.graph.countFollows`
-- [ ] `sh.tangled.graph.listVouches`
+- [x] `sh.tangled.graph.listVouches`
 - [ ] `sh.tangled.graph.countVouches`
 - [ ] `sh.tangled.git.listRefUpdates`
 - [ ] `sh.tangled.git.countRefUpdates`
