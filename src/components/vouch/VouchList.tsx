@@ -1,18 +1,16 @@
 import { parseResourceUri, type Did } from '@atcute/lexicons'
 import { isDid } from '@atcute/lexicons/syntax'
 import { useEffect, useState } from 'react'
-import { getProfile as getBskyProfile } from '../../lib/bsky/actor'
-import { getMiniDoc } from '../../lib/microcosm'
-import { getProfile } from '../../lib/tangled'
+import { resolveActor, type ResolvedActor } from '../../lib/actor'
 import type { VouchRecord } from '../../lib/tangled/graph'
-import { VouchListItem, type VouchAuthor } from './VouchListItem'
+import { VouchListItem } from './VouchListItem'
 
 type VouchListProps = {
   vouches: VouchRecord[]
 }
 
 export function VouchList({ vouches }: VouchListProps) {
-  const [authors, setAuthors] = useState<Map<string, VouchAuthor>>(new Map())
+  const [authors, setAuthors] = useState<Map<string, ResolvedActor>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -26,11 +24,8 @@ export function VouchList({ vouches }: VouchListProps) {
       ]
 
       const resolvedAuthors = await Promise.allSettled(
-        authorDids.map(async (did): Promise<[string, VouchAuthor]> => {
-          const [miniDoc, profile] = await Promise.all([getMiniDoc(did), getProfile(did)])
-          const bskyProfile = await getBskyProfile(miniDoc).catch(() => null)
-
-          return [did, { miniDoc, profile, bskyProfile }]
+        authorDids.map(async (did): Promise<[string, ResolvedActor]> => {
+          return [did, await resolveActor(did)]
         }),
       )
 

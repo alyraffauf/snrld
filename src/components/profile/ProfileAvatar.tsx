@@ -7,6 +7,7 @@ type ProfileAvatarProps = {
   miniDoc: MiniDoc
   profile: Profile
   bskyProfile?: AppBskyActorProfile.Main | null
+  avatarUrl?: string | null
   size?: 'small' | 'medium'
 }
 
@@ -14,16 +15,18 @@ export function ProfileAvatar({
   miniDoc,
   profile,
   bskyProfile,
+  avatarUrl,
   size = 'medium',
 }: ProfileAvatarProps) {
   const avatar = profile.value.avatar ?? bskyProfile?.avatar
-  const avatarUrl = avatar ? getAvatarUrl(miniDoc.did, avatar) : null
+  const resolvedAvatarUrl =
+    avatarUrl === undefined ? (avatar ? getAvatarUrl(miniDoc.did, avatar) : null) : avatarUrl
   const sizeClass = size === 'small' ? 'size-8 text-sm' : 'size-16 text-xl'
 
-  if (avatarUrl) {
+  if (resolvedAvatarUrl) {
     return (
       <img
-        src={avatarUrl}
+        src={resolvedAvatarUrl}
         alt={`${miniDoc.handle} avatar`}
         className={`${sizeClass} shrink-0 rounded-full object-cover ring-2 ring-ctp-surface-1`}
       />

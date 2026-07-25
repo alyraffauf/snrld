@@ -1,21 +1,13 @@
-import type { AppBskyActorProfile } from '@atcute/bluesky'
-import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { IconThumbDown, IconThumbUp } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import type { Profile } from '../../lib/tangled'
+import type { ResolvedActor } from '../../lib/actor'
 import { ProfileAvatar } from '../profile/ProfileAvatar'
 import { SurfaceCard } from '../shared/SurfaceCard'
 import type { VouchRecord } from '../../lib/tangled/graph'
 
 type VouchListItemProps = {
   vouchRecord: VouchRecord
-  author: VouchAuthor
-}
-
-export type VouchAuthor = {
-  miniDoc: MiniDoc
-  profile: Profile
-  bskyProfile: AppBskyActorProfile.Main | null
+  author: ResolvedActor
 }
 
 export function VouchListItem({ vouchRecord, author }: VouchListItemProps) {
@@ -38,6 +30,7 @@ export function VouchListItem({ vouchRecord, author }: VouchListItemProps) {
             miniDoc={author.miniDoc}
             profile={author.profile}
             bskyProfile={author.bskyProfile}
+            avatarUrl={author.avatarUrl}
             size="small"
           />
 
