@@ -24,15 +24,16 @@ export async function listVouches(did: Did, options: ListVouchesOptions = {}): P
     throw new Error(`Bobbin returned an invalid vouch list: ${listValidation.message}`)
   }
 
-  const items = listValidation.value.items.map((item, index) => {
+  const items = listValidation.value.items.flatMap((item, index) => {
     const valueValidation = safeParse(vouchSchema, item.value)
     if (!valueValidation.ok) {
-      throw new Error(
-        `Bobbin returned an invalid vouch record at index ${index}: ${valueValidation.message}`,
+      console.warn(
+        `Ignoring invalid Bobbin vouch record at index ${index}: ${valueValidation.message}`,
       )
+      return []
     }
 
-    return { ...item, value: valueValidation.value }
+    return [{ ...item, value: valueValidation.value }]
   })
 
   return { items, cursor: listValidation.value.cursor }
