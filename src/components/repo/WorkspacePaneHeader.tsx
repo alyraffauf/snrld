@@ -8,7 +8,7 @@ type WorkspacePaneHeaderProps = {
 
 export function WorkspacePaneHeader({ title, labelledBy, trailing }: WorkspacePaneHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-ctp-surface-1 bg-ctp-mantle px-4 py-3">
+    <div className="flex h-16 shrink-0 items-center justify-between border-b border-ctp-surface-1 bg-ctp-mantle px-4">
       <h2 id={labelledBy} className="font-mono text-base font-semibold text-ctp-text">
         {title}
       </h2>

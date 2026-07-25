@@ -29,6 +29,18 @@ export function RepoPage() {
   const [repo, setRepo] = useState<Repo | null>(null)
   const [rootTree, setRootTree] = useState<RepoTreeResponse | null>(null)
   const [error, setError] = useState<Error | null>(null)
+  const [hasVisitedCode, setHasVisitedCode] = useState(false)
+
+  const requestedSection = searchParams.get('view')
+
+  useEffect(() => {
+    const defaultIsCode =
+      requestedSection === null && rootTree !== null && rootTree.readme === undefined
+
+    if (requestedSection === 'code' || defaultIsCode) {
+      setHasVisitedCode(true)
+    }
+  }, [requestedSection, rootTree])
 
   useEffect(() => {
     if (handle === null || routeRepo === undefined) return
@@ -80,7 +92,8 @@ export function RepoPage() {
     return <RepoPageSkeleton />
   }
 
-  const activeSection = parseRepoSection(searchParams.get('view'), rootTree.readme !== undefined)
+  const activeSection = parseRepoSection(requestedSection, rootTree.readme !== undefined)
+  const shouldRenderWorkspace = hasVisitedCode || activeSection === 'code'
 
   return (
     <main>
@@ -102,7 +115,11 @@ export function RepoPage() {
           />
 
           {activeSection === 'readme' && <RepoReadme readme={rootTree.readme} />}
-          {activeSection === 'code' && <RepoWorkspace repo={repo} initialTree={rootTree} />}
+          {shouldRenderWorkspace && (
+            <div hidden={activeSection !== 'code'}>
+              <RepoWorkspace repo={repo} initialTree={rootTree} />
+            </div>
+          )}
           {activeSection === 'issues' && <RepoPlaceholder title="Issues" />}
           {activeSection === 'pulls' && <RepoPlaceholder title="Pulls" />}
           {activeSection === 'pipelines' && <RepoPlaceholder title="Pipelines" />}

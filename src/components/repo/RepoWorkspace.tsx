@@ -10,7 +10,7 @@ type RepoWorkspaceProps = {
 
 export function RepoWorkspace({ initialTree, repo }: RepoWorkspaceProps) {
   return (
-    <div className="grid items-stretch overflow-hidden rounded border border-ctp-surface-1 bg-ctp-mantle lg:grid-cols-2">
+    <div className="grid min-h-0 items-stretch overflow-hidden rounded border border-ctp-surface-1 bg-ctp-mantle lg:grid-cols-[2fr_1fr]">
       <div className="order-2 min-w-0 border-t border-ctp-surface-1 lg:order-1 lg:border-r lg:border-t-0">
         <RepoTree repo={repo} initialTree={initialTree} />
       </div>
