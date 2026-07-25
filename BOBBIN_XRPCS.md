@@ -67,13 +67,13 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.pipeline.countPipelines`
 - [ ] `sh.tangled.pipeline.listStatuses`
 - [ ] `sh.tangled.pipeline.countStatuses`
-- [ x `sh.tangled.string.listStrings`
+- [x] `sh.tangled.string.listStrings`
 - [ ] `sh.tangled.string.countStrings`
 
 ## Reverse aggregations
 
-- [ ] `sh.tangled.feed.listStarsBy`
-- [ ] `sh.tangled.feed.countStarsBy`
+- [x] `sh.tangled.feed.listStarsBy`
+- [x] `sh.tangled.feed.countStarsBy`
 - [ ] `sh.tangled.feed.listCommentsBy`
 - [ ] `sh.tangled.feed.countCommentsBy`
 - [ ] `sh.tangled.feed.listReactionsBy`
