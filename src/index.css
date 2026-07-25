@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 @import 'tailwindcss';
+@import '@catppuccin/tailwindcss/frappe.css';
+
+@theme inline {
+  --color-ctp-subtext-1: var(--catppuccin-color-subtext1);
+  --color-ctp-subtext-0: var(--catppuccin-color-subtext0);
+  --color-ctp-overlay-2: var(--catppuccin-color-overlay2);
+  --color-ctp-overlay-1: var(--catppuccin-color-overlay1);
+  --color-ctp-overlay-0: var(--catppuccin-color-overlay0);
+  --color-ctp-surface-2: var(--catppuccin-color-surface2);
+  --color-ctp-surface-1: var(--catppuccin-color-surface1);
+  --color-ctp-surface-0: var(--catppuccin-color-surface0);
+}
 
 @font-face {
   font-family: 'Caskaydia Cove';
@@ -7,35 +19,6 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-}
-
-@theme {
-  --color-ctp-rosewater: #f2d5cf;
-  --color-ctp-flamingo: #eebebe;
-  --color-ctp-pink: #f4b8e4;
-  --color-ctp-mauve: #ca9ee6;
-  --color-ctp-red: #e78284;
-  --color-ctp-maroon: #ea999c;
-  --color-ctp-peach: #ef9f76;
-  --color-ctp-yellow: #e5c890;
-  --color-ctp-green: #a6d189;
-  --color-ctp-teal: #81c8be;
-  --color-ctp-sky: #99d1db;
-  --color-ctp-sapphire: #85c1dc;
-  --color-ctp-blue: #8caaee;
-  --color-ctp-lavender: #babbf1;
-  --color-ctp-text: #c6d0f5;
-  --color-ctp-subtext-1: #b5bfe2;
-  --color-ctp-subtext-0: #a5adce;
-  --color-ctp-overlay-2: #949cbb;
-  --color-ctp-overlay-1: #838ba7;
-  --color-ctp-overlay-0: #737994;
-  --color-ctp-surface-2: #626880;
-  --color-ctp-surface-1: #51576d;
-  --color-ctp-surface-0: #414559;
-  --color-ctp-base: #303446;
-  --color-ctp-mantle: #292c3c;
-  --color-ctp-crust: #232634;
 }
 
 @layer base {
