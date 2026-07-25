@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { parseResourceUri } from '@atcute/lexicons'
 import type { StringRecord } from '../../lib/tangled'
+import { SurfaceCard } from '../shared/SurfaceCard'
 
 type StringListItemProps = {
   handle: string
@@ -17,7 +18,10 @@ export function StringListItem({ handle, stringRecord }: StringListItemProps) {
 
   return (
     <Link to={`/strings/${handle}/${encodeURIComponent(rkey)}`} className="block">
-      <article className="group h-full border-ctp-surface-1 p-4 transition-colors hover:border-ctp-lavender">
+      <SurfaceCard
+        as="article"
+        className="group h-full p-4 transition-colors hover:border-ctp-lavender"
+      >
         <h3 className="truncate font-mono text-base font-semibold text-ctp-text">
           {value.filename}
         </h3>
@@ -31,7 +35,7 @@ export function StringListItem({ handle, stringRecord }: StringListItemProps) {
         <p className="mt-3 line-clamp-4 whitespace-pre-wrap font-mono text-sm leading-snug text-ctp-overlay-1">
           {value.contents}
         </p>
-      </article>
+      </SurfaceCard>
     </Link>
   )
 }

@@ -226,10 +226,6 @@
     text-align: left;
   }
 
-  main {
-    padding-block: 3rem;
-  }
-
   article {
     border: 1px solid var(--app-border);
     border-radius: 0.25rem;

@@ -6,8 +6,8 @@ import { IconPin } from '@tabler/icons-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
+import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileHeader } from '../components/profile/ProfileHeader'
-import { ProfileOverview } from '../components/profile/ProfileOverview'
 import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { StringListItem } from '../components/string/StringListItem'
@@ -123,71 +123,77 @@ export function ProfilePage() {
   const activeSection = parseProfileSection(searchParams.get('view'))
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8">
-      <ProfileHeader miniDoc={identity} profile={profile} blueskyProfile={bskyProfile} />
-      <ProfileTabs handle={identity.handle} />
+    <main>
+      <PageContainer className="py-8">
+        <ProfileHeader miniDoc={identity} profile={profile} blueskyProfile={bskyProfile} />
+        <ProfileTabs handle={identity.handle} />
 
-      <div className="mt-8">
-        {activeSection === 'overview' && (
-          <ProfileOverview>
-            <h2
-              id="pinned-repos"
-              className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
-            >
-              <IconPin size={14} stroke={1.75} aria-hidden="true" />
-              Pinned
-            </h2>
-            {pinnedRepos?.length === 0 && <p>No repos found.</p>}
-            {pinnedRepos && pinnedRepos.length > 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {pinnedRepos.map((repo) => (
-                  <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
-                ))}
-              </div>
-            )}
-          </ProfileOverview>
-        )}
+        <div className="mt-8">
+          {activeSection === 'overview' && (
+            <section aria-labelledby="pinned-repos" className="space-y-4">
+              <h2
+                id="pinned-repos"
+                className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
+              >
+                <IconPin size={14} stroke={1.75} aria-hidden="true" />
+                Pinned
+              </h2>
+              {pinnedRepos?.length === 0 && <p>No repos found.</p>}
+              {pinnedRepos && pinnedRepos.length > 0 && (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {pinnedRepos.map((repo) => (
+                    <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
-        {activeSection === 'repos' && (
-          <ProfileCollection title="Repositories">
-            {repos.items.length === 0 && <p>No repositories found.</p>}
-            {repos.items.length > 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {repos.items.map((repo) => (
-                  <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
-                ))}
-              </div>
-            )}
-          </ProfileCollection>
-        )}
+          {activeSection === 'repos' && (
+            <ProfileCollection title="Repositories">
+              {repos.items.length === 0 && <p>No repositories found.</p>}
+              {repos.items.length > 0 && (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {repos.items.map((repo) => (
+                    <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
+                  ))}
+                </div>
+              )}
+            </ProfileCollection>
+          )}
 
-        {activeSection === 'strings' && (
-          <ProfileCollection title="Strings">
-            {strings.items.length === 0 && <p>No strings found.</p>}
-            {strings.items.length > 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {strings.items.map((string) => (
-                  <StringListItem key={string.uri} handle={identity.handle} stringRecord={string} />
-                ))}
-              </div>
-            )}
-          </ProfileCollection>
-        )}
+          {activeSection === 'strings' && (
+            <ProfileCollection title="Strings">
+              {strings.items.length === 0 && <p>No strings found.</p>}
+              {strings.items.length > 0 && (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {strings.items.map((string) => (
+                    <StringListItem
+                      key={string.uri}
+                      handle={identity.handle}
+                      stringRecord={string}
+                    />
+                  ))}
+                </div>
+              )}
+            </ProfileCollection>
+          )}
 
-        {activeSection === 'stars' && (
-          <ProfileCollection title="Stars">
-            {starredRepos.length === 0 && <p>No stars found.</p>}
+          {activeSection === 'stars' && (
+            <ProfileCollection title="Stars">
+              {starredRepos.length === 0 && <p>No stars found.</p>}
 
-            {starredRepos.length > 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {starredRepos.map(({ repo, handle }) => (
-                  <RepoListItem key={repo.uri} handle={handle} repo={repo} />
-                ))}
-              </div>
-            )}
-          </ProfileCollection>
-        )}
-      </div>
+              {starredRepos.length > 0 && (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {starredRepos.map(({ repo, handle }) => (
+                    <RepoListItem key={repo.uri} handle={handle} repo={repo} />
+                  ))}
+                </div>
+              )}
+            </ProfileCollection>
+          )}
+        </div>
+      </PageContainer>
     </main>
   )
 }

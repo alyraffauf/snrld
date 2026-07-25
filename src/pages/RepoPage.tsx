@@ -6,6 +6,7 @@ import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tre
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
+import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { RepoReadme } from '../components/repo/RepoReadme'
 import { RepoView } from '../components/repo/RepoView'
@@ -75,20 +76,22 @@ export function RepoPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8">
-      <ProfileByline
-        miniDoc={identity}
-        profile={profile}
-        bskyProfile={bskyProfile}
-        label={getRepoName(repo)}
-      />
+    <main>
+      <PageContainer className="py-8">
+        <ProfileByline
+          miniDoc={identity}
+          profile={profile}
+          bskyProfile={bskyProfile}
+          label={getRepoName(repo)}
+        />
 
-      <section className="mt-8 space-y-6">
-        <RepoView repo={repo} />
-        <RepoReadme readme={rootTree?.readme} />
+        <section className="mt-8 space-y-6">
+          <RepoView repo={repo} />
+          <RepoReadme readme={rootTree?.readme} />
 
-        <RepoWorkspace repo={repo} onRootTree={setRootTree} />
-      </section>
+          <RepoWorkspace repo={repo} onRootTree={setRootTree} />
+        </section>
+      </PageContainer>
     </main>
   )
 }
