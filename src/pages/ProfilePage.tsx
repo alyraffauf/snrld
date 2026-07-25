@@ -1,11 +1,12 @@
 import { type Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
 import { IconPin, IconThumbUp } from '@tabler/icons-react'
-import { type ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileHeader } from '../components/profile/ProfileHeader'
+import { ProfileSection } from '../components/profile/ProfileSection'
 import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { StringListItem } from '../components/string/StringListItem'
@@ -74,14 +75,10 @@ export function ProfilePage() {
         <div className="mt-8">
           {activeSection === 'overview' && (
             <div className="space-y-8">
-              <section aria-labelledby="pinned-repos" className="space-y-4">
-                <h2
-                  id="pinned-repos"
-                  className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
-                >
-                  <IconPin size={14} stroke={1.75} aria-hidden="true" />
-                  Pinned
-                </h2>
+              <ProfileSection
+                title="Pinned"
+                icon={<IconPin size={14} stroke={1.75} aria-hidden="true" />}
+              >
                 {pinnedRepos?.length === 0 && <p>No repos found.</p>}
                 {pinnedRepos && pinnedRepos.length > 0 && (
                   <div className="grid gap-4 lg:grid-cols-2">
@@ -90,24 +87,20 @@ export function ProfilePage() {
                     ))}
                   </div>
                 )}
-              </section>
+              </ProfileSection>
 
-              <section aria-labelledby="recent-vouches" className="space-y-4">
-                <h2
-                  id="recent-vouches"
-                  className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
-                >
-                  <IconThumbUp size={14} stroke={1.75} aria-hidden="true" />
-                  Recent Vouches
-                </h2>
+              <ProfileSection
+                title="Recent Vouches"
+                icon={<IconThumbUp size={14} stroke={1.75} aria-hidden="true" />}
+              >
                 {recentVouches.length === 0 && <p>No vouches yet.</p>}
                 {recentVouches.length > 0 && <VouchList vouches={recentVouches} />}
-              </section>
+              </ProfileSection>
             </div>
           )}
 
           {activeSection === 'repos' && (
-            <ProfileCollection title="Repositories">
+            <ProfileSection title="Repositories">
               {repos.items.length === 0 && <p>No repositories found.</p>}
               {repos.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
@@ -116,11 +109,11 @@ export function ProfilePage() {
                   ))}
                 </div>
               )}
-            </ProfileCollection>
+            </ProfileSection>
           )}
 
           {activeSection === 'strings' && (
-            <ProfileCollection title="Strings">
+            <ProfileSection title="Strings">
               {strings.items.length === 0 && <p>No strings found.</p>}
               {strings.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
@@ -133,11 +126,11 @@ export function ProfilePage() {
                   ))}
                 </div>
               )}
-            </ProfileCollection>
+            </ProfileSection>
           )}
 
           {activeSection === 'stars' && (
-            <ProfileCollection title="Stars">
+            <ProfileSection title="Stars">
               {starredRepos.length === 0 && <p>No stars found.</p>}
 
               {starredRepos.length > 0 && (
@@ -147,36 +140,18 @@ export function ProfilePage() {
                   ))}
                 </div>
               )}
-            </ProfileCollection>
+            </ProfileSection>
           )}
 
           {activeSection === 'vouches' && (
-            <ProfileCollection title="Vouches">
+            <ProfileSection title="Vouches">
               {vouches.items.length === 0 && <p>No vouches yet.</p>}
               {vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
-            </ProfileCollection>
+            </ProfileSection>
           )}
         </div>
       </PageContainer>
     </main>
-  )
-}
-
-type ProfileCollectionProps = {
-  title: string
-  children: ReactNode
-}
-
-function ProfileCollection({ title, children }: ProfileCollectionProps) {
-  const headingId = `${title.toLowerCase()}-heading`
-
-  return (
-    <section aria-labelledby={headingId} className="space-y-4">
-      <h2 id={headingId} className="sr-only">
-        {title}
-      </h2>
-      {children}
-    </section>
   )
 }
 
