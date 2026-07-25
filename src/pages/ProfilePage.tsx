@@ -2,7 +2,7 @@ import type { AppBskyActorProfile } from '@atcute/bluesky'
 import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
-import { IconPin } from '@tabler/icons-react'
+import { IconPin, IconThumbUp } from '@tabler/icons-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
@@ -11,11 +11,16 @@ import { ProfileHeader } from '../components/profile/ProfileHeader'
 import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { StringListItem } from '../components/string/StringListItem'
+import { VouchList } from '../components/vouch/VouchList'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
+import { parseProfileSection } from '../lib/profile'
 import { getProfile, listStrings, type Profile, type StringList } from '../lib/tangled'
 import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
 import { getRepoDidsFromStars, listStarsBy } from '../lib/tangled/feed'
+import { listVouches, type VouchList as VouchListData } from '../lib/tangled/graph'
+
+const MAX_RECENT_VOUCHES = 4
 
 export function ProfilePage() {
   const { handle: routeHandle } = useParams()
@@ -27,6 +32,7 @@ export function ProfilePage() {
   const [strings, setStrings] = useState<StringList | null>(null)
   const [pinnedRepos, setPinnedRepos] = useState<Repo[] | null>(null)
   const [starredRepos, setStarredRepos] = useState<StarredRepo[] | null>(null)
+  const [vouches, setVouches] = useState<VouchListData | null>(null)
   const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
@@ -41,9 +47,10 @@ export function ProfilePage() {
         const stars = await listStarsBy(miniDoc.did)
         const repoDids = getRepoDidsFromStars(stars)
 
-        const [profile, repos, strings, bskyProfile] = await Promise.all([
+        const [profile, repos, vouchList, strings, bskyProfile] = await Promise.all([
           getProfile(miniDoc.did),
           listRepos(miniDoc.did),
+          listVouches(miniDoc.did),
           listStrings(miniDoc.did),
           getBskyProfile(miniDoc).catch(() => null),
         ])
@@ -85,6 +92,7 @@ export function ProfilePage() {
           setRepos(repos)
           setPinnedRepos(pinnedRepos)
           setStarredRepos(starredRepos)
+          setVouches(vouchList)
           setStrings(strings)
           setBskyProfile(bskyProfile)
         }
@@ -115,12 +123,14 @@ export function ProfilePage() {
     profile === null ||
     repos === null ||
     strings === null ||
-    starredRepos === null
+    starredRepos === null ||
+    vouches === null
   ) {
     return <ProfilePageSkeleton />
   }
 
   const activeSection = parseProfileSection(searchParams.get('view'))
+  const recentVouches = vouches.items.slice(0, MAX_RECENT_VOUCHES)
 
   return (
     <main>
@@ -130,23 +140,37 @@ export function ProfilePage() {
 
         <div className="mt-8">
           {activeSection === 'overview' && (
-            <section aria-labelledby="pinned-repos" className="space-y-4">
-              <h2
-                id="pinned-repos"
-                className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
-              >
-                <IconPin size={14} stroke={1.75} aria-hidden="true" />
-                Pinned
-              </h2>
-              {pinnedRepos?.length === 0 && <p>No repos found.</p>}
-              {pinnedRepos && pinnedRepos.length > 0 && (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {pinnedRepos.map((repo) => (
-                    <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
-                  ))}
-                </div>
-              )}
-            </section>
+            <div className="space-y-8">
+              <section aria-labelledby="pinned-repos" className="space-y-4">
+                <h2
+                  id="pinned-repos"
+                  className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
+                >
+                  <IconPin size={14} stroke={1.75} aria-hidden="true" />
+                  Pinned
+                </h2>
+                {pinnedRepos?.length === 0 && <p>No repos found.</p>}
+                {pinnedRepos && pinnedRepos.length > 0 && (
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {pinnedRepos.map((repo) => (
+                      <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section aria-labelledby="recent-vouches" className="space-y-4">
+                <h2
+                  id="recent-vouches"
+                  className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-ctp-overlay-1"
+                >
+                  <IconThumbUp size={14} stroke={1.75} aria-hidden="true" />
+                  Recent Vouches
+                </h2>
+                {recentVouches.length === 0 && <p>No vouches yet.</p>}
+                {recentVouches.length > 0 && <VouchList vouches={recentVouches} />}
+              </section>
+            </div>
           )}
 
           {activeSection === 'repos' && (
@@ -192,6 +216,13 @@ export function ProfilePage() {
               )}
             </ProfileCollection>
           )}
+
+          {activeSection === 'vouches' && (
+            <ProfileCollection title="Vouches">
+              {vouches.items.length === 0 && <p>No vouches yet.</p>}
+              {vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
+            </ProfileCollection>
+          )}
         </div>
       </PageContainer>
     </main>
@@ -219,14 +250,6 @@ function ProfileCollection({ title, children }: ProfileCollectionProps) {
       {children}
     </section>
   )
-}
-
-function parseProfileSection(value: string | null): 'overview' | 'repos' | 'strings' | 'stars' {
-  if (value === 'repos' || value === 'strings' || value === 'stars') {
-    return value
-  }
-
-  return 'overview'
 }
 
 function parseHandle(value: string | undefined): Handle | null {

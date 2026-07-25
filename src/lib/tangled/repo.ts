@@ -10,6 +10,7 @@ import { mainSchema as reposListSchema } from '@atcute/tangled/types/repo/listRe
 import type { $output as RepoTree } from '@atcute/tangled/types/repo/tree'
 import { mainSchema as treeSchema } from '@atcute/tangled/types/repo/tree'
 import { rpc } from './client'
+import { removeNullCursor } from './utils'
 
 export type Repo = {
   cid?: Cid
@@ -301,13 +302,4 @@ function normalizeCommit(value: unknown): unknown {
   }
 
   return commit
-}
-
-function removeNullCursor(value: unknown): unknown {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return value
-  }
-
-  const { cursor, ...rest } = value as Record<string, unknown>
-  return cursor === null ? rest : value
 }

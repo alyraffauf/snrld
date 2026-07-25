@@ -5,6 +5,7 @@ import type { Main as TangledStar } from '@atcute/tangled/types/feed/star'
 import { mainSchema as starSchema } from '@atcute/tangled/types/feed/star'
 import { mainSchema as starsBySchema } from '@atcute/tangled/types/feed/listStarsBy'
 import { rpc } from './client'
+import { removeNullCursor } from './utils'
 
 export type StarRecord = {
   cid?: Cid
@@ -95,13 +96,4 @@ export async function listStarsBy(did: Did, options: ListStarsOptions = {}): Pro
     items,
     cursor: listValidation.value.cursor,
   }
-}
-
-function removeNullCursor(value: unknown): unknown {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return value
-  }
-
-  const { cursor, ...rest } = value as Record<string, unknown>
-  return cursor === null ? rest : value
 }

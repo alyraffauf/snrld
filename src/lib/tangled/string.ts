@@ -4,6 +4,7 @@ import { safeParse } from '@atcute/lexicons'
 import { ShTangledString, ShTangledStringListStrings } from '@atcute/tangled'
 import { slingshot } from '../microcosm'
 import { rpc } from './client'
+import { removeNullCursor } from './utils'
 
 export type StringRecord = {
   cid?: Cid
@@ -79,13 +80,4 @@ export async function listStrings(
     items,
     cursor: listValidation.value.cursor,
   }
-}
-
-function removeNullCursor(value: unknown): unknown {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return value
-  }
-
-  const { cursor, ...rest } = value as Record<string, unknown>
-  return cursor === null ? rest : value
 }
