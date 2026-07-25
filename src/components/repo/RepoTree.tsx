@@ -6,21 +6,26 @@ import { LoadingPanel } from '../shared/LoadingPanel'
 import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 
 type RepoTreeProps = {
+  initialTree?: RepoTreeResponse
   repo: Repo
-  onRootTree?: (tree: RepoTreeResponse) => void
 }
 
-export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
+export function RepoTree({ initialTree, repo }: RepoTreeProps) {
   const [path, setPath] = useState('')
-  const [tree, setTree] = useState<RepoTreeResponse | null>(null)
+  const [tree, setTree] = useState<RepoTreeResponse | null>(initialTree ?? null)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     setPath('')
-  }, [repo.uri])
+    setTree(initialTree ?? null)
+  }, [initialTree, repo.uri])
 
   useEffect(() => {
     let cancelled = false
+
+    if (path === '' && initialTree !== undefined) {
+      return
+    }
 
     async function loadTree() {
       setTree(null)
@@ -30,7 +35,6 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
         const response = await getRepoTree(repo, path)
         if (!cancelled) {
           setTree(response)
-          if (path === '') onRootTree?.(response)
         }
       } catch (caught) {
         if (!cancelled) {
@@ -44,7 +48,7 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
     return () => {
       cancelled = true
     }
-  }, [onRootTree, repo, path])
+  }, [initialTree, repo, path])
 
   if (error) {
     return <p role="alert">Could not load files: {error.message}</p>

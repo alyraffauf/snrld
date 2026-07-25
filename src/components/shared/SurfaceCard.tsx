@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 type SurfaceCardProps = {
-  as?: 'article' | 'div'
+  as?: 'article' | 'div' | 'section'
   children: ReactNode
   className?: string
 }

@@ -4,20 +4,24 @@ import { isHandle } from '@atcute/lexicons/syntax'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { RepoReadme } from '../components/repo/RepoReadme'
+import { RepoTabs } from '../components/repo/RepoTabs'
+import { parseRepoSection } from '../components/repo/repoSections'
 import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
+import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, type Profile } from '../lib/tangled'
-import { getRepo, getRepoName, type Repo } from '../lib/tangled/repo'
+import { getRepo, getRepoName, getRepoRkey, getRepoTree, type Repo } from '../lib/tangled/repo'
 
 export function RepoPage() {
   const { handle: routeHandle, repo: routeRepo } = useParams()
+  const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
   const [identity, setIdentity] = useState<MiniDoc | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -41,13 +45,14 @@ export function RepoPage() {
           getBskyProfile(miniDoc).catch(() => null),
           getRepo(repoUri),
         ])
+        const rootTree = await getRepoTree(repo)
 
         if (!cancelled) {
           setIdentity(miniDoc)
           setProfile(profile)
           setBskyProfile(bskyProfile)
           setRepo(repo)
-          setRootTree(null)
+          setRootTree(rootTree)
         }
       } catch (caught) {
         if (!cancelled) {
@@ -71,9 +76,11 @@ export function RepoPage() {
     return <p role="alert">Could not load repository: {error.message}</p>
   }
 
-  if (profile === null || identity === null || repo === null) {
+  if (profile === null || identity === null || repo === null || rootTree === null) {
     return <RepoPageSkeleton />
   }
+
+  const activeSection = parseRepoSection(searchParams.get('view'), rootTree.readme !== undefined)
 
   return (
     <main>
@@ -87,12 +94,34 @@ export function RepoPage() {
 
         <section className="mt-8 space-y-6">
           <RepoView repo={repo} />
-          <RepoReadme readme={rootTree?.readme} />
+          <RepoTabs
+            activeSection={activeSection}
+            handle={identity.handle}
+            hasReadme={rootTree.readme !== undefined}
+            repoKey={getRepoRkey(repo)}
+          />
 
-          <RepoWorkspace repo={repo} onRootTree={setRootTree} />
+          {activeSection === 'readme' && <RepoReadme readme={rootTree.readme} />}
+          {activeSection === 'code' && <RepoWorkspace repo={repo} initialTree={rootTree} />}
+          {activeSection === 'issues' && <RepoPlaceholder title="Issues" />}
+          {activeSection === 'pulls' && <RepoPlaceholder title="Pulls" />}
+          {activeSection === 'pipelines' && <RepoPlaceholder title="Pipelines" />}
         </section>
       </PageContainer>
     </main>
+  )
+}
+
+type RepoPlaceholderProps = {
+  title: string
+}
+
+function RepoPlaceholder({ title }: RepoPlaceholderProps) {
+  return (
+    <SurfaceCard as="section" className="p-8 text-center">
+      <h2 className="font-mono text-lg font-semibold text-ctp-text">{title}</h2>
+      <p className="mt-2 text-sm text-ctp-subtext-0">{title} will be available here soon.</p>
+    </SurfaceCard>
   )
 }
 
