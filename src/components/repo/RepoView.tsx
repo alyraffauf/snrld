@@ -20,7 +20,7 @@ export function RepoView({ repo }: RepoProps) {
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h1 className="truncate font-mono text-2xl font-bold text-ctp-text">{name}</h1>
-          {value.knot && <p className="mt-1 font-mono text-sm text-ctp-overlay-1">{value.knot}</p>}
+          {value.knot && <p className="mt-1 font-mono text-sm text-ctp-subtext-0">{value.knot}</p>}
         </div>
 
         <RepoStarCount repoDid={repoDid} />

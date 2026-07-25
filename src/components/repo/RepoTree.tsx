@@ -73,11 +73,11 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
           title={
             <span className="flex items-baseline gap-3">
               <span>Tree</span>
-              <span className="font-mono text-sm font-normal text-ctp-overlay-1">/{path}</span>
+              <span className="font-mono text-sm font-normal text-ctp-subtext-0">/{path}</span>
             </span>
           }
           trailing={
-            <span className="rounded bg-ctp-surface-0 px-2 py-1 font-mono text-xs text-ctp-subtext-1">
+            <span className="rounded bg-ctp-surface-0 px-2 py-1 font-mono text-sm text-ctp-subtext-1">
               {tree.ref}
             </span>
           }
@@ -89,7 +89,7 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
               <button
                 type="button"
                 onClick={() => setPath(tree.parent ?? tree.dotdot ?? '')}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left font-mono text-sm text-ctp-overlay-1 transition-colors hover:bg-ctp-surface-0/40 hover:text-ctp-text"
+                className="flex w-full items-center gap-3 px-4 py-3 text-left font-mono text-sm text-ctp-subtext-0 transition-colors hover:bg-ctp-surface-0/40 hover:text-ctp-text"
               >
                 <span aria-hidden="true" className="w-4 text-center text-ctp-yellow">
                   ↩
@@ -112,7 +112,7 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
                   <button
                     type="button"
                     onClick={() => setPath(entryPath)}
-                    className="flex min-w-0 items-center truncate font-mono text-xs text-ctp-text hover:text-ctp-lavender"
+                    className="flex min-w-0 items-center truncate font-mono text-sm text-ctp-text hover:text-ctp-lavender"
                   >
                     <span aria-hidden="true" className="mr-3 w-4 text-center text-ctp-yellow">
                       ▸
@@ -120,14 +120,14 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
                     {entry.name}
                   </button>
                 ) : (
-                  <span className="flex min-w-0 items-center truncate font-mono text-xs text-ctp-text">
+                  <span className="flex min-w-0 items-center truncate font-mono text-sm text-ctp-text">
                     <span aria-hidden="true" className="mr-3 w-4 text-center text-ctp-yellow">
                       ·
                     </span>
                     {entry.name}
                   </span>
                 )}
-                <span className="shrink-0 font-mono text-xs text-ctp-overlay-1">
+                <span className="shrink-0 font-mono text-sm text-ctp-subtext-0">
                   {isDirectory ? 'directory' : formatBytes(entry.size)}
                 </span>
               </li>
@@ -136,7 +136,7 @@ export function RepoTree({ repo, onRootTree }: RepoTreeProps) {
         </ul>
 
         {tree.files.length === 0 && (
-          <p className="mt-3 text-sm text-ctp-overlay-1">This directory is empty.</p>
+          <p className="mt-3 text-sm text-ctp-subtext-0">This directory is empty.</p>
         )}
       </div>
     </section>

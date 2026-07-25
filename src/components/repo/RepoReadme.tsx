@@ -10,7 +10,7 @@ export function RepoReadme({ readme }: RepoReadmeProps) {
 
   return (
     <details className="rounded border border-ctp-surface-1 bg-ctp-mantle p-4">
-      <summary className="cursor-pointer font-mono text-sm font-semibold text-ctp-text">
+      <summary className="cursor-pointer font-mono text-base font-semibold text-ctp-text">
         {readme.filename}
       </summary>
       <MarkdownContent className="mt-4 max-h-96 overflow-auto text-sm text-ctp-subtext-1">
