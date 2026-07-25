@@ -1,16 +1,19 @@
+import type { Handle } from '@atcute/lexicons'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
-import type { Repo } from '../../lib/tangled/index'
+import type { Repo } from '../../lib/tangled'
 import { getRepoName } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
+import { RepoCloneUrl } from './RepoCloneUrl'
 import { RepoStarCount } from './RepoStarCount'
 
 type RepoProps = {
+  handle: Handle
   repo: Repo
 }
 
-export function RepoView({ repo }: RepoProps) {
+export function RepoView({ handle, repo }: RepoProps) {
   const { value } = repo
   const name = getRepoName(repo)
   const repoDid = value.repoDid
@@ -49,6 +52,8 @@ export function RepoView({ repo }: RepoProps) {
           </a>
         </div>
       )}
+
+      <RepoCloneUrl handle={handle} repo={repo} />
     </SurfaceCard>
   )
 }

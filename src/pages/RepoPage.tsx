@@ -5,14 +5,14 @@ import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { RepoReadme } from '../components/repo/RepoReadme'
-import { RepoTabs } from '../components/repo/RepoTabs'
 import { parseRepoSection } from '../components/repo/repoSections'
+import { RepoTabs } from '../components/repo/RepoTabs'
 import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
+import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
@@ -106,7 +106,7 @@ export function RepoPage() {
         />
 
         <section className="mt-8 space-y-6">
-          <RepoView repo={repo} />
+          <RepoView handle={handle} repo={repo} />
           <RepoTabs
             activeSection={activeSection}
             handle={identity.handle}
