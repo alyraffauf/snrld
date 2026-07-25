@@ -22,10 +22,10 @@ export function Tabs({ ariaLabel, items }: TabsProps) {
             key={item.href}
             to={item.href}
             aria-current={item.isActive ? 'page' : undefined}
-            className={`flex shrink-0 items-center gap-2 border-b-2 pb-3 text-sm transition-colors ${
+            className={`flex shrink-0 items-center gap-2 border-b-2 pb-3 text-base transition-colors ${
               item.isActive
                 ? 'border-ctp-lavender font-semibold text-ctp-text'
-                : 'border-transparent text-ctp-overlay-1 hover:border-ctp-surface-1 hover:text-ctp-text'
+                : 'border-transparent font-medium text-ctp-subtext-0 hover:border-ctp-surface-1 hover:text-ctp-text'
             }`}
           >
             {item.icon}
