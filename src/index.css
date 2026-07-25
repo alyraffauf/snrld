@@ -3,6 +3,7 @@
 @import '@catppuccin/tailwindcss/frappe.css';
 
 @theme inline {
+  --font-mono: 'Caskaydia Cove', ui-monospace, SFMono-Regular, Menlo, monospace;
   --color-ctp-subtext-1: var(--catppuccin-color-subtext1);
   --color-ctp-subtext-0: var(--catppuccin-color-subtext0);
   --color-ctp-overlay-2: var(--catppuccin-color-overlay2);
@@ -108,7 +109,7 @@
 
 @layer components {
   .markdown-body {
-    font-family: 'CaskaydiaCove Nerd Font', 'Caskaydia Cove', ui-monospace, monospace;
+    font-family: 'Caskaydia Cove', ui-monospace, monospace;
     line-height: 1.65;
   }
 
