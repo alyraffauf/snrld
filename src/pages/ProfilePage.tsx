@@ -1,7 +1,5 @@
-import type { AppBskyActorProfile } from '@atcute/bluesky'
-import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
+import { type Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
-import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { IconPin, IconThumbUp } from '@tabler/icons-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
@@ -12,13 +10,8 @@ import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
-import { getProfile as getBskyProfile } from '../lib/bsky/actor'
-import { getMiniDoc } from '../lib/microcosm'
 import { parseProfileSection } from '../lib/profile'
-import { getProfile, listStrings, type Profile, type StringList } from '../lib/tangled'
-import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
-import { getRepoDidsFromStars, listStarsBy } from '../lib/tangled/feed'
-import { listVouches, type VouchList as VouchListData } from '../lib/tangled/graph'
+import { loadProfilePage, type ProfilePageData } from '../lib/profilePage'
 
 const MAX_RECENT_VOUCHES = 4
 
@@ -26,14 +19,7 @@ export function ProfilePage() {
   const { handle: routeHandle } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
-  const [identity, setIdentity] = useState<MiniDoc | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [repos, setRepos] = useState<RepoList | null>(null)
-  const [strings, setStrings] = useState<StringList | null>(null)
-  const [pinnedRepos, setPinnedRepos] = useState<Repo[] | null>(null)
-  const [starredRepos, setStarredRepos] = useState<StarredRepo[] | null>(null)
-  const [vouches, setVouches] = useState<VouchListData | null>(null)
-  const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
+  const [pageData, setPageData] = useState<ProfilePageData | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
@@ -43,58 +29,10 @@ export function ProfilePage() {
     async function loadPage(handle: Handle) {
       try {
         setError(null)
-        const miniDoc = await getMiniDoc(handle)
-        const stars = await listStarsBy(miniDoc.did)
-        const repoDids = getRepoDidsFromStars(stars)
-
-        const [profile, repos, vouchList, strings, bskyProfile] = await Promise.all([
-          getProfile(miniDoc.did),
-          listRepos(miniDoc.did),
-          listVouches(miniDoc.did),
-          listStrings(miniDoc.did),
-          getBskyProfile(miniDoc).catch(() => null),
-        ])
-
-        const ownerDocs = new Map<string, Promise<MiniDoc>>()
-        const getOwner = (identifier: string) => {
-          const existing = ownerDocs.get(identifier)
-          if (existing !== undefined) return existing
-
-          const request = getMiniDoc(identifier)
-          ownerDocs.set(identifier, request)
-          return request
-        }
-
-        const starredRepos = (
-          await Promise.allSettled(
-            repoDids.map(async (repoDid): Promise<StarredRepo> => {
-              const repo = await getRepoByRepoDid(repoDid)
-              const owner = await getOwner(parseResourceUri(repo.uri).repo)
-
-              return { repo, handle: owner.handle }
-            }),
-          )
-        ).flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
-
-        const pinnedResults = await Promise.allSettled(
-          (profile.value.pinnedRepositories ?? []).map((repoDid) =>
-            getRepoByRepoDid(repoDid as Did),
-          ),
-        )
-
-        const pinnedRepos = pinnedResults.flatMap((result) =>
-          result.status === 'fulfilled' ? [result.value] : [],
-        )
+        const data = await loadProfilePage(handle)
 
         if (!cancelled) {
-          setIdentity(miniDoc)
-          setProfile(profile)
-          setRepos(repos)
-          setPinnedRepos(pinnedRepos)
-          setStarredRepos(starredRepos)
-          setVouches(vouchList)
-          setStrings(strings)
-          setBskyProfile(bskyProfile)
+          setPageData(data)
         }
       } catch (caught) {
         if (!cancelled) {
@@ -118,17 +56,12 @@ export function ProfilePage() {
     return <p role="alert">Could not load profile: {error.message}</p>
   }
 
-  if (
-    identity === null ||
-    profile === null ||
-    repos === null ||
-    strings === null ||
-    starredRepos === null ||
-    vouches === null
-  ) {
+  if (pageData === null) {
     return <ProfilePageSkeleton />
   }
 
+  const { identity, profile, repos, strings, pinnedRepos, starredRepos, vouches, bskyProfile } =
+    pageData
   const activeSection = parseProfileSection(searchParams.get('view'))
   const recentVouches = vouches.items.slice(0, MAX_RECENT_VOUCHES)
 
@@ -232,11 +165,6 @@ export function ProfilePage() {
 type ProfileCollectionProps = {
   title: string
   children: ReactNode
-}
-
-type StarredRepo = {
-  repo: Repo
-  handle: Handle
 }
 
 function ProfileCollection({ title, children }: ProfileCollectionProps) {
