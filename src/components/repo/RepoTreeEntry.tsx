@@ -1,6 +1,7 @@
 import { IconChevronRight, IconFile, IconFolder } from '@tabler/icons-react'
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
-import { formatBytes, isDirectoryMode } from './repoTreeUtils'
+import { isDirectoryMode } from '../../lib/tangled/repo'
+import { formatBytes } from './repoTreeUtils'
 
 type TreeEntry = RepoTreeResponse['files'][number]
 

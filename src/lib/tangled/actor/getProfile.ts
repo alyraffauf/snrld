@@ -1,11 +1,10 @@
 import { ok } from '@atcute/client'
-import { safeParse } from '@atcute/lexicons'
-import { rpc } from './client'
-
 import type { Cid, Did, ResourceUri } from '@atcute/lexicons'
+import { safeParse } from '@atcute/lexicons'
+import type {} from '@atcute/tangled'
 import type { Main as TangledProfile } from '@atcute/tangled/types/actor/profile'
 import { mainSchema as profileSchema } from '@atcute/tangled/types/actor/profile'
-import type {} from '@atcute/tangled'
+import { rpc } from '../client'
 
 export type Profile = {
   cid?: Cid
@@ -20,8 +19,7 @@ export async function getProfile(did: Did): Promise<Profile> {
     }),
   )
 
-  const value = normalizeProfile(profile.value)
-  const validation = safeParse(profileSchema, value)
+  const validation = safeParse(profileSchema, normalizeProfile(profile.value))
   if (!validation.ok) {
     throw new Error(`Bobbin returned an invalid profile record: ${validation.message}`)
   }

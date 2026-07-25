@@ -1,6 +1,4 @@
-import { type Handle } from '@atcute/lexicons'
 import { IconPin, IconThumbUp } from '@tabler/icons-react'
-import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
 import { PageContainer } from '../components/layout/PageContainer'
@@ -10,8 +8,8 @@ import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
+import { useProfilePage } from '../hooks/useProfilePage'
 import { parseProfileSection } from '../lib/profile'
-import { loadProfilePage, type ProfilePageData } from '../lib/profilePage'
 import { parseHandle } from '../lib/routes'
 
 const MAX_RECENT_VOUCHES = 4
@@ -20,34 +18,7 @@ export function ProfilePage() {
   const { handle: routeHandle } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
-  const [pageData, setPageData] = useState<ProfilePageData | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-
-  useEffect(() => {
-    if (handle === null) return
-    let cancelled = false
-
-    async function loadPage(handle: Handle) {
-      try {
-        setError(null)
-        const data = await loadProfilePage(handle)
-
-        if (!cancelled) {
-          setPageData(data)
-        }
-      } catch (caught) {
-        if (!cancelled) {
-          setError(caught instanceof Error ? caught : new Error('Unable to load profile'))
-        }
-      }
-    }
-
-    void loadPage(handle)
-
-    return () => {
-      cancelled = true
-    }
-  }, [handle])
+  const { pageData, error } = useProfilePage(handle)
 
   if (handle === null) {
     return <p>Invalid handle</p>

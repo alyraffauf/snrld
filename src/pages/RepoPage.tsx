@@ -9,17 +9,16 @@ import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
+import { useRepoPage } from '../hooks/useRepoPage'
 import { parseHandle } from '../lib/routes'
-import { loadRepoPage, type RepoPageData } from '../lib/repoPage'
 import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
 
 export function RepoPage() {
   const { handle: routeHandle, repo: routeRepo } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
-  const [pageData, setPageData] = useState<RepoPageData | null>(null)
-  const [error, setError] = useState<Error | null>(null)
   const [hasVisitedCode, setHasVisitedCode] = useState(false)
+  const { pageData, error } = useRepoPage(handle, routeRepo)
 
   const requestedSection = searchParams.get('view')
 
@@ -31,34 +30,6 @@ export function RepoPage() {
       setHasVisitedCode(true)
     }
   }, [requestedSection, pageData])
-
-  useEffect(() => {
-    if (handle === null || routeRepo === undefined) return
-    const ownerHandle = handle
-    const repoKey = routeRepo
-    let cancelled = false
-
-    async function loadPage() {
-      try {
-        setError(null)
-        const data = await loadRepoPage(ownerHandle, repoKey)
-
-        if (!cancelled) {
-          setPageData(data)
-        }
-      } catch (caught) {
-        if (!cancelled) {
-          setError(caught instanceof Error ? caught : new Error('Unable to load repository'))
-        }
-      }
-    }
-
-    void loadPage()
-
-    return () => {
-      cancelled = true
-    }
-  }, [handle, routeRepo])
 
   if (handle === null || routeRepo === undefined) {
     return <p>Invalid repository route</p>

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
 import type { Repo } from '../../lib/tangled'
-import { getRecentCommits, type RepoCommit } from '../../lib/tangled/repo'
+import { useRepoCommits } from '../../hooks/useRepoCommits'
 import { LoadingPanel } from '../shared/LoadingPanel'
 import { RepoCommit as RepoCommitComponent } from './RepoCommit'
 import { WorkspacePaneHeader } from './WorkspacePaneHeader'
@@ -11,31 +10,7 @@ type RepoLogProps = {
 }
 
 export function RepoLog({ branch, repo }: RepoLogProps) {
-  const [commits, setCommits] = useState<RepoCommit[] | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadLog() {
-      setError(null)
-
-      try {
-        const response = await getRecentCommits(repo, { branch })
-        if (!cancelled) setCommits(response)
-      } catch (caught) {
-        if (!cancelled) {
-          setError(caught instanceof Error ? caught : new Error('Unable to load repository log'))
-        }
-      }
-    }
-
-    void loadLog()
-
-    return () => {
-      cancelled = true
-    }
-  }, [branch, repo])
+  const { commits, error } = useRepoCommits(repo, branch)
 
   if (error) {
     return <p role="alert">Could not load commits: {error.message}</p>

@@ -9,7 +9,8 @@ import {
   IconWorld,
 } from '@tabler/icons-react'
 import type { ReactNode } from 'react'
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
+import { useCopyToClipboard, type ClipboardStatus } from '../../hooks/useCopyToClipboard'
 import { getRepoName, type Repo } from '../../lib/tangled'
 
 type CloneProtocol = 'ssh' | 'https'
@@ -22,31 +23,10 @@ type RepoCloneUrlProps = {
 export function RepoCloneUrl({ handle, repo }: RepoCloneUrlProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [protocol, setProtocol] = useState<CloneProtocol>('ssh')
-  const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
+  const { copy, reset, status } = useCopyToClipboard()
   const panelId = useId()
 
   const cloneUrl = buildCloneUrl(handle, repo, protocol)
-
-  async function copyCloneUrl() {
-    try {
-      await navigator.clipboard.writeText(cloneUrl)
-      setStatus('copied')
-    } catch {
-      setStatus('failed')
-    }
-  }
-
-  useEffect(() => {
-    if (status === 'idle') return
-
-    const timeoutId = window.setTimeout(() => {
-      setStatus('idle')
-    }, 2000)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [status])
 
   return (
     <div className="mt-4 border-t border-ctp-surface-0 pt-4">
@@ -73,7 +53,7 @@ export function RepoCloneUrl({ handle, repo }: RepoCloneUrlProps) {
               isActive={protocol === 'ssh'}
               onSelect={() => {
                 setProtocol('ssh')
-                setStatus('idle')
+                reset()
               }}
               icon={<IconTerminal2 size={14} />}
             />
@@ -82,7 +62,7 @@ export function RepoCloneUrl({ handle, repo }: RepoCloneUrlProps) {
               isActive={protocol === 'https'}
               onSelect={() => {
                 setProtocol('https')
-                setStatus('idle')
+                reset()
               }}
               icon={<IconWorld size={14} />}
             />
@@ -97,7 +77,7 @@ export function RepoCloneUrl({ handle, repo }: RepoCloneUrlProps) {
             />
             <button
               type="button"
-              onClick={copyCloneUrl}
+              onClick={() => void copy(cloneUrl)}
               aria-label={
                 status === 'copied'
                   ? 'Copied'
@@ -140,7 +120,7 @@ function ProtocolOption({ protocol, isActive, onSelect, icon }: ProtocolOptionPr
 }
 
 type CopyIconProps = {
-  status: 'idle' | 'copied' | 'failed'
+  status: ClipboardStatus
 }
 
 function CopyIcon({ status }: CopyIconProps) {

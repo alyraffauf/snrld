@@ -1,8 +1,7 @@
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
 import { useEffect, useRef, useState } from 'react'
-import type { Repo } from '../../lib/tangled'
-import { getRepoTree } from '../../lib/tangled/repo'
-import { isDirectoryMode } from './repoTreeUtils'
+import type { Repo } from '../lib/tangled'
+import { getRepoTree, isDirectoryMode } from '../lib/tangled/repo'
 
 type UseRepoTreeOptions = {
   initialTree?: RepoTreeResponse
@@ -10,12 +9,7 @@ type UseRepoTreeOptions = {
   repo: Repo
 }
 
-type UseRepoTreeResult = {
-  error: Error | null
-  tree: RepoTreeResponse | null
-}
-
-export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions): UseRepoTreeResult {
+export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
   const cache = useRef(new Map<string, RepoTreeResponse>())
   const prefetching = useRef(new Set<string>())
   const [tree, setTree] = useState<RepoTreeResponse | null>(initialTree ?? null)
@@ -34,7 +28,7 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions): Us
   }, [initialTree, repo.uri])
 
   useEffect(() => {
-    let cancelled = false
+    let isCancelled = false
     const cachedTree = cache.current.get(path)
 
     if (cachedTree !== undefined) {
@@ -52,12 +46,12 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions): Us
         const response = await getRepoTree(repo, path)
         cache.current.set(path, response)
 
-        if (!cancelled) {
+        if (!isCancelled) {
           setTree(response)
           void prefetchDirectories(repo, response, path, cache.current, prefetching.current)
         }
       } catch (caught) {
-        if (!cancelled) {
+        if (!isCancelled) {
           setError(caught instanceof Error ? caught : new Error('Unable to load repository tree'))
         }
       }
@@ -66,7 +60,7 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions): Us
     void loadTree()
 
     return () => {
-      cancelled = true
+      isCancelled = true
     }
   }, [path, repo])
 

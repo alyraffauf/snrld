@@ -1,8 +1,7 @@
 import type { AppBskyActorProfile } from '@atcute/bluesky'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
-import { useEffect, useState } from 'react'
+import { useProfileFollowCounts } from '../../hooks/useProfileFollowCounts'
 import type { Profile } from '../../lib/tangled'
-import { countFollows, countFollowsBy } from '../../lib/tangled/graph'
 import { ProfileAvatar } from './ProfileAvatar'
 
 type ProfileHeaderProps = {
@@ -13,43 +12,13 @@ type ProfileHeaderProps = {
 
 export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeaderProps) {
   const { value } = profile
-  const [followers, setFollowers] = useState<number | null>(null)
-  const [follows, setFollows] = useState<number | null>(null)
+  const { followers, following } = useProfileFollowCounts(miniDoc.did)
   const profileLinks = [
     ...(value.bluesky
       ? [{ href: `https://witchsky.app/profile/${miniDoc.handle}`, label: 'witchsky' }]
       : []),
     ...(value.links ?? []).map((link) => ({ href: link, label: getLinkLabel(link) })),
   ]
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadStats(did: MiniDoc['did']) {
-      try {
-        const [followersCount, followingCount] = await Promise.all([
-          countFollows(did),
-          countFollowsBy(did),
-        ])
-
-        if (!cancelled) {
-          setFollowers(followersCount)
-          setFollows(followingCount)
-        }
-      } catch {
-        if (!cancelled) {
-          setFollowers(null)
-          setFollows(null)
-        }
-      }
-    }
-
-    void loadStats(miniDoc.did)
-
-    return () => {
-      cancelled = true
-    }
-  }, [miniDoc.did])
 
   return (
     <article className="border-0 bg-transparent p-0 shadow-none">
@@ -70,7 +39,7 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
 
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-ctp-green">
         <span>{followers ?? '—'} followers</span>
-        <span>{follows ?? '—'} following</span>
+        <span>{following ?? '—'} following</span>
       </div>
 
       {value.description && (

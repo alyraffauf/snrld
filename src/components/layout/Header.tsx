@@ -1,65 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isHandle } from '@atcute/lexicons/syntax'
-import { searchBlueskyActors, type BlueskyActorSearchResult } from '../../lib/bsky/actorSearch'
+import type { BlueskyActorSearchResult } from '../../lib/bsky/actorSearch'
+import { useActorSearch } from '../../hooks/useActorSearch'
+import { usePointerDownOutside } from '../../hooks/usePointerDownOutside'
 import { PageContainer } from './PageContainer'
 
 export function Header() {
   const [handleInput, setHandleInput] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
-  const [results, setResults] = useState<BlueskyActorSearchResult[]>([])
-  const [isSearching, setIsSearching] = useState(false)
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
+  const { results, isSearching } = useActorSearch(handleInput)
   const searchFormRef = useRef<HTMLFormElement>(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    function closeSuggestions(event: PointerEvent) {
-      if (!searchFormRef.current?.contains(event.target as Node)) {
-        setResults([])
-        setIsSearching(false)
-        setIsSuggestionsOpen(false)
-      }
-    }
-
-    document.addEventListener('pointerdown', closeSuggestions)
-    return () => document.removeEventListener('pointerdown', closeSuggestions)
-  }, [])
-
-  useEffect(() => {
-    const query = handleInput.trim()
-    if (query.length < 2) {
-      setResults([])
-      setIsSearching(false)
-      setIsSuggestionsOpen(false)
-      return
-    }
-
-    const controller = new AbortController()
-    const timeout = window.setTimeout(async () => {
-      setIsSearching(true)
-
-      try {
-        const actors = await searchBlueskyActors(query, controller.signal)
-        setResults(actors)
-      } catch (error) {
-        if (!(error instanceof DOMException && error.name === 'AbortError')) {
-          setResults([])
-        }
-      } finally {
-        if (!controller.signal.aborted) setIsSearching(false)
-      }
-    }, 180)
-
-    return () => {
-      controller.abort()
-      window.clearTimeout(timeout)
-    }
-  }, [handleInput])
+  usePointerDownOutside(searchFormRef, () => setIsSuggestionsOpen(false))
 
   function selectActor(actor: BlueskyActorSearchResult) {
     setHandleInput('')
-    setResults([])
     setIsSuggestionsOpen(false)
     navigate(`/${actor.handle}`)
   }

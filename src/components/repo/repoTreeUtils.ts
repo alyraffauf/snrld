@@ -1,4 +1,5 @@
 import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
+import { isDirectoryMode } from '../../lib/tangled/repo'
 
 type TreeEntry = RepoTreeResponse['files'][number]
 
@@ -24,17 +25,4 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / 1024 ** 2).toFixed(1)} MB`
-}
-
-export function isDirectoryMode(mode: string): boolean {
-  const normalizedMode = mode.toLowerCase()
-
-  return (
-    normalizedMode === 'tree' ||
-    normalizedMode === 'dir' ||
-    normalizedMode === 'directory' ||
-    normalizedMode === '40000' ||
-    normalizedMode === '040000' ||
-    normalizedMode.endsWith('40000')
-  )
 }

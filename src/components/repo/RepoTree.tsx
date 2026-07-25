@@ -3,12 +3,12 @@ import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tre
 import { useSearchParams } from 'react-router-dom'
 import type { Repo } from '../../lib/tangled'
 import { getRepoName } from '../../lib/tangled/repo'
+import { useRepoTree } from '../../hooks/useRepoTree'
 import { LoadingPanel } from '../shared/LoadingPanel'
 import { RepoTreeEntry } from './RepoTreeEntry'
 import { RepoTreePath } from './RepoTreePath'
 import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 import { getParentPath, sortTreeEntries } from './repoTreeUtils'
-import { useRepoTree } from './useRepoTree'
 
 type RepoTreeProps = {
   initialTree?: RepoTreeResponse
