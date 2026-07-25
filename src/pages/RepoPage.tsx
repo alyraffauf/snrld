@@ -3,6 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { RepoIssues } from '../components/repo/RepoIssues'
+import { RepoPulls } from '../components/repo/RepoPulls'
 import { RepoReadme } from '../components/repo/RepoReadme'
 import { parseRepoSection } from '../components/repo/repoSections'
 import { RepoTabs } from '../components/repo/RepoTabs'
@@ -77,7 +78,9 @@ export function RepoPage() {
           {activeSection === 'issues' && repo.value.repoDid !== undefined && (
             <RepoIssues repoDid={repo.value.repoDid} />
           )}
-          {activeSection === 'pulls' && <RepoPlaceholder title="Pulls" />}
+          {activeSection === 'pulls' && repo.value.repoDid !== undefined && (
+            <RepoPulls repoDid={repo.value.repoDid} />
+          )}
           {activeSection === 'pipelines' && <RepoPlaceholder title="Pipelines" />}
         </section>
       </PageContainer>
