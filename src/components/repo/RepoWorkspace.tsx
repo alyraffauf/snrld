@@ -15,7 +15,7 @@ export function RepoWorkspace({ initialTree, repo }: RepoWorkspaceProps) {
         <RepoTree repo={repo} initialTree={initialTree} />
       </div>
       <div className="order-1 min-w-0 lg:order-2">
-        <RepoLog repo={repo} />
+        <RepoLog repo={repo} branch={initialTree?.ref} />
       </div>
     </div>
   )

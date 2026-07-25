@@ -6,10 +6,11 @@ import { RepoCommit as RepoCommitComponent } from './RepoCommit'
 import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 
 type RepoLogProps = {
+  branch?: string
   repo: Repo
 }
 
-export function RepoLog({ repo }: RepoLogProps) {
+export function RepoLog({ branch, repo }: RepoLogProps) {
   const [commits, setCommits] = useState<RepoCommit[] | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
@@ -20,7 +21,7 @@ export function RepoLog({ repo }: RepoLogProps) {
       setError(null)
 
       try {
-        const response = await getRecentCommits(repo)
+        const response = await getRecentCommits(repo, { branch })
         if (!cancelled) setCommits(response)
       } catch (caught) {
         if (!cancelled) {
@@ -34,7 +35,7 @@ export function RepoLog({ repo }: RepoLogProps) {
     return () => {
       cancelled = true
     }
-  }, [repo])
+  }, [branch, repo])
 
   if (error) {
     return <p role="alert">Could not load commits: {error.message}</p>

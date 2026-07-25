@@ -155,9 +155,17 @@ export async function getRepoLog(
   return commits.text()
 }
 
-export async function getRecentCommits(repo: Repo, limit = 5): Promise<RepoCommit[]> {
-  const branch = await getDefaultBranch(repo)
-  const raw = await getRepoLog(repo, branch.name, { limit })
+export type RecentCommitsOptions = {
+  branch?: string
+  limit?: number
+}
+
+export async function getRecentCommits(
+  repo: Repo,
+  options: RecentCommitsOptions = {},
+): Promise<RepoCommit[]> {
+  const branch = options.branch ?? (await getDefaultBranch(repo)).name
+  const raw = await getRepoLog(repo, branch, { limit: options.limit ?? 5 })
 
   let parsed: unknown
   try {
