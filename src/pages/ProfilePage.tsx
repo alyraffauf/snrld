@@ -1,5 +1,5 @@
 import type { AppBskyActorProfile } from '@atcute/bluesky'
-import type { Did, Handle } from '@atcute/lexicons'
+import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
 import { isHandle } from '@atcute/lexicons/syntax'
 import type { $output as MiniDoc } from '@atcute/microcosm/types/blue/microcosm/identity/resolveMiniDoc'
 import { IconPin } from '@tabler/icons-react'
@@ -15,6 +15,7 @@ import { getProfile as getBskyProfile } from '../lib/bsky/actor'
 import { getMiniDoc } from '../lib/microcosm'
 import { getProfile, listStrings, type Profile, type StringList } from '../lib/tangled'
 import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
+import { getRepoDidsFromStars, listStarsBy } from '../lib/tangled/feed'
 
 export function ProfilePage() {
   const { handle: routeHandle } = useParams()
@@ -25,6 +26,7 @@ export function ProfilePage() {
   const [repos, setRepos] = useState<RepoList | null>(null)
   const [strings, setStrings] = useState<StringList | null>(null)
   const [pinnedRepos, setPinnedRepos] = useState<Repo[] | null>(null)
+  const [starredRepos, setStarredRepos] = useState<StarredRepo[] | null>(null)
   const [bskyProfile, setBskyProfile] = useState<AppBskyActorProfile.Main | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
@@ -36,6 +38,8 @@ export function ProfilePage() {
       try {
         setError(null)
         const miniDoc = await getMiniDoc(handle)
+        const stars = await listStarsBy(miniDoc.did)
+        const repoDids = getRepoDidsFromStars(stars)
 
         const [profile, repos, strings, bskyProfile] = await Promise.all([
           getProfile(miniDoc.did),
@@ -44,11 +48,33 @@ export function ProfilePage() {
           getBskyProfile(miniDoc).catch(() => null),
         ])
 
+        const ownerDocs = new Map<string, Promise<MiniDoc>>()
+        const getOwner = (identifier: string) => {
+          const existing = ownerDocs.get(identifier)
+          if (existing !== undefined) return existing
+
+          const request = getMiniDoc(identifier)
+          ownerDocs.set(identifier, request)
+          return request
+        }
+
+        const starredRepos = (
+          await Promise.allSettled(
+            repoDids.map(async (repoDid): Promise<StarredRepo> => {
+              const repo = await getRepoByRepoDid(repoDid)
+              const owner = await getOwner(parseResourceUri(repo.uri).repo)
+
+              return { repo, handle: owner.handle }
+            }),
+          )
+        ).flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
+
         const pinnedResults = await Promise.allSettled(
           (profile.value.pinnedRepositories ?? []).map((repoDid) =>
             getRepoByRepoDid(repoDid as Did),
           ),
         )
+
         const pinnedRepos = pinnedResults.flatMap((result) =>
           result.status === 'fulfilled' ? [result.value] : [],
         )
@@ -58,6 +84,7 @@ export function ProfilePage() {
           setProfile(profile)
           setRepos(repos)
           setPinnedRepos(pinnedRepos)
+          setStarredRepos(starredRepos)
           setStrings(strings)
           setBskyProfile(bskyProfile)
         }
@@ -83,7 +110,13 @@ export function ProfilePage() {
     return <p role="alert">Could not load profile: {error.message}</p>
   }
 
-  if (identity === null || profile === null || repos === null || strings === null) {
+  if (
+    identity === null ||
+    profile === null ||
+    repos === null ||
+    strings === null ||
+    starredRepos === null
+  ) {
     return <ProfilePageSkeleton />
   }
 
@@ -140,6 +173,20 @@ export function ProfilePage() {
             )}
           </ProfileCollection>
         )}
+
+        {activeSection === 'stars' && (
+          <ProfileCollection title="Stars">
+            {starredRepos.length === 0 && <p>No stars found.</p>}
+
+            {starredRepos.length > 0 && (
+              <div className="grid gap-4 lg:grid-cols-2">
+                {starredRepos.map(({ repo, handle }) => (
+                  <RepoListItem key={repo.uri} handle={handle} repo={repo} />
+                ))}
+              </div>
+            )}
+          </ProfileCollection>
+        )}
       </div>
     </main>
   )
@@ -148,6 +195,11 @@ export function ProfilePage() {
 type ProfileCollectionProps = {
   title: string
   children: ReactNode
+}
+
+type StarredRepo = {
+  repo: Repo
+  handle: Handle
 }
 
 function ProfileCollection({ title, children }: ProfileCollectionProps) {
@@ -163,8 +215,8 @@ function ProfileCollection({ title, children }: ProfileCollectionProps) {
   )
 }
 
-function parseProfileSection(value: string | null): 'overview' | 'repos' | 'strings' {
-  if (value === 'repos' || value === 'strings') {
+function parseProfileSection(value: string | null): 'overview' | 'repos' | 'strings' | 'stars' {
+  if (value === 'repos' || value === 'strings' || value === 'stars') {
     return value
   }
 
