@@ -25,16 +25,16 @@ export type ProfilePageData = {
 
 export async function loadProfilePage(handle: Handle): Promise<ProfilePageData> {
   const identity = await resolveMiniDoc(handle)
-  const stars = await listStarsBy(identity.did)
-  const repoDids = getRepoDidsFromStars(stars)
 
-  const [actor, repos, vouches, strings] = await Promise.all([
+  const [actor, stars, repos, vouches, strings] = await Promise.all([
     resolveActor(identity.did),
+    listStarsBy(identity.did),
     listRepos(identity.did),
     listVouches(identity.did),
     listStrings(identity.did),
   ])
   const profile = actor.profile
+  const repoDids = getRepoDidsFromStars(stars)
 
   const ownerDocs = new Map<string, Promise<MiniDoc>>()
   const getOwner = (identifier: string) => {
