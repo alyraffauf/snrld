@@ -1,32 +1,57 @@
-# React + TypeScript + Vite
+<p align="center">
+  <img src="public/catppuccin-logo.png" alt="Catppuccin logo" width="96" />
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+<h1 align="center">snrld</h1>
 
-Currently, two official plugins are available:
+<p align="center">
+  An beautiful client for <a href="https://tangled.org">Tangled</a>.
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+snrld currently lets you browse public profiles, repositories, strings, stars, vouches, issues, and pull requests through the Bobbin XRPC service. Authentication and write features are planned for a future release.
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19, TypeScript, and Vite
+- React Router for client-side routing
+- Tailwind CSS with the Catppuccin Frappe palette
+- React Compiler for automatic memoization
+- Bun for dependency management and scripts
 
-## Expanding the Oxlint configuration
+## Getting started
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Install dependencies and start the development server:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+bun install
+bun run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Build and preview the production bundle:
+
+```sh
+bun run build
+bun run preview
+```
+
+## Checks
+
+```sh
+bun run lint
+bun run format:check
+```
+
+Run `bun run format` to apply formatting changes.
+
+## Routes
+
+| Route                      | Purpose                                                     |
+| -------------------------- | ----------------------------------------------------------- |
+| `/`                        | Search for a Tangled profile                                |
+| `/:handle`                 | Profile overview, repositories, strings, stars, and vouches |
+| `/:handle/:repo`           | Repository README, source tree, issues, and pull requests   |
+| `/strings/:handle/:string` | A single Tangled string                                     |
+
+## Data source
+
+The client currently reads public data from [Bobbin](https://bobbin.klbr.net), the Tangled XRPC service.
