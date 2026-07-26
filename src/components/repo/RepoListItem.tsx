@@ -22,16 +22,19 @@ export function RepoListItem({ handle, repo }: RepoListItemProps) {
   return (
     <SurfaceCard
       as="article"
-      className="group flex h-full flex-col p-3 transition-colors hover:border-ctp-lavender sm:p-4"
+      className="group pointer-events-none relative flex h-full flex-col p-3 transition-colors hover:border-ctp-lavender sm:p-4"
     >
+      <Link
+        to={`/${handle}/${encodeURIComponent(rkey)}`}
+        aria-label={`Open ${name}`}
+        className="pointer-events-auto absolute inset-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-lavender"
+      />
+
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <Link
-            to={`/${handle}/${encodeURIComponent(rkey)}`}
-            className="block truncate font-mono text-base font-semibold text-ctp-text transition-colors hover:text-ctp-lavender focus-visible:rounded"
-          >
+          <h3 className="truncate font-mono text-base font-semibold text-ctp-text transition-colors group-hover:text-ctp-lavender">
             {name}
-          </Link>
+          </h3>
 
           {value.knot && (
             <p className="mt-1 truncate font-mono text-xs text-ctp-overlay-1">{value.knot}</p>
@@ -42,7 +45,7 @@ export function RepoListItem({ handle, repo }: RepoListItemProps) {
       </header>
 
       {value.description && (
-        <div className="mt-3 line-clamp-2 text-sm leading-snug text-ctp-subtext-1">
+        <div className="relative z-10 mt-3 line-clamp-2 text-sm leading-snug text-ctp-subtext-1 [&_a]:pointer-events-auto">
           <Markdown>{value.description}</Markdown>
         </div>
       )}
