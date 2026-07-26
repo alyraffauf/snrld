@@ -23,7 +23,7 @@ knot-proxied endpoints require `knot`.
 
 ## Aggregations
 
-- [ ] `sh.tangled.feed.listStars`
+- [x] `sh.tangled.feed.listStars`
 - [x] `sh.tangled.feed.countStars`
 - [ ] `sh.tangled.feed.listComments`
 - [ ] `sh.tangled.feed.countComments`
@@ -35,9 +35,9 @@ knot-proxied endpoints require `knot`.
 - [ ] `sh.tangled.graph.countVouches`
 - [ ] `sh.tangled.git.listRefUpdates`
 - [ ] `sh.tangled.git.countRefUpdates`
-- [ ] `sh.tangled.repo.listIssues`
+- [x] `sh.tangled.repo.listIssues`
 - [ ] `sh.tangled.repo.countIssues`
-- [ ] `sh.tangled.repo.listPulls`
+- [x] `sh.tangled.repo.listPulls`
 - [ ] `sh.tangled.repo.countPulls`
 - [ ] `sh.tangled.repo.listCollaborators`
 - [ ] `sh.tangled.repo.countCollaborators`
