@@ -24,13 +24,11 @@ export function RepoStarCount({ repoDid, variant = 'count' }: RepoStarCountProps
   }
 
   return (
-    <span className="shrink-0 font-mono text-sm leading-4 tabular-nums text-ctp-yellow">
-      <IconStar
-        size={16}
-        stroke={1.75}
-        aria-hidden="true"
-        className="mr-1 inline-block align-middle text-current"
-      />
+    <span
+      className="inline-flex shrink-0 items-center gap-1 font-mono text-sm leading-none tabular-nums text-ctp-yellow"
+      aria-label={`${count} stars`}
+    >
+      <IconStar size={16} stroke={1.75} aria-hidden="true" />
       {count}
     </span>
   )

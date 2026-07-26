@@ -30,18 +30,17 @@ export function RepoListItem({ handle, repo }: RepoListItemProps) {
         className="pointer-events-auto absolute inset-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-lavender"
       />
 
-      <header className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
+      <header className="min-w-0">
+        <div className="flex min-w-0 items-center justify-between gap-4">
           <h3 className="truncate font-mono text-base font-semibold text-ctp-text transition-colors group-hover:text-ctp-lavender">
             {name}
           </h3>
-
-          {value.knot && (
-            <p className="mt-1 truncate font-mono text-xs text-ctp-overlay-1">{value.knot}</p>
-          )}
+          <RepoStarCount repoDid={repoDid} />
         </div>
 
-        <RepoStarCount repoDid={repoDid} />
+        {value.knot && (
+          <p className="mt-1 truncate font-mono text-xs text-ctp-overlay-1">{value.knot}</p>
+        )}
       </header>
 
       {value.description && (
