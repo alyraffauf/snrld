@@ -1,13 +1,8 @@
-import { parseResourceUri } from '@atcute/lexicons'
 import type { Repo } from './types'
+import { getRecordRkey } from './recordIdentity'
 
 export function getRepoRkey(repo: Repo): string {
-  const { rkey } = parseResourceUri(repo.uri)
-  if (rkey === undefined) {
-    throw new Error(`Repository URI has no record key: ${repo.uri}`)
-  }
-
-  return rkey
+  return getRecordRkey(repo.uri)
 }
 
 export function getRepoName(repo: Repo): string {

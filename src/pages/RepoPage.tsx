@@ -92,10 +92,18 @@ export function RepoPage() {
             </div>
           )}
           {activeSection === 'issues' && repo.value.repoDid !== undefined && (
-            <RepoIssues repoDid={repo.value.repoDid} />
+            <RepoIssues
+              repoOwnerHandle={identity.handle}
+              repoDid={repo.value.repoDid}
+              repoKey={getRepoRkey(repo)}
+            />
           )}
           {activeSection === 'pulls' && repo.value.repoDid !== undefined && (
-            <RepoPulls repoDid={repo.value.repoDid} />
+            <RepoPulls
+              repoOwnerHandle={identity.handle}
+              repoDid={repo.value.repoDid}
+              repoKey={getRepoRkey(repo)}
+            />
           )}
           {activeSection === 'pipelines' && <RepoPlaceholder title="Pipelines" />}
         </section>
