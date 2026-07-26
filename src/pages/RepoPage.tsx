@@ -78,7 +78,14 @@ export function RepoPage() {
             repoKey={getRepoRkey(repo)}
           />
 
-          {activeSection === 'readme' && <RepoReadme readme={rootTree.readme} />}
+          {activeSection === 'readme' && (
+            <RepoReadme
+              readme={rootTree.readme}
+              repositoryName={getRepoRkey(repo)}
+              repositoryOwner={identity.handle}
+              repositoryRef={rootTree.ref}
+            />
+          )}
           {shouldRenderWorkspace && (
             <div hidden={activeSection !== 'code'}>
               <RepoWorkspace repo={repo} initialTree={rootTree} />
