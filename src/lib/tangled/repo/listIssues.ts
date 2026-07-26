@@ -1,21 +1,11 @@
 import { ok } from '@atcute/client'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import type { Main as TangledIssue } from '@atcute/tangled/types/repo/issue'
-import { mainSchema as issueSchema } from '@atcute/tangled/types/repo/issue'
-import type { $output as IssueListResponse } from '@atcute/tangled/types/repo/listIssues'
 import { mainSchema as issueListSchema } from '@atcute/tangled/types/repo/listIssues'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
-
-export type Issue = Omit<IssueListResponse['items'][number], 'value'> & {
-  value: TangledIssue
-}
-
-export type IssueList = {
-  items: Issue[]
-  cursor?: string
-}
+import type { IssueList } from './types'
+import { validateIssue } from './validators'
 
 export type ListIssuesOptions = {
   cursor?: string
@@ -45,16 +35,7 @@ export async function listIssues(
     throw new Error(`Bobbin returned an invalid issue list: ${listValidation.message}`)
   }
 
-  const items = listValidation.value.items.map((item, index) => {
-    const valueValidation = safeParse(issueSchema, item.value)
-    if (!valueValidation.ok) {
-      throw new Error(
-        `Bobbin returned an invalid issue record at index ${index}: ${valueValidation.message}`,
-      )
-    }
-
-    return { ...item, value: valueValidation.value }
-  })
+  const items = listValidation.value.items.map(validateIssue)
 
   return { items, cursor: listValidation.value.cursor }
 }

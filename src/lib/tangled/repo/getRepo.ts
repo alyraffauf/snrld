@@ -1,7 +1,8 @@
 import { ok } from '@atcute/client'
 import type { ResourceUri } from '@atcute/lexicons'
 import { rpc } from '../client'
-import { validateRepo, type Repo } from './types'
+import type { Repo } from './types'
+import { validateRepo } from './validators'
 
 export async function getRepo(atUri: ResourceUri): Promise<Repo> {
   const repo = await ok(

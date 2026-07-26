@@ -1,6 +1,7 @@
 import type { Did } from '@atcute/lexicons'
 import { rpc } from '../client'
-import { validateRepo, type Repo } from './types'
+import type { Repo } from './types'
+import { validateRepo } from './validators'
 
 export async function getRepoByRepoDid(did: Did): Promise<Repo | null> {
   const response = await rpc.get('sh.tangled.repo.getRepoByRepoDid', {

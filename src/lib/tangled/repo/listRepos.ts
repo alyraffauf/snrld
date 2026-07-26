@@ -4,7 +4,9 @@ import { safeParse } from '@atcute/lexicons'
 import { mainSchema as reposListSchema } from '@atcute/tangled/types/repo/listRepos'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
-import { getRepoRkey, validateRepo, type Repo, type RepoList } from './types'
+import { getRepoRkey } from './repoIdentity'
+import type { Repo, RepoList } from './types'
+import { validateRepo } from './validators'
 
 export async function listRepos(did: Did): Promise<RepoList> {
   const response = await ok(
