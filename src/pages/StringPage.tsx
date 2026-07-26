@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
+import { ErrorPage } from '../components/shared/ErrorPage'
 import { StringView } from '../components/string/StringView'
 import { useStringPage } from '../hooks/useStringPage'
 import { parseHandle } from '../lib/routes'
@@ -11,11 +12,17 @@ export function StringPage() {
   const { pageData, error } = useStringPage(handle, routeString)
 
   if (handle === null || routeString === undefined) {
-    return <p>Invalid string route</p>
+    return <ErrorPage title="String not found" message="That string address is not valid." />
   }
 
   if (error) {
-    return <p role="alert">Could not load string: {error.message}</p>
+    return (
+      <ErrorPage
+        title="We couldn't load this string"
+        message="The string may not exist, or the service may be temporarily unavailable."
+        details={error.message}
+      />
+    )
   }
 
   if (pageData === null) {

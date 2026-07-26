@@ -10,6 +10,7 @@ import { RepoTabs } from '../components/repo/RepoTabs'
 import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
+import { ErrorPage } from '../components/shared/ErrorPage'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { useRepoPage } from '../hooks/useRepoPage'
 import { parseHandle } from '../lib/routes'
@@ -34,11 +35,19 @@ export function RepoPage() {
   }, [requestedSection, pageData])
 
   if (handle === null || routeRepo === undefined) {
-    return <p>Invalid repository route</p>
+    return (
+      <ErrorPage title="Repository not found" message="That repository address is not valid." />
+    )
   }
 
   if (error) {
-    return <p role="alert">Could not load repository: {error.message}</p>
+    return (
+      <ErrorPage
+        title="We couldn't load this repository"
+        message="The repository may not exist, or the service may be temporarily unavailable."
+        details={error.message}
+      />
+    )
   }
 
   if (pageData === null) {

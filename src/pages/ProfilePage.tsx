@@ -6,6 +6,7 @@ import { ProfileHeader } from '../components/profile/ProfileHeader'
 import { ProfileSection } from '../components/profile/ProfileSection'
 import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
+import { ErrorPage } from '../components/shared/ErrorPage'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
 import { useProfilePage } from '../hooks/useProfilePage'
@@ -21,11 +22,17 @@ export function ProfilePage() {
   const { pageData, error } = useProfilePage(handle)
 
   if (handle === null) {
-    return <p>Invalid handle</p>
+    return <ErrorPage title="Profile not found" message="That profile address is not valid." />
   }
 
   if (error) {
-    return <p role="alert">Could not load profile: {error.message}</p>
+    return (
+      <ErrorPage
+        title="We couldn't load this profile"
+        message="The profile may not exist, or the service may be temporarily unavailable."
+        details={error.message}
+      />
+    )
   }
 
   if (pageData === null) {
