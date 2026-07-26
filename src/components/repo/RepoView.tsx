@@ -3,8 +3,9 @@ import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import type { Repo } from '../../lib/tangled'
-import { getRepoName } from '../../lib/tangled/repo'
+import { getRepoName, getRepoRkey } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
+import { RepoAtomFeed } from './RepoAtomFeed'
 import { RepoCloneUrl } from './RepoCloneUrl'
 import { RepoStarCount } from './RepoStarCount'
 
@@ -16,6 +17,7 @@ type RepoProps = {
 export function RepoView({ handle, repo }: RepoProps) {
   const { value } = repo
   const name = getRepoName(repo)
+  const repoKey = getRepoRkey(repo)
   const repoDid = value.repoDid
 
   return (
@@ -29,7 +31,10 @@ export function RepoView({ handle, repo }: RepoProps) {
           {value.knot && <p className="mt-1 font-mono text-sm text-ctp-subtext-0">{value.knot}</p>}
         </div>
 
-        <RepoStarCount repoDid={repoDid} />
+        <div className="flex shrink-0 items-center gap-2">
+          <RepoStarCount repoDid={repoDid} variant="action" />
+          <RepoAtomFeed handle={handle} repoKey={repoKey} />
+        </div>
       </header>
 
       {value.description && (
