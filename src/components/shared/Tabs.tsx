@@ -16,7 +16,7 @@ type TabsProps = {
 export function Tabs({ ariaLabel, items }: TabsProps) {
   return (
     <nav aria-label={ariaLabel} className="border-b border-ctp-surface-0">
-      <div className="flex gap-6 overflow-x-auto">
+      <div className="flex gap-5 overflow-x-auto overscroll-x-contain px-1 [-webkit-overflow-scrolling:touch] sm:gap-6">
         {items.map((item) => (
           <Link
             key={item.href}

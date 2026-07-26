@@ -48,21 +48,25 @@ export async function loadProfilePage(handle: Handle): Promise<ProfilePageData> 
 
   const starredRepos = (
     await Promise.allSettled(
-      repoDids.map(async (repoDid): Promise<StarredRepo> => {
+      repoDids.map(async (repoDid): Promise<StarredRepo | null> => {
         const repo = await getRepoByRepoDid(repoDid)
+        if (repo === null) return null
+
         const owner = await getOwner(parseResourceUri(repo.uri).repo)
 
         return { repo, handle: owner.handle }
       }),
     )
-  ).flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
+  ).flatMap((result) =>
+    result.status === 'fulfilled' && result.value !== null ? [result.value] : [],
+  )
 
   const pinnedResults = await Promise.allSettled(
     (profile.value.pinnedRepositories ?? []).map((repoDid) => getRepoByRepoDid(repoDid as Did)),
   )
 
   const pinnedRepos = pinnedResults.flatMap((result) =>
-    result.status === 'fulfilled' ? [result.value] : [],
+    result.status === 'fulfilled' && result.value !== null ? [result.value] : [],
   )
 
   return {

@@ -14,7 +14,7 @@ type ProfileBylineProps = {
 export function ProfileByline({ miniDoc, profile, bskyProfile, label }: ProfileBylineProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex items-center gap-2 font-mono text-sm">
+      <ol className="flex min-w-0 items-center gap-2 font-mono text-sm">
         <li className="shrink-0">
           <Link
             to={`/${miniDoc.handle}`}
@@ -34,7 +34,7 @@ export function ProfileByline({ miniDoc, profile, bskyProfile, label }: ProfileB
           /
         </li>
 
-        <li className="truncate font-semibold text-ctp-text">{label}</li>
+        <li className="min-w-0 truncate font-semibold text-ctp-text">{label}</li>
       </ol>
     </nav>
   )

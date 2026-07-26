@@ -117,6 +117,11 @@
     margin-top: 1rem;
   }
 
+  .markdown-body > :not(pre) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
   .markdown-body h1,
   .markdown-body h2,
   .markdown-body h3,
@@ -199,7 +204,9 @@
   }
 
   .markdown-body table {
-    width: 100%;
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
   }
 
@@ -231,5 +238,6 @@
   section {
     display: grid;
     gap: 1rem;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

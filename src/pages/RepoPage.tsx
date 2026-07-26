@@ -61,7 +61,7 @@ export function RepoPage() {
 
   return (
     <main>
-      <PageContainer className="py-8">
+      <PageContainer className="py-6 sm:py-8">
         <ProfileByline
           miniDoc={identity}
           profile={profile}
@@ -69,7 +69,7 @@ export function RepoPage() {
           label={getRepoName(repo)}
         />
 
-        <section className="mt-8 space-y-6">
+        <section className="mt-6 min-w-0 space-y-6 sm:mt-8">
           <RepoView handle={handle} repo={repo} />
           <RepoTabs
             activeSection={activeSection}

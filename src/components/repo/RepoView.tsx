@@ -19,7 +19,10 @@ export function RepoView({ handle, repo }: RepoProps) {
   const repoDid = value.repoDid
 
   return (
-    <SurfaceCard as="article" className="p-6 transition-colors hover:border-ctp-lavender">
+    <SurfaceCard
+      as="article"
+      className="min-w-0 p-4 transition-colors hover:border-ctp-lavender sm:p-6"
+    >
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h1 className="truncate font-mono text-2xl font-bold text-ctp-text">{name}</h1>
@@ -30,9 +33,9 @@ export function RepoView({ handle, repo }: RepoProps) {
       </header>
 
       {value.description && (
-        <p className="mt-4 max-w-prose text-lg leading-relaxed text-ctp-subtext-1">
+        <div className="mt-4 max-w-prose break-words text-lg leading-relaxed text-ctp-subtext-1">
           <Markdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>{value.description}</Markdown>
-        </p>
+        </div>
       )}
 
       {value.topics && value.topics.length > 0 && (
