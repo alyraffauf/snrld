@@ -6,6 +6,7 @@ import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoIssues } from '../../hooks/useRepoIssues'
 import { getRecordRkey, type Issue } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
+import { LoadMoreButton } from '../shared/LoadMoreButton'
 
 type RepoIssuesProps = {
   repoOwnerHandle: Handle
@@ -14,9 +15,9 @@ type RepoIssuesProps = {
 }
 
 export function RepoIssues({ repoOwnerHandle, repoDid, repoKey }: RepoIssuesProps) {
-  const { issues, error } = useRepoIssues(repoDid)
+  const { issues, error, hasMore, isLoadingMore, loadMore } = useRepoIssues(repoDid)
 
-  if (error) {
+  if (error && issues === null) {
     return <p role="alert">Could not load issues: {error.message}</p>
   }
 
@@ -29,16 +30,28 @@ export function RepoIssues({ repoOwnerHandle, repoDid, repoKey }: RepoIssuesProp
   }
 
   return (
-    <ul className="space-y-3" aria-label="Issues">
-      {issues.items.map((issue) => (
-        <IssueListItem
-          key={issue.uri}
-          issue={issue}
-          repoKey={repoKey}
-          repoOwnerHandle={repoOwnerHandle}
-        />
-      ))}
-    </ul>
+    <>
+      <ul className="space-y-3" aria-label="Issues">
+        {issues.items.map((issue) => (
+          <IssueListItem
+            key={issue.uri}
+            issue={issue}
+            repoKey={repoKey}
+            repoOwnerHandle={repoOwnerHandle}
+          />
+        ))}
+      </ul>
+      {hasMore && (
+        <div className="mt-4">
+          <LoadMoreButton
+            label="Issues"
+            isLoading={isLoadingMore}
+            onClick={() => void loadMore()}
+          />
+        </div>
+      )}
+      {error && issues !== null && <p role="alert">Could not load more issues: {error.message}</p>}
+    </>
   )
 }
 

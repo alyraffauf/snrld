@@ -7,6 +7,7 @@ import { useVisibleActor } from '../../hooks/useVisibleActor'
 import type { CommentRecord } from '../../lib/tangled/feed'
 import { ProfileAvatar } from '../profile/ProfileAvatar'
 import { MarkdownContent } from '../shared/MarkdownContent'
+import { LoadMoreButton } from '../shared/LoadMoreButton'
 import { SurfaceCard } from '../shared/SurfaceCard'
 
 const COMMENT_SKELETON_COUNT = 3
@@ -16,9 +17,9 @@ type IssueCommentsProps = {
 }
 
 export function IssueComments({ issueUri }: IssueCommentsProps) {
-  const { comments, error } = useIssueComments(issueUri)
+  const { comments, error, hasMore, isLoadingMore, loadMore } = useIssueComments(issueUri)
 
-  if (error) {
+  if (error && comments === null) {
     return <p role="alert">Could not load comments: {error.message}</p>
   }
 
@@ -43,6 +44,20 @@ export function IssueComments({ issueUri }: IssueCommentsProps) {
           </li>
         ))}
       </ol>
+      {hasMore && (
+        <div className="mt-4">
+          <LoadMoreButton
+            label="Comments"
+            isLoading={isLoadingMore}
+            onClick={() => void loadMore()}
+          />
+        </div>
+      )}
+      {error && (
+        <p className="mt-2" role="alert">
+          Could not load more comments: {error.message}
+        </p>
+      )}
     </section>
   )
 }

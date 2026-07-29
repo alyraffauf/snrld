@@ -1,36 +1,15 @@
 import type { ResourceUri } from '@atcute/lexicons'
-import { useEffect, useState } from 'react'
 import { listComments, type CommentList } from '../lib/tangled/feed'
+import { useCursorList } from './useCursorList'
 
-const INITIAL_COMMENT_LIMIT = 50
+const INITIAL_COMMENT_LIMIT = 20
 
 export function useIssueComments(issue: ResourceUri) {
-  const [comments, setComments] = useState<CommentList | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+  const { data, error, hasMore, isLoadingMore, loadMore } = useCursorList(
+    issue,
+    (options) => listComments(issue, { ...options, order: 'asc' }),
+    INITIAL_COMMENT_LIMIT,
+  )
 
-  useEffect(() => {
-    let isCancelled = false
-
-    async function loadComments() {
-      setComments(null)
-      setError(null)
-
-      try {
-        const result = await listComments(issue, { limit: INITIAL_COMMENT_LIMIT, order: 'asc' })
-        if (!isCancelled) setComments(result)
-      } catch (caught) {
-        if (!isCancelled) {
-          setError(caught instanceof Error ? caught : new Error('Unable to load comments.'))
-        }
-      }
-    }
-
-    void loadComments()
-
-    return () => {
-      isCancelled = true
-    }
-  }, [issue])
-
-  return { comments, error }
+  return { comments: data as CommentList | null, error, hasMore, isLoadingMore, loadMore }
 }

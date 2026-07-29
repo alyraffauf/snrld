@@ -6,6 +6,7 @@ import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoPulls } from '../../hooks/useRepoPulls'
 import { getRecordRkey, type Pull } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
+import { LoadMoreButton } from '../shared/LoadMoreButton'
 
 type RepoPullsProps = {
   repoOwnerHandle: Handle
@@ -14,9 +15,9 @@ type RepoPullsProps = {
 }
 
 export function RepoPulls({ repoOwnerHandle, repoDid, repoKey }: RepoPullsProps) {
-  const { pulls, error } = useRepoPulls(repoDid)
+  const { pulls, error, hasMore, isLoadingMore, loadMore } = useRepoPulls(repoDid)
 
-  if (error) {
+  if (error && pulls === null) {
     return <p role="alert">Could not load pulls: {error.message}</p>
   }
 
@@ -29,16 +30,30 @@ export function RepoPulls({ repoOwnerHandle, repoDid, repoKey }: RepoPullsProps)
   }
 
   return (
-    <ul className="space-y-3" aria-label="Pull requests">
-      {pulls.items.map((pull) => (
-        <PullListItem
-          key={pull.uri}
-          pull={pull}
-          repoKey={repoKey}
-          repoOwnerHandle={repoOwnerHandle}
-        />
-      ))}
-    </ul>
+    <>
+      <ul className="space-y-3" aria-label="Pull requests">
+        {pulls.items.map((pull) => (
+          <PullListItem
+            key={pull.uri}
+            pull={pull}
+            repoKey={repoKey}
+            repoOwnerHandle={repoOwnerHandle}
+          />
+        ))}
+      </ul>
+      {hasMore && (
+        <div className="mt-4">
+          <LoadMoreButton
+            label="Pull requests"
+            isLoading={isLoadingMore}
+            onClick={() => void loadMore()}
+          />
+        </div>
+      )}
+      {error && pulls !== null && (
+        <p role="alert">Could not load more pull requests: {error.message}</p>
+      )}
+    </>
   )
 }
 
