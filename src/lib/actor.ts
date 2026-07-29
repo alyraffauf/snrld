@@ -41,7 +41,9 @@ export function resolveActor(did: Did): Promise<ResolvedActor> {
 
   const request = Promise.all([resolveMiniDoc(did), getProfile(did)])
     .then(async ([miniDoc, profile]) => {
-      const bskyProfile = await getBskyProfile(miniDoc).catch(() => null)
+      const bskyProfile = profile.value.avatar
+        ? null
+        : await getBskyProfile(miniDoc).catch(() => null)
       const avatar = profile.value.avatar ?? bskyProfile?.avatar
       const avatarUrl = avatar ? getAvatarUrl(did, avatar) : null
 
