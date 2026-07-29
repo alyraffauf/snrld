@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import type { Repo } from '../lib/tangled'
 import { getRepoTree, isDirectoryMode } from '../lib/tangled/repo'
 
+const MAX_PREFETCHED_DIRECTORIES = 3
+
 type UseRepoTreeOptions = {
   initialTree?: RepoTreeResponse
   path: string
@@ -77,6 +79,7 @@ async function prefetchDirectories(
   const directories = tree.files
     .filter((entry) => isDirectoryMode(entry.mode))
     .map((entry) => (currentPath ? `${currentPath}/${entry.name}` : entry.name))
+    .slice(0, MAX_PREFETCHED_DIRECTORIES)
 
   await Promise.all(
     directories.map(async (directoryPath) => {
@@ -86,7 +89,6 @@ async function prefetchDirectories(
       try {
         const childTree = await getRepoTree(repo, directoryPath)
         cache.set(directoryPath, childTree)
-        await prefetchDirectories(repo, childTree, directoryPath, cache, prefetching)
       } catch {
         // Navigation retries directories whose background prefetch failed.
       } finally {
