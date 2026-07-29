@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
+import { IssueComments } from '../components/repo/IssueComments'
 import { ErrorPage } from '../components/shared/ErrorPage'
 import { RepoRecordView } from '../components/repo/RepoRecordView'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
@@ -66,8 +67,9 @@ export function IssuePage() {
             { label: issue.value.title },
           ]}
         />
-        <section>
+        <section className="space-y-6">
           <RepoRecordView author={recordAuthor} {...issue.value} />
+          <IssueComments issueUri={issue.uri} />
         </section>
       </PageContainer>
     </main>
