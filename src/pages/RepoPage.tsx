@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
@@ -14,6 +13,7 @@ import { LoadingPanel } from '../components/shared/LoadingPanel'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { useRepoPage } from '../hooks/useRepoPage'
+import { useRepoRootTree } from '../hooks/useRepoRootTree'
 import { parseHandle } from '../lib/routes'
 import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
 
@@ -21,26 +21,13 @@ export function RepoPage() {
   const { handle: routeHandle, repo: routeRepo } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
-  const [hasVisitedCode, setHasVisitedCode] = useState(false)
   const requestedSection = searchParams.get('view')
   const shouldLoadTree =
     requestedSection !== 'issues' &&
     requestedSection !== 'pulls' &&
     requestedSection !== 'pipelines'
-  const { pageData, error, rootTree, rootTreeError } = useRepoPage(
-    handle,
-    routeRepo,
-    shouldLoadTree,
-  )
-
-  useEffect(() => {
-    const defaultIsCode =
-      requestedSection === null && rootTree !== null && rootTree.readme === undefined
-
-    if (requestedSection === 'code' || defaultIsCode) {
-      setHasVisitedCode(true)
-    }
-  }, [requestedSection, rootTree])
+  const { pageData, error } = useRepoPage(handle, routeRepo)
+  const { rootTree, error: rootTreeError } = useRepoRootTree(pageData?.repo ?? null, shouldLoadTree)
 
   if (handle === null || routeRepo === undefined) {
     return (
@@ -66,7 +53,6 @@ export function RepoPage() {
   const { miniDoc: identity, profile, bskyProfile } = actor
   const hasReadme = rootTree === null || rootTree.readme !== undefined
   const activeSection = parseRepoSection(requestedSection, hasReadme)
-  const shouldRenderWorkspace = hasVisitedCode || activeSection === 'code'
   const isContentSection = activeSection === 'readme' || activeSection === 'code'
   const shouldShowContentLoading = isContentSection && rootTree === null && rootTreeError === null
   const shouldShowContentError = isContentSection && rootTreeError !== null
@@ -98,10 +84,8 @@ export function RepoPage() {
               repositoryRef={rootTree.ref}
             />
           )}
-          {shouldRenderWorkspace && rootTree !== null && (
-            <div hidden={activeSection !== 'code'}>
-              <RepoWorkspace repo={repo} initialTree={rootTree} />
-            </div>
+          {activeSection === 'code' && rootTree !== null && (
+            <RepoWorkspace repo={repo} initialTree={rootTree} />
           )}
           {shouldShowContentLoading && (
             <LoadingPanel label="Loading repository contents" className="h-96" />
