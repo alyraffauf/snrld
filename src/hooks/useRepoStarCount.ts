@@ -2,14 +2,14 @@ import type { Did } from '@atcute/lexicons'
 import { useEffect, useState } from 'react'
 import { countStars } from '../lib/tangled/feed'
 
-export function useRepoStarCount(repoDid?: Did) {
+export function useRepoStarCount(repoDid?: Did, isEnabled = true) {
   const [starCount, setStarCount] = useState<number | null>(null)
   const [hasFailed, setHasFailed] = useState(false)
 
   useEffect(() => {
     setStarCount(null)
     setHasFailed(false)
-    if (repoDid === undefined) return
+    if (repoDid === undefined || !isEnabled) return
 
     let isCancelled = false
     countStars(repoDid)
@@ -23,7 +23,7 @@ export function useRepoStarCount(repoDid?: Did) {
     return () => {
       isCancelled = true
     }
-  }, [repoDid])
+  }, [isEnabled, repoDid])
 
   return { starCount, hasFailed }
 }
