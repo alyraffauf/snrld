@@ -1,12 +1,11 @@
 import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
+import { isDid } from '@atcute/lexicons/syntax'
 import { IconCircleDot, IconMessageCircle } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import { useRecordAuthors } from '../../hooks/useRecordAuthors'
+import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoIssues } from '../../hooks/useRepoIssues'
 import { getRecordRkey, type Issue } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
-
-const EMPTY_ISSUES: readonly Issue[] = []
 
 type RepoIssuesProps = {
   repoOwnerHandle: Handle
@@ -16,7 +15,6 @@ type RepoIssuesProps = {
 
 export function RepoIssues({ repoOwnerHandle, repoDid, repoKey }: RepoIssuesProps) {
   const { issues, error } = useRepoIssues(repoDid)
-  const { authors, error: authorsError } = useRecordAuthors(issues?.items ?? EMPTY_ISSUES)
 
   if (error) {
     return <p role="alert">Could not load issues: {error.message}</p>
@@ -30,40 +28,43 @@ export function RepoIssues({ repoOwnerHandle, repoDid, repoKey }: RepoIssuesProp
     return <p className="text-sm text-ctp-subtext-0">No issues found.</p>
   }
 
-  const authorResolutionMessage =
-    authorsError === null ? null : 'Some issues may not be available until their authors resolve.'
+  return (
+    <ul className="space-y-3" aria-label="Issues">
+      {issues.items.map((issue) => (
+        <IssueListItem
+          key={issue.uri}
+          issue={issue}
+          repoKey={repoKey}
+          repoOwnerHandle={repoOwnerHandle}
+        />
+      ))}
+    </ul>
+  )
+}
+
+type IssueListItemProps = { issue: Issue; repoKey: string; repoOwnerHandle: Handle }
+
+function IssueListItem({ issue, repoKey, repoOwnerHandle }: IssueListItemProps) {
+  const authorIdentifier = parseResourceUri(issue.uri).repo
+  const { actor, elementRef } = useVisibleActor(isDid(authorIdentifier) ? authorIdentifier : null)
+  const issueUrl = actor
+    ? `/${repoOwnerHandle}/${repoKey}/issues/${actor.miniDoc.handle}/${getRecordRkey(issue.uri)}`
+    : undefined
 
   return (
-    <>
-      {authorResolutionMessage && <p role="status">{authorResolutionMessage}</p>}
-      <ul className="space-y-3" aria-label="Issues">
-        {issues.items.map((issue) => {
-          const isOpen = issue.state === 'open'
-          const authorDid = parseResourceUri(issue.uri).repo
-          const issueOwner = authors?.get(authorDid)
-          const issueUrl =
-            issueOwner === undefined
-              ? undefined
-              : `/${repoOwnerHandle}/${repoKey}/issues/${issueOwner}/${getRecordRkey(issue.uri)}`
-
-          return (
-            <li key={issue.uri}>
-              {issueUrl === undefined ? (
-                <IssueCard issue={issue} isOpen={isOpen} />
-              ) : (
-                <Link
-                  to={issueUrl}
-                  className="group block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ctp-blue"
-                  aria-label={`Open issue: ${issue.value.title}`}
-                >
-                  <IssueCard issue={issue} isOpen={isOpen} linked />
-                </Link>
-              )}
-            </li>
-          )
-        })}
-      </ul>
-    </>
+    <li ref={elementRef}>
+      {issueUrl === undefined ? (
+        <IssueCard issue={issue} isOpen={issue.state === 'open'} />
+      ) : (
+        <Link
+          to={issueUrl}
+          className="group block rounded-lg"
+          aria-label={`Open issue: ${issue.value.title}`}
+        >
+          <IssueCard issue={issue} isOpen={issue.state === 'open'} linked />
+        </Link>
+      )}
+    </li>
   )
 }
 

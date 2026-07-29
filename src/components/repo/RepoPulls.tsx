@@ -1,12 +1,11 @@
 import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
+import { isDid } from '@atcute/lexicons/syntax'
 import { IconGitPullRequest, IconMessageCircle } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import { useRecordAuthors } from '../../hooks/useRecordAuthors'
+import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoPulls } from '../../hooks/useRepoPulls'
 import { getRecordRkey, type Pull } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
-
-const EMPTY_PULLS: readonly Pull[] = []
 
 type RepoPullsProps = {
   repoOwnerHandle: Handle
@@ -16,7 +15,6 @@ type RepoPullsProps = {
 
 export function RepoPulls({ repoOwnerHandle, repoDid, repoKey }: RepoPullsProps) {
   const { pulls, error } = useRepoPulls(repoDid)
-  const { authors, error: authorsError } = useRecordAuthors(pulls?.items ?? EMPTY_PULLS)
 
   if (error) {
     return <p role="alert">Could not load pulls: {error.message}</p>
@@ -30,47 +28,49 @@ export function RepoPulls({ repoOwnerHandle, repoDid, repoKey }: RepoPullsProps)
     return <p className="text-sm text-ctp-subtext-0">No pulls found.</p>
   }
 
-  const authorResolutionMessage =
-    authorsError === null
-      ? null
-      : 'Some pull requests may not be available until their authors resolve.'
+  return (
+    <ul className="space-y-3" aria-label="Pull requests">
+      {pulls.items.map((pull) => (
+        <PullListItem
+          key={pull.uri}
+          pull={pull}
+          repoKey={repoKey}
+          repoOwnerHandle={repoOwnerHandle}
+        />
+      ))}
+    </ul>
+  )
+}
+
+type PullListItemProps = { pull: Pull; repoKey: string; repoOwnerHandle: Handle }
+
+function PullListItem({ pull, repoKey, repoOwnerHandle }: PullListItemProps) {
+  const authorIdentifier = parseResourceUri(pull.uri).repo
+  const { actor, elementRef } = useVisibleActor(isDid(authorIdentifier) ? authorIdentifier : null)
+  const pullUrl = actor
+    ? `/${repoOwnerHandle}/${repoKey}/pulls/${actor.miniDoc.handle}/${getRecordRkey(pull.uri)}`
+    : undefined
+  const stateClassName =
+    pull.state === 'open'
+      ? 'text-ctp-teal'
+      : pull.state === 'merged'
+        ? 'text-ctp-mauve'
+        : 'text-ctp-overlay-1'
 
   return (
-    <>
-      {authorResolutionMessage && <p role="status">{authorResolutionMessage}</p>}
-      <ul className="space-y-3" aria-label="Pull requests">
-        {pulls.items.map((pull) => {
-          const stateClassName =
-            pull.state === 'open'
-              ? 'text-ctp-teal'
-              : pull.state === 'merged'
-                ? 'text-ctp-mauve'
-                : 'text-ctp-overlay-1'
-          const authorDid = parseResourceUri(pull.uri).repo
-          const pullOwner = authors?.get(authorDid)
-          const pullUrl =
-            pullOwner === undefined
-              ? undefined
-              : `/${repoOwnerHandle}/${repoKey}/pulls/${pullOwner}/${getRecordRkey(pull.uri)}`
-
-          return (
-            <li key={pull.uri}>
-              {pullUrl === undefined ? (
-                <PullCard pull={pull} stateClassName={stateClassName} />
-              ) : (
-                <Link
-                  to={pullUrl}
-                  className="group block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ctp-blue"
-                  aria-label={`Open pull request: ${pull.value.title}`}
-                >
-                  <PullCard pull={pull} stateClassName={stateClassName} linked />
-                </Link>
-              )}
-            </li>
-          )
-        })}
-      </ul>
-    </>
+    <li ref={elementRef}>
+      {pullUrl === undefined ? (
+        <PullCard pull={pull} stateClassName={stateClassName} />
+      ) : (
+        <Link
+          to={pullUrl}
+          className="group block rounded-lg"
+          aria-label={`Open pull request: ${pull.value.title}`}
+        >
+          <PullCard pull={pull} stateClassName={stateClassName} linked />
+        </Link>
+      )}
+    </li>
   )
 }
 
