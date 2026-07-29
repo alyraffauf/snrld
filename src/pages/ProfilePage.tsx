@@ -10,6 +10,13 @@ import { ErrorPage } from '../components/shared/ErrorPage'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
 import { useProfilePage } from '../hooks/useProfilePage'
+import {
+  usePinnedRepos,
+  useProfileRepos,
+  useProfileStrings,
+  useProfileVouches,
+  useStarredRepos,
+} from '../hooks/useProfileSections'
 import { parseProfileSection } from '../lib/profile'
 import { parseHandle } from '../lib/routes'
 
@@ -39,10 +46,43 @@ export function ProfilePage() {
     return <ProfilePageSkeleton />
   }
 
-  const { identity, profile, repos, strings, pinnedRepos, starredRepos, vouches, bskyProfile } =
-    pageData
-  const activeSection = parseProfileSection(searchParams.get('view'))
-  const recentVouches = vouches.items.slice(0, MAX_RECENT_VOUCHES)
+  return (
+    <ProfileContent
+      pageData={pageData}
+      activeSection={parseProfileSection(searchParams.get('view'))}
+    />
+  )
+}
+
+type ProfileContentProps = {
+  activeSection: ReturnType<typeof parseProfileSection>
+  pageData: NonNullable<ReturnType<typeof useProfilePage>['pageData']>
+}
+
+function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
+  const { identity, profile, bskyProfile } = pageData
+  const isOverview = activeSection === 'overview'
+  const { data: pinnedRepos, error: pinnedReposError } = usePinnedRepos(
+    (profile.value.pinnedRepositories ?? []).map((did) => did as `did:${string}:${string}`),
+    isOverview,
+  )
+  const { data: repos, error: reposError } = useProfileRepos(
+    identity.did,
+    activeSection === 'repos',
+  )
+  const { data: strings, error: stringsError } = useProfileStrings(
+    identity.did,
+    activeSection === 'strings',
+  )
+  const { data: starredRepos, error: starredReposError } = useStarredRepos(
+    identity.did,
+    activeSection === 'stars',
+  )
+  const { data: vouches, error: vouchesError } = useProfileVouches(
+    identity.did,
+    isOverview || activeSection === 'vouches',
+  )
+  const recentVouches = vouches?.items.slice(0, MAX_RECENT_VOUCHES) ?? []
 
   return (
     <main>
@@ -57,6 +97,10 @@ export function ProfilePage() {
                 title="Pinned"
                 icon={<IconPin size={14} stroke={1.75} aria-hidden="true" />}
               >
+                {pinnedReposError && <SectionError error={pinnedReposError} />}
+                {pinnedRepos === null && pinnedReposError === null && (
+                  <p>Loading pinned repositories...</p>
+                )}
                 {pinnedRepos?.length === 0 && <p>No repos found.</p>}
                 {pinnedRepos && pinnedRepos.length > 0 && (
                   <div className="grid gap-4 lg:grid-cols-2">
@@ -71,7 +115,9 @@ export function ProfilePage() {
                 title="Recent Vouches"
                 icon={<IconThumbUp size={14} stroke={1.75} aria-hidden="true" />}
               >
-                {recentVouches.length === 0 && <p>No vouches yet.</p>}
+                {vouchesError && <SectionError error={vouchesError} />}
+                {vouches === null && vouchesError === null && <p>Loading vouches...</p>}
+                {vouches !== null && recentVouches.length === 0 && <p>No vouches yet.</p>}
                 {recentVouches.length > 0 && <VouchList vouches={recentVouches} />}
               </ProfileSection>
             </div>
@@ -79,8 +125,10 @@ export function ProfilePage() {
 
           {activeSection === 'repos' && (
             <ProfileSection title="Repositories">
-              {repos.items.length === 0 && <p>No repositories found.</p>}
-              {repos.items.length > 0 && (
+              {reposError && <SectionError error={reposError} />}
+              {repos === null && reposError === null && <p>Loading repositories...</p>}
+              {repos?.items.length === 0 && <p>No repositories found.</p>}
+              {repos && repos.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
                   {repos.items.map((repo) => (
                     <RepoListItem key={repo.uri} handle={identity.handle} repo={repo} />
@@ -92,8 +140,10 @@ export function ProfilePage() {
 
           {activeSection === 'strings' && (
             <ProfileSection title="Strings">
-              {strings.items.length === 0 && <p>No strings found.</p>}
-              {strings.items.length > 0 && (
+              {stringsError && <SectionError error={stringsError} />}
+              {strings === null && stringsError === null && <p>Loading strings...</p>}
+              {strings?.items.length === 0 && <p>No strings found.</p>}
+              {strings && strings.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
                   {strings.items.map((string) => (
                     <StringListItem
@@ -109,9 +159,11 @@ export function ProfilePage() {
 
           {activeSection === 'stars' && (
             <ProfileSection title="Stars">
-              {starredRepos.length === 0 && <p>No stars found.</p>}
+              {starredReposError && <SectionError error={starredReposError} />}
+              {starredRepos === null && starredReposError === null && <p>Loading stars...</p>}
+              {starredRepos?.length === 0 && <p>No stars found.</p>}
 
-              {starredRepos.length > 0 && (
+              {starredRepos && starredRepos.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
                   {starredRepos.map(({ repo, handle }) => (
                     <RepoListItem key={repo.uri} handle={handle} repo={repo} />
@@ -123,12 +175,18 @@ export function ProfilePage() {
 
           {activeSection === 'vouches' && (
             <ProfileSection title="Vouches">
-              {vouches.items.length === 0 && <p>No vouches yet.</p>}
-              {vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
+              {vouchesError && <SectionError error={vouchesError} />}
+              {vouches === null && vouchesError === null && <p>Loading vouches...</p>}
+              {vouches?.items.length === 0 && <p>No vouches yet.</p>}
+              {vouches && vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
             </ProfileSection>
           )}
         </div>
       </PageContainer>
     </main>
   )
+}
+
+function SectionError({ error }: { error: Error }) {
+  return <p role="alert">Could not load this section: {error.message}</p>
 }
