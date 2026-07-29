@@ -23,7 +23,12 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
   return (
     <article className="border-0 bg-transparent p-0 shadow-none">
       <div className="flex items-center gap-4">
-        <ProfileAvatar miniDoc={miniDoc} profile={profile} bskyProfile={blueskyProfile} />
+        <ProfileAvatar
+          miniDoc={miniDoc}
+          profile={profile}
+          bskyProfile={blueskyProfile}
+          loading="eager"
+        />
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

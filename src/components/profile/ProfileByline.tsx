@@ -38,6 +38,7 @@ export function ProfileByline({
               miniDoc={miniDoc}
               profile={profile}
               bskyProfile={bskyProfile}
+              loading="eager"
               size="small"
             />
             {miniDoc.handle}

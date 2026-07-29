@@ -8,6 +8,7 @@ type ProfileAvatarProps = {
   profile: Profile
   bskyProfile?: AppBskyActorProfile.Main | null
   avatarUrl?: string | null
+  loading?: 'eager' | 'lazy'
   size?: 'small' | 'medium'
 }
 
@@ -16,6 +17,7 @@ export function ProfileAvatar({
   profile,
   bskyProfile,
   avatarUrl,
+  loading = 'lazy',
   size = 'medium',
 }: ProfileAvatarProps) {
   const avatar = profile.value.avatar ?? bskyProfile?.avatar
@@ -28,6 +30,8 @@ export function ProfileAvatar({
       <img
         src={resolvedAvatarUrl}
         alt={`${miniDoc.handle} avatar`}
+        loading={loading}
+        decoding="async"
         className={`${sizeClass} shrink-0 rounded-full object-cover ring-2 ring-ctp-surface-1`}
       />
     )
