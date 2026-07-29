@@ -9,8 +9,9 @@ import { parseRepoSection } from '../components/repo/repoSections'
 import { RepoTabs } from '../components/repo/RepoTabs'
 import { RepoView } from '../components/repo/RepoView'
 import { RepoWorkspace } from '../components/repo/RepoWorkspace'
-import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { ErrorPage } from '../components/shared/ErrorPage'
+import { LoadingPanel } from '../components/shared/LoadingPanel'
+import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { useRepoPage } from '../hooks/useRepoPage'
 import { parseHandle } from '../lib/routes'
@@ -21,18 +22,25 @@ export function RepoPage() {
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
   const [hasVisitedCode, setHasVisitedCode] = useState(false)
-  const { pageData, error } = useRepoPage(handle, routeRepo)
-
   const requestedSection = searchParams.get('view')
+  const shouldLoadTree =
+    requestedSection !== 'issues' &&
+    requestedSection !== 'pulls' &&
+    requestedSection !== 'pipelines'
+  const { pageData, error, rootTree, rootTreeError } = useRepoPage(
+    handle,
+    routeRepo,
+    shouldLoadTree,
+  )
 
   useEffect(() => {
     const defaultIsCode =
-      requestedSection === null && pageData !== null && pageData.rootTree.readme === undefined
+      requestedSection === null && rootTree !== null && rootTree.readme === undefined
 
     if (requestedSection === 'code' || defaultIsCode) {
       setHasVisitedCode(true)
     }
-  }, [requestedSection, pageData])
+  }, [requestedSection, rootTree])
 
   if (handle === null || routeRepo === undefined) {
     return (
@@ -54,10 +62,14 @@ export function RepoPage() {
     return <RepoPageSkeleton />
   }
 
-  const { actor, repo, rootTree } = pageData
+  const { actor, repo } = pageData
   const { miniDoc: identity, profile, bskyProfile } = actor
-  const activeSection = parseRepoSection(requestedSection, rootTree.readme !== undefined)
+  const hasReadme = rootTree === null || rootTree.readme !== undefined
+  const activeSection = parseRepoSection(requestedSection, hasReadme)
   const shouldRenderWorkspace = hasVisitedCode || activeSection === 'code'
+  const isContentSection = activeSection === 'readme' || activeSection === 'code'
+  const shouldShowContentLoading = isContentSection && rootTree === null && rootTreeError === null
+  const shouldShowContentError = isContentSection && rootTreeError !== null
 
   return (
     <main>
@@ -74,11 +86,11 @@ export function RepoPage() {
           <RepoTabs
             activeSection={activeSection}
             handle={identity.handle}
-            hasReadme={rootTree.readme !== undefined}
+            hasReadme={hasReadme}
             repoKey={getRepoRkey(repo)}
           />
 
-          {activeSection === 'readme' && (
+          {activeSection === 'readme' && rootTree !== null && (
             <RepoReadme
               readme={rootTree.readme}
               repositoryName={getRepoRkey(repo)}
@@ -86,10 +98,16 @@ export function RepoPage() {
               repositoryRef={rootTree.ref}
             />
           )}
-          {shouldRenderWorkspace && (
+          {shouldRenderWorkspace && rootTree !== null && (
             <div hidden={activeSection !== 'code'}>
               <RepoWorkspace repo={repo} initialTree={rootTree} />
             </div>
+          )}
+          {shouldShowContentLoading && (
+            <LoadingPanel label="Loading repository contents" className="h-96" />
+          )}
+          {shouldShowContentError && rootTreeError !== null && (
+            <p role="alert">Could not load repository contents: {rootTreeError.message}</p>
           )}
           {activeSection === 'issues' && repo.value.repoDid !== undefined && (
             <RepoIssues
