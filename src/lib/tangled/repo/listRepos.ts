@@ -8,10 +8,16 @@ import { getRepoRkey } from './repoIdentity'
 import type { Repo, RepoList } from './types'
 import { validateRepo } from './validators'
 
-export async function listRepos(did: Did): Promise<RepoList> {
+export type ListReposOptions = {
+  cursor?: string
+  limit?: number
+  order?: 'asc' | 'desc'
+}
+
+export async function listRepos(did: Did, options: ListReposOptions = {}): Promise<RepoList> {
   const response = await ok(
     rpc.get('sh.tangled.repo.listRepos', {
-      params: { subject: did },
+      params: { subject: did, cursor: options.cursor, limit: options.limit, order: options.order },
     }),
   )
 

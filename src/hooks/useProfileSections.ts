@@ -5,19 +5,33 @@ import { listVouches, type VouchList } from '../lib/tangled/graph'
 import { getRepoByRepoDid, listRepos, type Repo, type RepoList } from '../lib/tangled/repo'
 import { listStrings, type StringList } from '../lib/tangled/string'
 import { useDeferredResource } from './useDeferredResource'
+import { useCursorList } from './useCursorList'
 
 type StarredRepo = { handle: Handle; repo: Repo }
+const PROFILE_LIST_LIMIT = 20
 
 export function useProfileRepos(did: Did, isEnabled: boolean) {
-  return useDeferredResource(did, isEnabled, loadRepos)
+  return useCursorList(
+    isEnabled ? did : null,
+    (options) => listRepos(did, options),
+    PROFILE_LIST_LIMIT,
+  )
 }
 
 export function useProfileStrings(did: Did, isEnabled: boolean) {
-  return useDeferredResource(did, isEnabled, listStrings)
+  return useCursorList(
+    isEnabled ? did : null,
+    (options) => listStrings(did, options),
+    PROFILE_LIST_LIMIT,
+  )
 }
 
 export function useProfileVouches(did: Did, isEnabled: boolean) {
-  return useDeferredResource(did, isEnabled, loadVouches)
+  return useCursorList(
+    isEnabled ? did : null,
+    (options) => listVouches(did, options),
+    PROFILE_LIST_LIMIT,
+  )
 }
 
 export function usePinnedRepos(repoDids: readonly Did[], isEnabled: boolean) {
@@ -25,7 +39,11 @@ export function usePinnedRepos(repoDids: readonly Did[], isEnabled: boolean) {
 }
 
 export function useStarredRepos(did: Did, isEnabled: boolean) {
-  return useDeferredResource(did, isEnabled, loadStarredRepos)
+  return useCursorList(
+    isEnabled ? did : null,
+    (options) => loadStarredRepos(did, options),
+    PROFILE_LIST_LIMIT,
+  )
 }
 
 async function loadPinnedRepos(repoDids: string): Promise<Repo[]> {
@@ -40,20 +58,13 @@ async function loadPinnedRepos(repoDids: string): Promise<Repo[]> {
   )
 }
 
-function loadRepos(did: string): Promise<RepoList> {
-  return listRepos(did as Did)
-}
-
-function loadVouches(did: string): Promise<VouchList> {
-  return listVouches(did as Did)
-}
-
-async function loadStarredRepos(did: string): Promise<StarredRepo[]> {
-  const stars = await listStarsBy(did as Did)
+async function loadStarredRepos(did: Did, options: { cursor?: string; limit: number }) {
+  const stars = await listStarsBy(did, options)
   const results = await Promise.allSettled(getRepoDidsFromStars(stars).map(loadStarredRepo))
-  return results.flatMap((result) =>
+  const items = results.flatMap((result) =>
     result.status === 'fulfilled' && result.value !== null ? [result.value] : [],
   )
+  return { items, cursor: stars.cursor }
 }
 
 async function loadStarredRepo(repoDid: Did): Promise<StarredRepo | null> {

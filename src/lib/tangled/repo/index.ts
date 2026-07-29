@@ -14,6 +14,7 @@ export type { ListIssuesOptions } from './listIssues'
 export { listPulls } from './listPulls'
 export type { ListPullsOptions } from './listPulls'
 export { listRepos } from './listRepos'
+export type { ListReposOptions } from './listRepos'
 export { getRecordRkey } from './recordIdentity'
 export { getRepoName, getRepoRkey } from './repoIdentity'
 export type {

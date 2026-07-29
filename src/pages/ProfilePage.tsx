@@ -7,6 +7,7 @@ import { ProfileSection } from '../components/profile/ProfileSection'
 import { ProfileTabs } from '../components/profile/ProfileTabs'
 import { RepoListItem } from '../components/repo/RepoListItem'
 import { ErrorPage } from '../components/shared/ErrorPage'
+import { LoadMoreButton } from '../components/shared/LoadMoreButton'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
 import { useProfilePage } from '../hooks/useProfilePage'
@@ -66,22 +67,34 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
     (profile.value.pinnedRepositories ?? []).map((did) => did as `did:${string}:${string}`),
     isOverview,
   )
-  const { data: repos, error: reposError } = useProfileRepos(
-    identity.did,
-    activeSection === 'repos',
-  )
-  const { data: strings, error: stringsError } = useProfileStrings(
-    identity.did,
-    activeSection === 'strings',
-  )
-  const { data: starredRepos, error: starredReposError } = useStarredRepos(
-    identity.did,
-    activeSection === 'stars',
-  )
-  const { data: vouches, error: vouchesError } = useProfileVouches(
-    identity.did,
-    isOverview || activeSection === 'vouches',
-  )
+  const {
+    data: repos,
+    error: reposError,
+    hasMore: hasMoreRepos,
+    isLoadingMore: isLoadingMoreRepos,
+    loadMore: loadMoreRepos,
+  } = useProfileRepos(identity.did, activeSection === 'repos')
+  const {
+    data: strings,
+    error: stringsError,
+    hasMore: hasMoreStrings,
+    isLoadingMore: isLoadingMoreStrings,
+    loadMore: loadMoreStrings,
+  } = useProfileStrings(identity.did, activeSection === 'strings')
+  const {
+    data: starredRepos,
+    error: starredReposError,
+    hasMore: hasMoreStars,
+    isLoadingMore: isLoadingMoreStars,
+    loadMore: loadMoreStars,
+  } = useStarredRepos(identity.did, activeSection === 'stars')
+  const {
+    data: vouches,
+    error: vouchesError,
+    hasMore: hasMoreVouches,
+    isLoadingMore: isLoadingMoreVouches,
+    loadMore: loadMoreVouches,
+  } = useProfileVouches(identity.did, isOverview || activeSection === 'vouches')
   const recentVouches = vouches?.items.slice(0, MAX_RECENT_VOUCHES) ?? []
 
   return (
@@ -135,6 +148,13 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
                   ))}
                 </div>
               )}
+              {hasMoreRepos && (
+                <LoadMoreButton
+                  label="Repositories"
+                  isLoading={isLoadingMoreRepos}
+                  onClick={() => void loadMoreRepos()}
+                />
+              )}
             </ProfileSection>
           )}
 
@@ -154,6 +174,13 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
                   ))}
                 </div>
               )}
+              {hasMoreStrings && (
+                <LoadMoreButton
+                  label="Strings"
+                  isLoading={isLoadingMoreStrings}
+                  onClick={() => void loadMoreStrings()}
+                />
+              )}
             </ProfileSection>
           )}
 
@@ -161,14 +188,21 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
             <ProfileSection title="Stars">
               {starredReposError && <SectionError error={starredReposError} />}
               {starredRepos === null && starredReposError === null && <p>Loading stars...</p>}
-              {starredRepos?.length === 0 && <p>No stars found.</p>}
+              {starredRepos?.items.length === 0 && <p>No stars found.</p>}
 
-              {starredRepos && starredRepos.length > 0 && (
+              {starredRepos && starredRepos.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
-                  {starredRepos.map(({ repo, handle }) => (
+                  {starredRepos.items.map(({ repo, handle }) => (
                     <RepoListItem key={repo.uri} handle={handle} repo={repo} />
                   ))}
                 </div>
+              )}
+              {hasMoreStars && (
+                <LoadMoreButton
+                  label="Stars"
+                  isLoading={isLoadingMoreStars}
+                  onClick={() => void loadMoreStars()}
+                />
               )}
             </ProfileSection>
           )}
@@ -179,6 +213,13 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
               {vouches === null && vouchesError === null && <p>Loading vouches...</p>}
               {vouches?.items.length === 0 && <p>No vouches yet.</p>}
               {vouches && vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
+              {hasMoreVouches && (
+                <LoadMoreButton
+                  label="Vouches"
+                  isLoading={isLoadingMoreVouches}
+                  onClick={() => void loadMoreVouches()}
+                />
+              )}
             </ProfileSection>
           )}
         </div>
