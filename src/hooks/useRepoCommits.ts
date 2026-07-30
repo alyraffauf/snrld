@@ -1,31 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import type { Repo } from '../lib/tangled'
 import { getRecentCommits, type RepoCommit } from '../lib/tangled/repo'
+import { useDeferredResource } from './useDeferredResource'
 
 export function useRepoCommits(repo: Repo, branch?: string) {
-  const [commits, setCommits] = useState<RepoCommit[] | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-
-  useEffect(() => {
-    let isCancelled = false
-
-    async function loadCommits() {
-      setError(null)
-      try {
-        const response = await getRecentCommits(repo, { branch })
-        if (!isCancelled) setCommits(response)
-      } catch (caught) {
-        if (!isCancelled) {
-          setError(caught instanceof Error ? caught : new Error('Unable to load repository log'))
-        }
-      }
-    }
-
-    void loadCommits()
-    return () => {
-      isCancelled = true
-    }
-  }, [branch, repo])
+  const loadCommits = useCallback(
+    (): Promise<RepoCommit[]> => getRecentCommits(repo, { branch }),
+    [branch, repo],
+  )
+  const key = `${repo.uri}:${branch ?? 'default'}`
+  const { data: commits, error } = useDeferredResource(key, true, loadCommits)
 
   return { commits, error }
 }

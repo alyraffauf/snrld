@@ -7,11 +7,11 @@ import { rpc } from '../client'
 import { getDefaultBranch } from './getDefaultBranch'
 import type { Repo } from './types'
 
-export async function getRepoTree(repo: Repo, path = ''): Promise<RepoTree> {
-  const defaultBranch = await getDefaultBranch(repo)
+export async function getRepoTree(repo: Repo, path = '', ref?: string): Promise<RepoTree> {
+  const defaultBranch = ref ?? (await getDefaultBranch(repo)).name
   const treeResponse = await ok(
     rpc.get('sh.tangled.repo.tree', {
-      params: { repo: repo.uri, ref: defaultBranch.name, path },
+      params: { repo: repo.uri, ref: defaultBranch, path },
     }),
   )
 

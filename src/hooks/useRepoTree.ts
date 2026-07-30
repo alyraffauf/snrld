@@ -40,7 +40,7 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
       setError(null)
 
       try {
-        const response = await getRepoTree(repo, path)
+        const response = await getRepoTree(repo, path, initialTree?.ref)
         cache.current.set(path, response)
 
         if (!isCancelled) {
@@ -58,7 +58,7 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
     return () => {
       isCancelled = true
     }
-  }, [path, repo])
+  }, [initialTree?.ref, path, repo])
 
   return { error, tree }
 }

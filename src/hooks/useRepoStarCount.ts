@@ -1,29 +1,16 @@
 import type { Did } from '@atcute/lexicons'
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { countStars } from '../lib/tangled/feed'
+import { useDeferredResource } from './useDeferredResource'
 
 export function useRepoStarCount(repoDid?: Did, isEnabled = true) {
-  const [starCount, setStarCount] = useState<number | null>(null)
-  const [hasFailed, setHasFailed] = useState(false)
+  const loadStarCount = useCallback((): Promise<number> => {
+    if (repoDid === undefined) throw new Error('Repository DID is required')
 
-  useEffect(() => {
-    setStarCount(null)
-    setHasFailed(false)
-    if (repoDid === undefined || !isEnabled) return
+    return countStars(repoDid)
+  }, [repoDid])
+  const key = isEnabled ? (repoDid ?? null) : null
+  const { data: starCount, error } = useDeferredResource(key, true, loadStarCount)
 
-    let isCancelled = false
-    countStars(repoDid)
-      .then((count) => {
-        if (!isCancelled) setStarCount(count)
-      })
-      .catch(() => {
-        if (!isCancelled) setHasFailed(true)
-      })
-
-    return () => {
-      isCancelled = true
-    }
-  }, [isEnabled, repoDid])
-
-  return { starCount, hasFailed }
+  return { starCount, hasFailed: error !== null }
 }
