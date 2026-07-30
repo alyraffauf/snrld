@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "bun run generate:og && tsc -b && vite build",
+    "generate:og": "bun run scripts/generate-og-image.ts",
     "lint": "oxlint",
     "preview": "vite preview",
     "format": "prettier --write .",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
     "@rolldown/plugin-babel": "0.2.3",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.1.2",
     "@types/react": "^19.2.17",
@@ -36,6 +38,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "oxlint": "^1.76.0",
     "prettier": "^3.9.6",
+    "satori": "^0.29.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.1.5"
