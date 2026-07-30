@@ -1,6 +1,11 @@
 import { IconPin, IconThumbUp } from '@tabler/icons-react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
+import {
+  ProfilePageSkeleton,
+  ProfileRepositorySkeletons,
+  ProfileStringSkeletons,
+  ProfileVouchSkeletons,
+} from '../components/shared/PageSkeletons'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileHeader } from '../components/profile/ProfileHeader'
 import { ProfileSection } from '../components/profile/ProfileSection'
@@ -63,9 +68,12 @@ type ProfileContentProps = {
 function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
   const { identity, profile, bskyProfile } = pageData
   const isOverview = activeSection === 'overview'
+  const pinnedRepoDids = (profile.value.pinnedRepositories ?? []).map(
+    (did) => did as `did:${string}:${string}`,
+  )
   const { data: pinnedRepos, error: pinnedReposError } = usePinnedRepos(
-    (profile.value.pinnedRepositories ?? []).map((did) => did as `did:${string}:${string}`),
-    isOverview,
+    pinnedRepoDids,
+    isOverview && pinnedRepoDids.length > 0,
   )
   const {
     data: repos,
@@ -111,10 +119,12 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
                 icon={<IconPin size={14} stroke={1.75} aria-hidden="true" />}
               >
                 {pinnedReposError && <SectionError error={pinnedReposError} />}
-                {pinnedRepos === null && pinnedReposError === null && (
-                  <p>Loading pinned repositories...</p>
+                {pinnedRepos === null && pinnedReposError === null && pinnedRepoDids.length > 0 && (
+                  <ProfileRepositorySkeletons count={2} />
                 )}
-                {pinnedRepos?.length === 0 && <p>No repos found.</p>}
+                {(pinnedRepos?.length === 0 || pinnedRepoDids.length === 0) && (
+                  <p>No repos found.</p>
+                )}
                 {pinnedRepos && pinnedRepos.length > 0 && (
                   <div className="grid gap-4 lg:grid-cols-2">
                     {pinnedRepos.map((repo) => (
@@ -129,7 +139,7 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
                 icon={<IconThumbUp size={14} stroke={1.75} aria-hidden="true" />}
               >
                 {vouchesError && <SectionError error={vouchesError} />}
-                {vouches === null && vouchesError === null && <p>Loading vouches...</p>}
+                {vouches === null && vouchesError === null && <ProfileVouchSkeletons count={2} />}
                 {vouches !== null && recentVouches.length === 0 && <p>No vouches yet.</p>}
                 {recentVouches.length > 0 && <VouchList vouches={recentVouches} />}
               </ProfileSection>
@@ -139,7 +149,7 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
           {activeSection === 'repos' && (
             <ProfileSection title="Repositories">
               {reposError && <SectionError error={reposError} />}
-              {repos === null && reposError === null && <p>Loading repositories...</p>}
+              {repos === null && reposError === null && <ProfileRepositorySkeletons />}
               {repos?.items.length === 0 && <p>No repositories found.</p>}
               {repos && repos.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
@@ -161,7 +171,7 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
           {activeSection === 'strings' && (
             <ProfileSection title="Strings">
               {stringsError && <SectionError error={stringsError} />}
-              {strings === null && stringsError === null && <p>Loading strings...</p>}
+              {strings === null && stringsError === null && <ProfileStringSkeletons />}
               {strings?.items.length === 0 && <p>No strings found.</p>}
               {strings && strings.items.length > 0 && (
                 <div className="grid gap-4 lg:grid-cols-2">
@@ -187,7 +197,9 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
           {activeSection === 'stars' && (
             <ProfileSection title="Stars">
               {starredReposError && <SectionError error={starredReposError} />}
-              {starredRepos === null && starredReposError === null && <p>Loading stars...</p>}
+              {starredRepos === null && starredReposError === null && (
+                <ProfileRepositorySkeletons />
+              )}
               {starredRepos?.items.length === 0 && <p>No stars found.</p>}
 
               {starredRepos && starredRepos.items.length > 0 && (
@@ -210,7 +222,7 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
           {activeSection === 'vouches' && (
             <ProfileSection title="Vouches">
               {vouchesError && <SectionError error={vouchesError} />}
-              {vouches === null && vouchesError === null && <p>Loading vouches...</p>}
+              {vouches === null && vouchesError === null && <ProfileVouchSkeletons />}
               {vouches?.items.length === 0 && <p>No vouches yet.</p>}
               {vouches && vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
               {hasMoreVouches && (

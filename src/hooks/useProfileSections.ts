@@ -35,7 +35,7 @@ export function useProfileVouches(did: Did, isEnabled: boolean) {
 }
 
 export function usePinnedRepos(repoDids: readonly Did[], isEnabled: boolean) {
-  return useDeferredResource(repoDids.join(','), isEnabled, loadPinnedRepos)
+  return useDeferredResource(repoDids.join(','), isEnabled, loadPinnedRepos, { cache: true })
 }
 
 export function useStarredRepos(did: Did, isEnabled: boolean) {

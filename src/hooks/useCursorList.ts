@@ -24,16 +24,20 @@ export function useCursorList<T>(
   const [state, setState] = useState<CursorListState<T> | null>(null)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const loadRef = useRef(load)
+  const stateRef = useRef(state)
+  const inFlightRequests = useRef(new Map<string, Promise<CursorList<T>>>())
   loadRef.current = load
+  stateRef.current = state
 
   useEffect(() => {
     if (key === null) return
+    if (stateRef.current?.key === key && stateRef.current.data !== undefined) return
 
     let isCancelled = false
     setState({ key })
 
-    void loadRef
-      .current({ limit })
+    const request = getRequest(key, () => loadRef.current({ limit }), inFlightRequests.current)
+    void request
       .then((data) => {
         if (!isCancelled) setState({ key, data })
       })
@@ -94,4 +98,17 @@ export function useCursorList<T>(
     isLoadingMore,
     loadMore,
   }
+}
+
+function getRequest<T>(
+  key: string,
+  load: () => Promise<T>,
+  requests: Map<string, Promise<T>>,
+): Promise<T> {
+  const existingRequest = requests.get(key)
+  if (existingRequest !== undefined) return existingRequest
+
+  const request = load().finally(() => requests.delete(key))
+  requests.set(key, request)
+  return request
 }
