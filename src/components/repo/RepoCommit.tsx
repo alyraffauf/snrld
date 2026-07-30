@@ -1,10 +1,13 @@
 import { type RepoCommit } from '../../lib/tangled/repo'
+import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
+import { PipelineWorkflowStatuses } from './PipelineWorkflowStatuses'
 
 type RepoCommitProps = {
   commit: RepoCommit
+  pipelines?: readonly Pipeline[]
 }
 
-export function RepoCommit({ commit }: RepoCommitProps) {
+export function RepoCommit({ commit, pipelines = [] }: RepoCommitProps) {
   return (
     <li className="flex flex-col gap-2 px-4 py-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ctp-subtext-0">
@@ -16,6 +19,7 @@ export function RepoCommit({ commit }: RepoCommitProps) {
       <p className="whitespace-pre-wrap break-words text-base leading-snug text-ctp-subtext-1">
         {commit.message.trim()}
       </p>
+      {pipelines.length > 0 && <PipelineWorkflowStatuses pipelines={pipelines} />}
     </li>
   )
 }

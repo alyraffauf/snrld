@@ -5,6 +5,7 @@ import { ProfileByline } from '../components/profile/ProfileByline'
 import { PullChanges } from '../components/repo/PullChanges'
 import { RepoRecordView } from '../components/repo/RepoRecordView'
 import { IssueComments } from '../components/repo/IssueComments'
+import { PullPipelineStatuses } from '../components/repo/PullPipelineStatuses'
 import { ErrorPage } from '../components/shared/ErrorPage'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { Tabs } from '../components/shared/Tabs'
@@ -82,7 +83,16 @@ export function PullPage() {
           <RepoRecordView
             author={recordAuthor}
             {...pull.value}
-            details={<PullBranches pull={pull.value} />}
+            details={
+              <>
+                <PullBranches pull={pull.value} />
+                <PullPipelineStatuses
+                  pullUri={pull.uri}
+                  repoDid={repo.value.repoDid}
+                  spindle={repo.value.spindle}
+                />
+              </>
+            }
           />
           <Tabs
             ariaLabel="Pull request sections"

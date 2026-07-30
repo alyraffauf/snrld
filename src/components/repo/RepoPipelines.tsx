@@ -4,6 +4,7 @@ import { useRepoPipelines } from '../../hooks/useRepoPipelines'
 import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
 import { LoadMoreButton } from '../shared/LoadMoreButton'
 import { SurfaceCard } from '../shared/SurfaceCard'
+import { PipelineWorkflowStatuses } from './PipelineWorkflowStatuses'
 
 export function RepoPipelines({
   isActive,
@@ -76,24 +77,25 @@ function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
   return (
     <SurfaceCard as="article" className="p-4">
       <header className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 font-mono text-sm text-ctp-text">
-          <IconRoute size={16} stroke={1.75} aria-hidden="true" />
-          {getTriggerName(pipeline)}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 font-mono text-sm text-ctp-text">
+            <IconRoute size={16} stroke={1.75} aria-hidden="true" />
+            {getTriggerName(pipeline)}
+          </div>
+          <p className="mt-1 truncate font-mono text-xs text-ctp-overlay-1">
+            {getTriggerReference(pipeline)}
+          </p>
         </div>
-        <span className="font-mono text-xs text-ctp-overlay-1">
-          {getTriggerReference(pipeline)}
-        </span>
+        <p className="shrink-0 font-mono text-xs text-ctp-overlay-1">
+          commit{' '}
+          <code className="text-ctp-lavender" title={pipeline.commit}>
+            {pipeline.commit.slice(0, 7)}
+          </code>
+        </p>
       </header>
-      <ul className="mt-4 flex flex-wrap gap-2" aria-label="Workflow statuses">
-        {pipeline.workflows.map((workflow) => (
-          <li
-            key={workflow.id}
-            className={`rounded px-2 py-1 font-mono text-xs ${getStatusClass(workflow.status)}`}
-          >
-            {workflow.name}: {workflow.status}
-          </li>
-        ))}
-      </ul>
+      <div className="mt-4">
+        <PipelineWorkflowStatuses pipelines={[pipeline]} />
+      </div>
     </SurfaceCard>
   )
 }
@@ -110,11 +112,4 @@ function getTriggerReference(pipeline: Pipeline) {
   if (trigger.$type === 'sh.tangled.ci.trigger#push') return trigger.ref
   if (trigger.$type === 'sh.tangled.ci.trigger#pullRequest') return trigger.targetBranch
   return trigger.ref ?? trigger.sha.slice(0, 7)
-}
-
-function getStatusClass(status: string | undefined) {
-  if (status === 'success') return 'bg-ctp-green/20 text-ctp-green'
-  if (status === 'failed' || status === 'timeout') return 'bg-ctp-red/20 text-ctp-red'
-  if (status === 'running') return 'bg-ctp-blue/20 text-ctp-blue'
-  return 'bg-ctp-surface-1 text-ctp-subtext-0'
 }
