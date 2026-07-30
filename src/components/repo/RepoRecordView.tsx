@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import type { ResolvedActor } from '../../lib/actor'
 import { ProfileAvatar } from '../profile/ProfileAvatar'
 import { MarkdownContent } from '../shared/MarkdownContent'
@@ -8,6 +9,7 @@ type RepoRecordViewProps = {
   author: ResolvedActor
   body?: string
   createdAt: string
+  details?: ReactNode
   mentions?: string[]
   references?: string[]
   title: string
@@ -17,6 +19,7 @@ export function RepoRecordView({
   author,
   body,
   createdAt,
+  details,
   mentions,
   references,
   title,
@@ -69,6 +72,7 @@ export function RepoRecordView({
             <RecordCount label="References" count={references.length} />
           )}
         </dl>
+        {details && <div className="mt-4">{details}</div>}
       </header>
 
       {body && (

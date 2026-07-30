@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom'
+import { IconArrowRight, IconGitBranch } from '@tabler/icons-react'
 import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { PullChanges } from '../components/repo/PullChanges'
@@ -74,8 +75,11 @@ export function PullPage() {
           ]}
         />
         <section className="space-y-6">
-          <PullBranches pull={pull.value} />
-          <RepoRecordView author={recordAuthor} {...pull.value} />
+          <RepoRecordView
+            author={recordAuthor}
+            {...pull.value}
+            details={<PullBranches pull={pull.value} />}
+          />
           <Tabs
             ariaLabel="Pull request sections"
             items={[
@@ -104,8 +108,30 @@ export function PullPage() {
 function PullBranches({ pull }: { pull: PullPageData['record']['value'] }) {
   const source = pull.source?.branch ?? 'unknown source'
   return (
-    <p className="font-mono text-sm text-ctp-subtext-0">
-      {source} <span aria-hidden="true">→</span> {pull.target.branch}
-    </p>
+    <div
+      className="flex flex-wrap items-center gap-3 rounded bg-ctp-surface-0 px-3 py-2"
+      aria-label="Branches"
+    >
+      <Branch branch={source} label="Source" />
+      <IconArrowRight size={18} stroke={1.75} className="text-ctp-overlay-1" aria-hidden="true" />
+      <Branch branch={pull.target.branch} label="Target" />
+    </div>
+  )
+}
+
+function Branch({ branch, label }: { branch: string; label: string }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-xs font-medium text-ctp-overlay-1">{label}</p>
+      <p className="mt-1 flex items-center gap-2 font-mono text-sm text-ctp-text">
+        <IconGitBranch
+          size={16}
+          stroke={1.75}
+          className="shrink-0 text-ctp-lavender"
+          aria-hidden="true"
+        />
+        <span className="truncate">{branch}</span>
+      </p>
+    </div>
   )
 }
