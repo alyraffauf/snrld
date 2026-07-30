@@ -5,12 +5,15 @@ import { RepoSearch } from '../components/repo/RepoSearch'
 import { RepoSearchResult } from '../components/repo/RepoSearchResult'
 import { PageContainer } from '../components/layout/PageContainer'
 import { useRepoSearch } from '../hooks/useRepoSearch'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useVisibleActor } from '../hooks/useVisibleActor'
 import type { Repo } from '../lib/tangled'
 
 const RESULTS_LIMIT = 50
 
 export function SearchPage() {
+  useDocumentTitle('Search')
+
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')?.trim() ?? ''
   const { results, isSearching, error } = useRepoSearch(query, {

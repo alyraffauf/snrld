@@ -16,6 +16,7 @@ import { LoadMoreButton } from '../components/shared/LoadMoreButton'
 import { StringListItem } from '../components/string/StringListItem'
 import { VouchList } from '../components/vouch/VouchList'
 import { useProfilePage } from '../hooks/useProfilePage'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import {
   usePinnedRepos,
   useProfileRepos,
@@ -32,6 +33,7 @@ export function ProfilePage() {
   const { handle: routeHandle } = useParams()
   const [searchParams] = useSearchParams()
   const handle = parseHandle(routeHandle)
+  useDocumentTitle(handle ?? undefined)
   const { pageData, error } = useProfilePage(handle)
 
   if (handle === null) {

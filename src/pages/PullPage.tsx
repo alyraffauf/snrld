@@ -9,6 +9,7 @@ import { ErrorPage } from '../components/shared/ErrorPage'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { Tabs } from '../components/shared/Tabs'
 import { useRepoRecordPage } from '../hooks/useRepoRecordPage'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { loadPullPage, type PullPageData } from '../lib/pullPage'
 import { parseHandle } from '../lib/routes'
 import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
@@ -30,6 +31,9 @@ export function PullPage() {
     repoKey,
     repoOwnerHandle,
   })
+  useDocumentTitle(
+    pageData ? `${pageData.record.value.title} · ${getRepoName(pageData.repo)}` : undefined,
+  )
 
   if (
     repoOwnerHandle === null ||

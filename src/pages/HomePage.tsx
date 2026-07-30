@@ -1,7 +1,10 @@
 import { RepoSearch } from '../components/repo/RepoSearch'
 import { PageContainer } from '../components/layout/PageContainer'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export function HomePage() {
+  useDocumentTitle()
+
   return (
     <main>
       <PageContainer className="flex min-h-[calc(100vh-12rem)] items-center justify-center py-8">

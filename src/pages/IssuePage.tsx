@@ -6,6 +6,7 @@ import { ErrorPage } from '../components/shared/ErrorPage'
 import { RepoRecordView } from '../components/repo/RepoRecordView'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { useRepoRecordPage } from '../hooks/useRepoRecordPage'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { loadIssuePage } from '../lib/issuePage'
 import { parseHandle } from '../lib/routes'
 import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
@@ -26,6 +27,9 @@ export function IssuePage() {
     repoKey,
     repoOwnerHandle,
   })
+  useDocumentTitle(
+    pageData ? `${pageData.record.value.title} · ${getRepoName(pageData.repo)}` : undefined,
+  )
 
   if (
     repoOwnerHandle === null ||

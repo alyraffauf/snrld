@@ -14,6 +14,7 @@ import { LoadingPanel } from '../components/shared/LoadingPanel'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
 import { useRepoPage } from '../hooks/useRepoPage'
 import { useRepoRootTree } from '../hooks/useRepoRootTree'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { parseHandle } from '../lib/routes'
 import { getRepoName, getRepoRkey } from '../lib/tangled/repo'
 
@@ -27,6 +28,9 @@ export function RepoPage() {
     requestedSection !== 'pulls' &&
     requestedSection !== 'pipelines'
   const { pageData, error } = useRepoPage(handle, routeRepo)
+  useDocumentTitle(
+    pageData ? `${pageData.actor.miniDoc.handle}/${getRepoName(pageData.repo)}` : undefined,
+  )
   const { rootTree, error: rootTreeError } = useRepoRootTree(pageData?.repo ?? null, shouldLoadTree)
 
   if (handle === null || routeRepo === undefined) {

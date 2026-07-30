@@ -4,12 +4,14 @@ import { ProfilePageSkeleton } from '../components/shared/PageSkeletons'
 import { ErrorPage } from '../components/shared/ErrorPage'
 import { StringView } from '../components/string/StringView'
 import { useStringPage } from '../hooks/useStringPage'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { parseHandle } from '../lib/routes'
 
 export function StringPage() {
   const { handle: routeHandle, string: routeString } = useParams()
   const handle = parseHandle(routeHandle)
   const { pageData, error } = useStringPage(handle, routeString)
+  useDocumentTitle(pageData?.stringRecord.value.filename)
 
   if (handle === null || routeString === undefined) {
     return <ErrorPage title="String not found" message="That string address is not valid." />
