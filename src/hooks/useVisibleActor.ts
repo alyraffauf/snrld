@@ -1,11 +1,12 @@
 import type { Did } from '@atcute/lexicons'
 import { useEffect, useState } from 'react'
-import { resolveActor, type ResolvedActor } from '../lib/actor'
+import { resolveActor, resolveMiniDoc, type ResolvedActor } from '../lib/actor'
 import { useElementVisibility } from './useElementVisibility'
 
 type ActorState = {
   actor?: ResolvedActor
   did: Did
+  miniDoc?: ResolvedActor['miniDoc']
 }
 
 export function useVisibleActor(did: Did | null) {
@@ -17,13 +18,19 @@ export function useVisibleActor(did: Did | null) {
 
     let isCancelled = false
 
-    void resolveActor(did)
-      .then((actor) => {
-        if (!isCancelled) setState({ did, actor })
+    void resolveMiniDoc(did)
+      .then((miniDoc) => {
+        if (!isCancelled) setState({ did, miniDoc })
       })
       .catch(() => {
         if (!isCancelled) setState({ did })
       })
+
+    void resolveActor(did)
+      .then((actor) => {
+        if (!isCancelled) setState({ did, actor, miniDoc: actor.miniDoc })
+      })
+      .catch(() => undefined)
 
     return () => {
       isCancelled = true
@@ -32,6 +39,7 @@ export function useVisibleActor(did: Did | null) {
 
   return {
     actor: state?.did === did ? (state.actor ?? null) : null,
+    miniDoc: state?.did === did ? (state.miniDoc ?? null) : null,
     elementRef,
     isVisible,
   }

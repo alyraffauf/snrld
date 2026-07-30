@@ -6,6 +6,7 @@ import { IssuePage } from './pages/IssuePage'
 import { ProfilePage } from './pages/ProfilePage'
 import { PullPage } from './pages/PullPage'
 import { RepoPage } from './pages/RepoPage'
+import { SearchPage } from './pages/SearchPage'
 import { StringPage } from './pages/StringPage'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <PageLayout>
       <Routes>
         <Route index element={<HomePage />} />
+        <Route path="search" element={<SearchPage />} />
         <Route path=":repoOwner/:repo/issues/:issueOwner/:issue" element={<IssuePage />} />
         <Route path=":repoOwner/:repo/pulls/:pullOwner/:pull" element={<PullPage />} />
         <Route path=":handle/:repo/issues" element={<RepoSectionRedirect section="issues" />} />

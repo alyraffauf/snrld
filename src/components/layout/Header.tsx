@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ActorSearch } from '../actor/ActorSearch'
+import { RepoSearch } from '../repo/RepoSearch'
 import { PageContainer } from './PageContainer'
 
 export function Header() {
@@ -14,7 +14,7 @@ export function Header() {
             snrld
           </Link>
 
-          <ActorSearch variant="compact" />
+          <RepoSearch size="header" />
         </PageContainer>
       </nav>
     </header>

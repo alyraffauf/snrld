@@ -1,4 +1,4 @@
-import { ActorSearch } from '../components/actor/ActorSearch'
+import { RepoSearch } from '../components/repo/RepoSearch'
 import { PageContainer } from '../components/layout/PageContainer'
 
 export function HomePage() {
@@ -10,7 +10,7 @@ export function HomePage() {
           <p className="font-mono text-sm text-ctp-overlay-1">An experimental Tangled client.</p>
           <h1 className="mt-3 font-mono text-2xl font-bold text-ctp-text">snrld</h1>
           <div className="mt-6 flex justify-center">
-            <ActorSearch variant="prominent" />
+            <RepoSearch />
           </div>
         </section>
       </PageContainer>
