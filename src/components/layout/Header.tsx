@@ -9,8 +9,9 @@ export function Header() {
         <PageContainer className="flex items-center gap-6 py-4">
           <Link
             to="/"
-            className="shrink-0 font-mono text-sm font-semibold tracking-wide text-ctp-text no-underline"
+            className="flex shrink-0 items-center gap-2 font-mono text-sm font-semibold tracking-wide text-ctp-text no-underline"
           >
+            <img src="/catppuccin-logo.png" alt="" className="size-6" />
             snrld
           </Link>
 
