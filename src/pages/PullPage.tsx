@@ -91,14 +91,17 @@ export function PullPage() {
               },
             ]}
           />
-          {activeTab === 'conversation' && <IssueComments issueUri={pull.uri} />}
-          {activeTab === 'changes' && (
+          <div hidden={activeTab !== 'conversation'}>
+            <IssueComments isActive={activeTab === 'conversation'} issueUri={pull.uri} />
+          </div>
+          <div hidden={activeTab !== 'changes'}>
             <PullChanges
+              isActive={activeTab === 'changes'}
               pull={pull.value}
               pullAuthorDid={recordAuthor.miniDoc.did}
               pullAuthorPds={recordAuthor.miniDoc.pds}
             />
-          )}
+          </div>
         </section>
       </PageContainer>
     </main>

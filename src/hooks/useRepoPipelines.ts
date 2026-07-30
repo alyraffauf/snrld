@@ -4,9 +4,9 @@ import { useCursorList } from './useCursorList'
 
 const INITIAL_PIPELINE_LIMIT = 20
 
-export function useRepoPipelines(repoDid: Did, spindle: string) {
+export function useRepoPipelines(repoDid: Did, spindle: string, isEnabled: boolean) {
   const result = useCursorList(
-    `${spindle}:${repoDid}`,
+    isEnabled ? `${spindle}:${repoDid}` : null,
     (options) => queryPipelines(spindle, repoDid, options),
     INITIAL_PIPELINE_LIMIT,
   )

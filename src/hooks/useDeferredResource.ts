@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-type DeferredResourceOptions = {
-  cache?: boolean
-}
-
 type ResourceState<T> = {
   data?: T
   error?: Error
@@ -14,20 +10,15 @@ export function useDeferredResource<T>(
   key: string | null,
   isEnabled: boolean,
   load: (key: string) => Promise<T>,
-  { cache = false }: DeferredResourceOptions = {},
 ) {
-  const cachedValues = useRef(new Map<string, T>())
   const inFlightRequests = useRef(new Map<string, Promise<T>>())
   const [state, setState] = useState<ResourceState<T> | null>(null)
+  const stateRef = useRef(state)
+  stateRef.current = state
 
   useEffect(() => {
     if (key === null || !isEnabled) return
-
-    const cachedValue = cache ? cachedValues.current.get(key) : undefined
-    if (cachedValue !== undefined) {
-      setState({ key, data: cachedValue })
-      return
-    }
+    if (stateRef.current?.key === key && stateRef.current.data !== undefined) return
 
     let isCancelled = false
     setState({ key })
@@ -35,7 +26,6 @@ export function useDeferredResource<T>(
     const request = getRequest(key, load, inFlightRequests.current)
     void request
       .then((data) => {
-        if (cache) cachedValues.current.set(key, data)
         if (!isCancelled) setState({ key, data })
       })
       .catch((caught) => {
@@ -50,7 +40,7 @@ export function useDeferredResource<T>(
     return () => {
       isCancelled = true
     }
-  }, [cache, isEnabled, key, load])
+  }, [isEnabled, key, load])
 
   const isCurrentResource = state?.key === key
   return {

@@ -9,9 +9,7 @@ export function useRepoRootTree(repo: Repo | null, isEnabled: boolean) {
 
     return getRepoTree(repo)
   }, [repo])
-  const { data, error } = useDeferredResource(repo?.uri ?? null, isEnabled, loadRootTree, {
-    cache: true,
-  })
+  const { data, error } = useDeferredResource(repo?.uri ?? null, isEnabled, loadRootTree)
 
   return { error, rootTree: data }
 }

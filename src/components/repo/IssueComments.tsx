@@ -13,11 +13,12 @@ import { SurfaceCard } from '../shared/SurfaceCard'
 const COMMENT_SKELETON_COUNT = 3
 
 type IssueCommentsProps = {
+  isActive?: boolean
   issueUri: CommentRecord['value']['subject']['uri']
 }
 
-export function IssueComments({ issueUri }: IssueCommentsProps) {
-  const { comments, error, hasMore, isLoadingMore, loadMore } = useIssueComments(issueUri)
+export function IssueComments({ isActive = true, issueUri }: IssueCommentsProps) {
+  const { comments, error, hasMore, isLoadingMore, loadMore } = useIssueComments(issueUri, isActive)
 
   if (error && comments === null) {
     return <p role="alert">Could not load comments: {error.message}</p>

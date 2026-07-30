@@ -4,9 +4,9 @@ import { useCursorList } from './useCursorList'
 
 const INITIAL_PULL_LIMIT = 20
 
-export function useRepoPulls(repoDid: Did) {
+export function useRepoPulls(repoDid: Did, isEnabled: boolean) {
   const { data, error, hasMore, isLoadingMore, loadMore } = useCursorList(
-    repoDid,
+    isEnabled ? repoDid : null,
     (options) => listPulls(repoDid, options),
     INITIAL_PULL_LIMIT,
   )

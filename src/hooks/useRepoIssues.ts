@@ -4,9 +4,9 @@ import { useCursorList } from './useCursorList'
 
 const INITIAL_ISSUE_LIMIT = 20
 
-export function useRepoIssues(repoDid: Did) {
+export function useRepoIssues(repoDid: Did, isEnabled: boolean) {
   const { data, error, hasMore, isLoadingMore, loadMore } = useCursorList(
-    repoDid,
+    isEnabled ? repoDid : null,
     (options) => listIssues(repoDid, options),
     INITIAL_ISSUE_LIMIT,
   )

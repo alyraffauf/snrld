@@ -12,14 +12,15 @@ import { getParentPath, sortTreeEntries } from './repoTreeUtils'
 
 type RepoTreeProps = {
   initialTree?: RepoTreeResponse
+  isActive: boolean
   repo: Repo
 }
 
-export function RepoTree({ initialTree, repo }: RepoTreeProps) {
+export function RepoTree({ initialTree, isActive, repo }: RepoTreeProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const path = searchParams.get('path') ?? ''
   const repoName = getRepoName(repo)
-  const { error, tree } = useRepoTree({ initialTree, path, repo })
+  const { error, tree } = useRepoTree({ initialTree, isEnabled: isActive, path, repo })
 
   function navigateToPath(nextPath: string) {
     setSearchParams(

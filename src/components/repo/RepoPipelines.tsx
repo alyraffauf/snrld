@@ -5,7 +5,15 @@ import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
 import { LoadMoreButton } from '../shared/LoadMoreButton'
 import { SurfaceCard } from '../shared/SurfaceCard'
 
-export function RepoPipelines({ repoDid, spindle }: { repoDid: Did; spindle?: string }) {
+export function RepoPipelines({
+  isActive,
+  repoDid,
+  spindle,
+}: {
+  isActive: boolean
+  repoDid: Did
+  spindle?: string
+}) {
   if (spindle === undefined)
     return (
       <p className="text-sm text-ctp-subtext-0">
@@ -13,11 +21,23 @@ export function RepoPipelines({ repoDid, spindle }: { repoDid: Did; spindle?: st
       </p>
     )
 
-  return <ConfiguredRepoPipelines repoDid={repoDid} spindle={spindle} />
+  return <ConfiguredRepoPipelines isActive={isActive} repoDid={repoDid} spindle={spindle} />
 }
 
-function ConfiguredRepoPipelines({ repoDid, spindle }: { repoDid: Did; spindle: string }) {
-  const { pipelines, error, hasMore, isLoadingMore, loadMore } = useRepoPipelines(repoDid, spindle)
+function ConfiguredRepoPipelines({
+  isActive,
+  repoDid,
+  spindle,
+}: {
+  isActive: boolean
+  repoDid: Did
+  spindle: string
+}) {
+  const { pipelines, error, hasMore, isLoadingMore, loadMore } = useRepoPipelines(
+    repoDid,
+    spindle,
+    isActive,
+  )
 
   if (error && pipelines === null)
     return <p role="alert">Could not load pipelines: {error.message}</p>

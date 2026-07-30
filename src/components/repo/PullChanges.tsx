@@ -1,19 +1,27 @@
 import type { Blob, Did, LegacyBlob } from '@atcute/lexicons'
 import type { Main as Pull } from '@atcute/tangled/types/repo/pull'
+import { useCallback } from 'react'
 import { useDeferredResource } from '../../hooks/useDeferredResource'
 import { SurfaceCard } from '../shared/SurfaceCard'
 
 type PullChangesProps = {
+  isActive: boolean
   pull: Pull
   pullAuthorDid: Did
   pullAuthorPds: string
 }
 
-export function PullChanges({ pull, pullAuthorDid, pullAuthorPds }: PullChangesProps) {
+export function PullChanges({ isActive, pull, pullAuthorDid, pullAuthorPds }: PullChangesProps) {
   const latestRound = pull.rounds.at(-1)
   const patchCid = latestRound === undefined ? null : getBlobCid(latestRound.patchBlob)
-  const { data: patch, error } = useDeferredResource(patchCid, latestRound !== undefined, () =>
-    loadPatch(pullAuthorPds, pullAuthorDid, patchCid),
+  const loadLatestPatch = useCallback(
+    () => loadPatch(pullAuthorPds, pullAuthorDid, patchCid),
+    [patchCid, pullAuthorDid, pullAuthorPds],
+  )
+  const { data: patch, error } = useDeferredResource(
+    isActive ? patchCid : null,
+    isActive && latestRound !== undefined,
+    loadLatestPatch,
   )
 
   if (latestRound === undefined) {

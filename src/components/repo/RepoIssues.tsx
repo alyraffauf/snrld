@@ -9,13 +9,14 @@ import { SurfaceCard } from '../shared/SurfaceCard'
 import { LoadMoreButton } from '../shared/LoadMoreButton'
 
 type RepoIssuesProps = {
+  isActive: boolean
   repoOwnerHandle: Handle
   repoDid: Did
   repoKey: string
 }
 
-export function RepoIssues({ repoOwnerHandle, repoDid, repoKey }: RepoIssuesProps) {
-  const { issues, error, hasMore, isLoadingMore, loadMore } = useRepoIssues(repoDid)
+export function RepoIssues({ isActive, repoOwnerHandle, repoDid, repoKey }: RepoIssuesProps) {
+  const { issues, error, hasMore, isLoadingMore, loadMore } = useRepoIssues(repoDid, isActive)
 
   if (error && issues === null) {
     return <p role="alert">Could not load issues: {error.message}</p>

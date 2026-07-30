@@ -6,11 +6,12 @@ import { WorkspacePaneHeader } from './WorkspacePaneHeader'
 
 type RepoLogProps = {
   branch?: string
+  isActive: boolean
   repo: Repo
 }
 
-export function RepoLog({ branch, repo }: RepoLogProps) {
-  const { commits, error } = useRepoCommits(repo, branch)
+export function RepoLog({ branch, isActive, repo }: RepoLogProps) {
+  const { commits, error } = useRepoCommits(repo, branch, isActive)
 
   if (error) {
     return <p role="alert">Could not load commits: {error.message}</p>

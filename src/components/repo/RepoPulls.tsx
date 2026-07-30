@@ -9,13 +9,14 @@ import { SurfaceCard } from '../shared/SurfaceCard'
 import { LoadMoreButton } from '../shared/LoadMoreButton'
 
 type RepoPullsProps = {
+  isActive: boolean
   repoOwnerHandle: Handle
   repoDid: Did
   repoKey: string
 }
 
-export function RepoPulls({ repoOwnerHandle, repoDid, repoKey }: RepoPullsProps) {
-  const { pulls, error, hasMore, isLoadingMore, loadMore } = useRepoPulls(repoDid)
+export function RepoPulls({ isActive, repoOwnerHandle, repoDid, repoKey }: RepoPullsProps) {
+  const { pulls, error, hasMore, isLoadingMore, loadMore } = useRepoPulls(repoDid, isActive)
 
   if (error && pulls === null) {
     return <p role="alert">Could not load pulls: {error.message}</p>

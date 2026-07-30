@@ -5,11 +5,12 @@ import { getRepoTree } from '../lib/tangled/repo'
 
 type UseRepoTreeOptions = {
   initialTree?: RepoTreeResponse
+  isEnabled: boolean
   path: string
   repo: Repo
 }
 
-export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
+export function useRepoTree({ initialTree, isEnabled, path, repo }: UseRepoTreeOptions) {
   const cache = useRef(new Map<string, RepoTreeResponse>())
   const [tree, setTree] = useState<RepoTreeResponse | null>(initialTree ?? null)
   const [error, setError] = useState<Error | null>(null)
@@ -26,6 +27,8 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
   }, [initialTree, repo.uri])
 
   useEffect(() => {
+    if (!isEnabled) return
+
     let isCancelled = false
     const cachedTree = cache.current.get(path)
 
@@ -58,7 +61,7 @@ export function useRepoTree({ initialTree, path, repo }: UseRepoTreeOptions) {
     return () => {
       isCancelled = true
     }
-  }, [initialTree?.ref, path, repo])
+  }, [initialTree?.ref, isEnabled, path, repo])
 
   return { error, tree }
 }

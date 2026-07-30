@@ -76,16 +76,24 @@ export function RepoPage() {
             repoKey={getRepoRkey(repo)}
           />
 
-          {activeSection === 'readme' && rootTree !== null && (
-            <RepoReadme
-              readme={rootTree.readme}
-              repositoryName={getRepoRkey(repo)}
-              repositoryOwner={identity.handle}
-              repositoryRef={rootTree.ref}
-            />
+          {rootTree !== null && (
+            <div hidden={activeSection !== 'readme'}>
+              <RepoReadme
+                readme={rootTree.readme}
+                repositoryName={getRepoRkey(repo)}
+                repositoryOwner={identity.handle}
+                repositoryRef={rootTree.ref}
+              />
+            </div>
           )}
-          {activeSection === 'code' && rootTree !== null && (
-            <RepoWorkspace repo={repo} initialTree={rootTree} />
+          {rootTree !== null && (
+            <div hidden={activeSection !== 'code'}>
+              <RepoWorkspace
+                repo={repo}
+                initialTree={rootTree}
+                isActive={activeSection === 'code'}
+              />
+            </div>
           )}
           {shouldShowContentLoading && (
             <LoadingPanel label="Loading repository contents" className="h-96" />
@@ -93,22 +101,34 @@ export function RepoPage() {
           {shouldShowContentError && rootTreeError !== null && (
             <p role="alert">Could not load repository contents: {rootTreeError.message}</p>
           )}
-          {activeSection === 'issues' && repo.value.repoDid !== undefined && (
-            <RepoIssues
-              repoOwnerHandle={identity.handle}
-              repoDid={repo.value.repoDid}
-              repoKey={getRepoRkey(repo)}
-            />
+          {repo.value.repoDid !== undefined && (
+            <div hidden={activeSection !== 'issues'}>
+              <RepoIssues
+                isActive={activeSection === 'issues'}
+                repoOwnerHandle={identity.handle}
+                repoDid={repo.value.repoDid}
+                repoKey={getRepoRkey(repo)}
+              />
+            </div>
           )}
-          {activeSection === 'pulls' && repo.value.repoDid !== undefined && (
-            <RepoPulls
-              repoOwnerHandle={identity.handle}
-              repoDid={repo.value.repoDid}
-              repoKey={getRepoRkey(repo)}
-            />
+          {repo.value.repoDid !== undefined && (
+            <div hidden={activeSection !== 'pulls'}>
+              <RepoPulls
+                isActive={activeSection === 'pulls'}
+                repoOwnerHandle={identity.handle}
+                repoDid={repo.value.repoDid}
+                repoKey={getRepoRkey(repo)}
+              />
+            </div>
           )}
-          {activeSection === 'pipelines' && repo.value.repoDid !== undefined && (
-            <RepoPipelines repoDid={repo.value.repoDid} spindle={repo.value.spindle} />
+          {repo.value.repoDid !== undefined && (
+            <div hidden={activeSection !== 'pipelines'}>
+              <RepoPipelines
+                isActive={activeSection === 'pipelines'}
+                repoDid={repo.value.repoDid}
+                spindle={repo.value.spindle}
+              />
+            </div>
           )}
         </section>
       </PageContainer>

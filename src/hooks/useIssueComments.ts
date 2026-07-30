@@ -4,9 +4,9 @@ import { useCursorList } from './useCursorList'
 
 const INITIAL_COMMENT_LIMIT = 20
 
-export function useIssueComments(issue: ResourceUri) {
+export function useIssueComments(issue: ResourceUri, isEnabled = true) {
   const { data, error, hasMore, isLoadingMore, loadMore } = useCursorList(
-    issue,
+    isEnabled ? issue : null,
     (options) => listComments(issue, { ...options, order: 'asc' }),
     INITIAL_COMMENT_LIMIT,
   )
