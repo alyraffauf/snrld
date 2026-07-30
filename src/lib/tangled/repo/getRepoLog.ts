@@ -1,6 +1,6 @@
 import { ok } from '@atcute/client'
-import { rpc } from '../client'
-import type { Repo } from './types'
+import { getKnotRpc } from '../client'
+import { getRepoDid, type Repo } from './types'
 
 export type RepoLogOptions = {
   path?: string
@@ -13,11 +13,12 @@ export async function getRepoLog(
   ref: string,
   options: RepoLogOptions = {},
 ): Promise<string> {
+  const repoDid = getRepoDid(repo)
   const commits = await ok(
-    rpc.get('sh.tangled.repo.log', {
+    getKnotRpc(repo.value.knot).get('sh.tangled.repo.log', {
       as: 'blob',
       params: {
-        repo: repo.uri,
+        repo: repoDid,
         ref,
         path: options.path ?? '',
         limit: options.limit ?? 50,

@@ -1,4 +1,4 @@
-import type { Cid, ResourceUri } from '@atcute/lexicons'
+import type { Cid, Did, ResourceUri } from '@atcute/lexicons'
 import type { Main as TangledRepo } from '@atcute/tangled/types/repo'
 import type { Main as TangledIssue } from '@atcute/tangled/types/repo/issue'
 import type { $output as IssueListResponse } from '@atcute/tangled/types/repo/listIssues'
@@ -12,6 +12,15 @@ export type TangledRecord<TValue> = {
 }
 
 export type Repo = TangledRecord<TangledRepo>
+
+export function getRepoDid(repo: Repo): Did {
+  const repoDid = repo.value.repoDid
+  if (repoDid === undefined) {
+    throw new Error(`Repository ${repo.uri} does not have a repository DID`)
+  }
+
+  return repoDid
+}
 
 export type IssueRecord = TangledRecord<TangledIssue>
 

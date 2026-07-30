@@ -5,3 +5,12 @@ export const BOBBIN_URL = 'https://bobbin.klbr.net'
 export const rpc = new Client({
   handler: simpleFetchHandler({ service: BOBBIN_URL }),
 })
+
+export function getKnotRpc(knot: string) {
+  const service =
+    knot.startsWith('http://') || knot.startsWith('https://') ? knot : `https://${knot}`
+
+  return new Client({
+    handler: simpleFetchHandler({ service }),
+  })
+}

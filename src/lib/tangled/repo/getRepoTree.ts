@@ -3,15 +3,16 @@ import { safeParse } from '@atcute/lexicons'
 import { isDatetime } from '@atcute/lexicons/syntax'
 import type { $output as RepoTree } from '@atcute/tangled/types/repo/tree'
 import { mainSchema as treeSchema } from '@atcute/tangled/types/repo/tree'
-import { rpc } from '../client'
+import { getKnotRpc } from '../client'
 import { getDefaultBranch } from './getDefaultBranch'
-import type { Repo } from './types'
+import { getRepoDid, type Repo } from './types'
 
 export async function getRepoTree(repo: Repo, path = '', ref?: string): Promise<RepoTree> {
+  const repoDid = getRepoDid(repo)
   const defaultBranch = ref ?? (await getDefaultBranch(repo)).name
   const treeResponse = await ok(
-    rpc.get('sh.tangled.repo.tree', {
-      params: { repo: repo.uri, ref: defaultBranch, path },
+    getKnotRpc(repo.value.knot).get('sh.tangled.repo.tree', {
+      params: { repo: repoDid, ref: defaultBranch, path },
     }),
   )
 

@@ -2,13 +2,14 @@ import { ok } from '@atcute/client'
 import { safeParse } from '@atcute/lexicons'
 import type { $output as DefaultBranch } from '@atcute/tangled/types/repo/getDefaultBranch'
 import { mainSchema as defaultBranchSchema } from '@atcute/tangled/types/repo/getDefaultBranch'
-import { rpc } from '../client'
-import type { Repo } from './types'
+import { getKnotRpc } from '../client'
+import { getRepoDid, type Repo } from './types'
 
 export async function getDefaultBranch(repo: Repo): Promise<DefaultBranch> {
+  const repoDid = getRepoDid(repo)
   const response = await ok(
-    rpc.get('sh.tangled.repo.getDefaultBranch', {
-      params: { repo: repo.uri },
+    getKnotRpc(repo.value.knot).get('sh.tangled.repo.getDefaultBranch', {
+      params: { repo: repoDid },
     }),
   )
 
