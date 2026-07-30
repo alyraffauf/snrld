@@ -3,6 +3,7 @@ import { PageContainer } from '../components/layout/PageContainer'
 import { ProfileByline } from '../components/profile/ProfileByline'
 import { RepoIssues } from '../components/repo/RepoIssues'
 import { RepoPulls } from '../components/repo/RepoPulls'
+import { RepoPipelines } from '../components/repo/RepoPipelines'
 import { RepoReadme } from '../components/repo/RepoReadme'
 import { parseRepoSection } from '../components/repo/repoSections'
 import { RepoTabs } from '../components/repo/RepoTabs'
@@ -11,7 +12,6 @@ import { RepoWorkspace } from '../components/repo/RepoWorkspace'
 import { ErrorPage } from '../components/shared/ErrorPage'
 import { LoadingPanel } from '../components/shared/LoadingPanel'
 import { RepoPageSkeleton } from '../components/shared/PageSkeletons'
-import { SurfaceCard } from '../components/shared/SurfaceCard'
 import { useRepoPage } from '../hooks/useRepoPage'
 import { useRepoRootTree } from '../hooks/useRepoRootTree'
 import { parseHandle } from '../lib/routes'
@@ -107,22 +107,11 @@ export function RepoPage() {
               repoKey={getRepoRkey(repo)}
             />
           )}
-          {activeSection === 'pipelines' && <RepoPlaceholder title="Pipelines" />}
+          {activeSection === 'pipelines' && repo.value.repoDid !== undefined && (
+            <RepoPipelines repoDid={repo.value.repoDid} spindle={repo.value.spindle} />
+          )}
         </section>
       </PageContainer>
     </main>
-  )
-}
-
-type RepoPlaceholderProps = {
-  title: string
-}
-
-function RepoPlaceholder({ title }: RepoPlaceholderProps) {
-  return (
-    <SurfaceCard as="section" className="p-8 text-center">
-      <h2 className="font-mono text-lg font-semibold text-ctp-text">{title}</h2>
-      <p className="mt-2 text-sm text-ctp-subtext-0">{title} will be available here soon.</p>
-    </SurfaceCard>
   )
 }
