@@ -14,10 +14,27 @@ export async function queryPipelines(
   const response = await ok(
     rpc.get('sh.tangled.ci.queryPipelines', { params: { repo, ...options } }),
   )
-  const validation = safeParse(queryPipelinesSchema.output.schema, removeNullCursor(response))
+  const validation = safeParse(
+    queryPipelinesSchema.output.schema,
+    normalizePipelineResponse(response),
+  )
   if (!validation.ok) throw new Error(`Spindle returned invalid pipelines: ${validation.message}`)
 
   return { items: validation.value.pipelines, cursor: validation.value.cursor }
+}
+
+function normalizePipelineResponse(value: unknown): unknown {
+  const response = removeNullCursor(value)
+  if (typeof response !== 'object' || response === null || Array.isArray(response)) {
+    return response
+  }
+
+  // Older Spindle versions serialize an empty pipeline list as null.
+  if ('pipelines' in response && response.pipelines === null) {
+    return { ...response, pipelines: [] }
+  }
+
+  return response
 }
 
 function getSpindleFetchHandler(spindle: string): FetchHandler {
