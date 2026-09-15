@@ -1,0 +1,14 @@
+.git
+.github
+.tangled
+node_modules
+dist
+dist-ssr
+coverage
+.env
+.env.*
+*.local
+*.log
+.idea
+.vscode
+.DS_Store

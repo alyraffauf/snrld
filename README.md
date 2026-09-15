@@ -34,6 +34,26 @@ bun run build
 bun run preview
 ```
 
+## Run in a container
+
+Build the image from the repository root:
+
+```sh
+docker build -f Containerfile -t snrld .
+```
+
+Start the container:
+
+```sh
+docker run --rm -p 8080:8080 snrld
+```
+
+Open <http://localhost:8080>. You can also run these commands with `podman` in place of `docker`.
+
+The image serves the production bundle with nginx and supports direct links to client-side routes.
+The GitHub Actions workflow builds the image for pull requests, pushes to `main`, and manual runs.
+It does not publish the image to a registry.
+
 ## Checks
 
 ```sh
