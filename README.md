@@ -45,14 +45,14 @@ docker build -f Containerfile -t snrld .
 Start the container:
 
 ```sh
-docker run --rm -p 8080:8080 snrld
+docker run --rm -p 8080:80 snrld
 ```
 
 Open <http://localhost:8080>. You can also run these commands with `podman` in place of `docker`.
 
 The image serves the production bundle with nginx and supports direct links to client-side routes.
-The GitHub Actions workflow builds the image for pull requests, pushes to `main`, and manual runs.
-It does not publish the image to a registry.
+The GitHub Actions workflow builds the image for pull requests to `main`.
+Pushes to `main` and manual runs publish `ghcr.io/alyraffauf/snrld` with `latest` and commit SHA tags.
 
 ## Checks
 
