@@ -10,4 +10,6 @@ RUN bun run build
 FROM docker.io/nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY scripts/configure-oauth.sh /docker-entrypoint.d/40-configure-oauth.sh
+RUN chmod +x /docker-entrypoint.d/40-configure-oauth.sh
 EXPOSE 80

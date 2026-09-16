@@ -9,7 +9,7 @@ type ProfileAvatarProps = {
   bskyProfile?: AppBskyActorProfile.Main | null
   avatarUrl?: string | null
   loading?: 'eager' | 'lazy'
-  size?: 'small' | 'medium'
+  size?: 'compact' | 'small' | 'medium'
 }
 
 export function ProfileAvatar({
@@ -23,7 +23,12 @@ export function ProfileAvatar({
   const avatar = profile.value.avatar ?? bskyProfile?.avatar
   const resolvedAvatarUrl =
     avatarUrl === undefined ? (avatar ? getAvatarUrl(miniDoc.did, avatar) : null) : avatarUrl
-  const sizeClass = size === 'small' ? 'size-8 text-sm' : 'size-16 text-xl'
+  const sizeClass = {
+    compact: 'size-6 text-xs',
+    small: 'size-8 text-sm',
+    medium: 'size-16 text-xl',
+  }[size]
+  const ringClass = size === 'compact' ? 'ring-1' : 'ring-2'
 
   if (resolvedAvatarUrl) {
     return (
@@ -32,7 +37,7 @@ export function ProfileAvatar({
         alt={`${miniDoc.handle} avatar`}
         loading={loading}
         decoding="async"
-        className={`${sizeClass} shrink-0 rounded-full object-cover ring-2 ring-ctp-surface-1`}
+        className={`${sizeClass} ${ringClass} shrink-0 rounded-full object-cover ring-ctp-surface-1`}
       />
     )
   }

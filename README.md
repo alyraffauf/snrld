@@ -8,7 +8,7 @@
   An beautiful client for <a href="https://tangled.org">Tangled</a>.
 </p>
 
-snrld currently lets you browse public profiles, repositories, strings, stars, vouches, issues, and pull requests through the Bobbin XRPC service. Authentication and write features are planned for a future release.
+snrld lets you browse public profiles, repositories, strings, stars, vouches, issues, and pull requests through the Bobbin XRPC service. You can sign in with AT Protocol OAuth. Write features are planned for a future release.
 
 ## Stack
 
@@ -27,12 +27,30 @@ bun install
 bun run dev
 ```
 
+Open <http://127.0.0.1:5173>. Vite generates the OAuth client ID and callback address from the development server port. No OAuth environment variables are needed for local development.
+
 Build and preview the production bundle:
 
 ```sh
 bun run build
 bun run preview
 ```
+
+Preview uses <http://127.0.0.1:4173> and generates its own local OAuth metadata.
+
+## OAuth configuration
+
+Define the requested permissions in `OAUTH_SCOPE` in `src/lib/auth/config.ts`. Both development and production client metadata use this value. The browser loads `/client-metadata.json` before using atcute and requests the scopes declared in that document.
+
+For a static deployment, supply the public HTTPS origin at build time:
+
+```sh
+VITE_PUBLIC_URL=https://snrld.example bun run build
+```
+
+The build generates `dist/client-metadata.json`, including the `/auth/callback` redirect URL. Serve that JSON file at the same public origin. Use an origin without a path, trailing slash, or port.
+
+Sign in again after changing scopes to grant the new permissions.
 
 ## Run in a container
 
@@ -45,10 +63,12 @@ docker build -f Containerfile -t snrld .
 Start the container:
 
 ```sh
-docker run --rm -p 8080:80 snrld
+docker run --rm -p 8080:80 -e PUBLIC_URL=https://snrld.example snrld
 ```
 
-Open <http://localhost:8080>. You can also run these commands with `podman` in place of `docker`.
+Replace `https://snrld.example` with your public HTTPS origin and route it to port 8080 through your HTTPS reverse proxy. Open the app at that origin. You can also run these commands with `podman` in place of `docker`.
+
+The container generates `client-metadata.json` from `PUBLIC_URL` at startup. The same image can run at different origins without rebuilding. OAuth scopes remain part of the image, so scope changes require a rebuild.
 
 The image serves the production bundle with nginx and supports direct links to client-side routes.
 The GitHub Actions workflow builds the image for pull requests to `main`.

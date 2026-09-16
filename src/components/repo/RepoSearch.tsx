@@ -16,9 +16,9 @@ type RepoSearchProps = {
 
 const searchStyles = {
   header: {
-    form: 'ml-auto max-w-sm border border-ctp-surface-1 bg-ctp-mantle',
-    input: 'px-3 py-1.5 text-sm',
-    button: 'px-3 py-1.5',
+    form: 'ml-auto h-9 max-w-sm border border-ctp-surface-1 bg-ctp-mantle',
+    input: 'h-full px-3 text-sm',
+    button: 'h-full px-3',
   },
   page: {
     form: 'max-w-xl border border-ctp-surface-1 bg-ctp-mantle',
