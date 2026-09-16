@@ -1,4 +1,4 @@
-export const OAUTH_SCOPE = 'atproto'
+export const OAUTH_SCOPE = 'atproto transition:generic'
 export const OAUTH_CALLBACK_PATH = '/auth/callback'
 export const OAUTH_METADATA_PATH = '/client-metadata.json'
 
