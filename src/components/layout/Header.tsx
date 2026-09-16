@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { RepoSearch } from '../repo/RepoSearch'
 import { PageContainer } from './PageContainer'
+import { AccountButton } from '../auth/AccountButton'
 
 export function Header() {
   return (
@@ -16,6 +17,7 @@ export function Header() {
           </Link>
 
           <RepoSearch size="header" />
+          <AccountButton ariaLabel="Login with Atproto" to="/auth/login" />
         </PageContainer>
       </nav>
     </header>

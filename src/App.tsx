@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { PageLayout } from './components/layout/PageLayout'
+import { AuthLayout } from './components/layout/AuthLayout'
 import { ErrorPage } from './components/shared/ErrorPage'
 import { HomePage } from './pages/HomePage'
 import { IssuePage } from './pages/IssuePage'
@@ -8,11 +9,18 @@ import { PullPage } from './pages/PullPage'
 import { RepoPage } from './pages/RepoPage'
 import { SearchPage } from './pages/SearchPage'
 import { StringPage } from './pages/StringPage'
+import { AuthPage } from './pages/AuthPage'
+import { AuthCallbackPage } from './pages/AuthCallbackPage'
 
 function App() {
   return (
-    <PageLayout>
-      <Routes>
+    <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="auth/login" element={<AuthPage />} />
+        <Route path="auth/callback" element={<AuthCallbackPage />} />
+      </Route>
+
+      <Route element={<PageLayout />}>
         <Route index element={<HomePage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path=":repoOwner/:repo/issues/:issueOwner/:issue" element={<IssuePage />} />
@@ -28,8 +36,8 @@ function App() {
             <ErrorPage title="Page not found" message="This address doesn't point to a page." />
           }
         />
-      </Routes>
-    </PageLayout>
+      </Route>
+    </Routes>
   )
 }
 
