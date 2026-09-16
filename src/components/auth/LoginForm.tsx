@@ -34,7 +34,7 @@ export function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative mt-6 flex w-full min-w-0 items-center border border-ctp-surface-1 bg-ctp-mantle text-left"
+      className="relative mt-6 flex w-full min-w-0 items-center border border-ctp-surface-1 bg-ctp-base text-left"
     >
       <AccountHandleInput disabled={isSigningIn} />
       {error && (
