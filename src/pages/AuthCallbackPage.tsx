@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { finishSignIn } from '../lib/auth/oauth'
 import { PageContainer } from '../components/layout/PageContainer'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -35,22 +35,20 @@ export function AuthCallbackPage() {
 
     return (
         <main>
-            <PageContainer className="py-8">
-                {error ? (
-                    <div>
-                        <p role="alert" className="text-ctp-red">
-                            {error}
-                        </p>
-                        <Link
-                            to="/auth/login"
-                            className="mt-4 inline-block text-ctp-lavender underline"
-                        >
-                            Try signing in again
-                        </Link>
-                    </div>
-                ) : (
-                    <p role="status">Finishing sign-in…</p>
-                )}
+            <PageContainer className="flex min-h-[calc(100vh-12rem)] items-center justify-center py-8">
+                <section className="w-full max-w-xl text-center">
+                    <img src="/catppuccin-logo.png" alt="" className="mx-auto mb-5 size-40" />
+                    <h1 className="mt-3 font-mono text-2xl font-bold text-ctp-text">snrld</h1>
+                    {error ? (
+                        <div>
+                            <p role="alert" className="font-mono text-sm text-ctp-overlay-1 text-ctp-red">
+                                {error}
+                            </p>
+                        </div>
+                    ) : (
+                        <p className="font-mono text-sm text-ctp-overlay-1" role="status">Finishing sign-in…</p>
+                    )}
+                </section>
             </PageContainer>
         </main>
     )
