@@ -18,7 +18,7 @@ export function AccountButton({ ariaLabel, to }: AccountButtonProps) {
   const handle = miniDoc && miniDoc.handle !== 'handle.invalid' ? miniDoc.handle : null
 
   const actionClassName =
-    'flex size-10 items-center justify-center transition-colors hover:bg-ctp-surface-0'
+    'flex h-full w-9 items-center justify-center transition-colors hover:bg-ctp-surface-0'
 
   const isSignedIn = session !== null
   const isUnavailable = isLoading || (isSignedIn && handle === null)
@@ -51,7 +51,7 @@ export function AccountButton({ ariaLabel, to }: AccountButtonProps) {
   return (
     <div
       ref={elementRef}
-      className="inline-flex shrink-0 overflow-hidden rounded border border-ctp-surface-1"
+      className="inline-flex h-9 shrink-0 overflow-hidden border border-ctp-surface-1"
     >
       {isUnavailable ? (
         <button
@@ -66,7 +66,7 @@ export function AccountButton({ ariaLabel, to }: AccountButtonProps) {
         <Link
           to={`/${handle}`}
           aria-label="View your profile"
-          className="flex h-10 items-center gap-3 px-3 text-ctp-text transition-colors hover:bg-ctp-surface-0 hover:text-ctp-text"
+          className="flex h-full items-center gap-3 px-3 text-ctp-text transition-colors hover:bg-ctp-surface-0 hover:text-ctp-text"
         >
           <span className="max-w-40 truncate font-mono text-sm">{handle}</span>
           {accountAvatar}
