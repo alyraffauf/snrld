@@ -28,7 +28,7 @@ export async function searchBlueskyActors(
 
   const validation = safeParse(AppBskyActorSearchActorsTypeahead.mainSchema.output.schema, response)
   if (!validation.ok) {
-    throw new Error(`Typeahead returned an invalid actor search response: ${validation.message}`)
+    throw new Error(`Typeahead returned an invalid actor search response.`)
   }
 
   return validation.value.actors
