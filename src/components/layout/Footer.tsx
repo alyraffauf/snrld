@@ -18,7 +18,7 @@ export function Footer() {
         <nav aria-label="Footer navigation" className="flex gap-4">
           <Link to="/">Home</Link>
           <Link to="/aly.codes/snrld">Code</Link>
-          <a href="https://bobbin.klbr.net" target="_blank" rel="noreferrer">
+          <a href="https://bobbin.aly.town" target="_blank" rel="noreferrer">
             Bobbin
           </a>
         </nav>
