@@ -10,16 +10,17 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "generate:lexicons": "lex-cli generate"
   },
   "dependencies": {
+    "@atcute/atproto": "^4.0.4",
     "@atcute/bluesky": "^4.0.21",
     "@atcute/client": "^5.1.2",
     "@atcute/identity-resolver": "^2.0.2",
     "@atcute/lexicons": "^2.1.0",
     "@atcute/microcosm": "^2.0.2",
     "@atcute/oauth-browser-client": "^5.0.2",
-    "@atcute/tangled": "^2.0.18",
     "@tabler/icons-react": "^3.46.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
@@ -29,9 +30,10 @@
     "rehype-sanitize": "^6.0.0"
   },
   "devDependencies": {
+    "@atcute/lex-cli": "3.2.1",
     "@catppuccin/tailwindcss": "^1.0.0",
-    "@rolldown/plugin-babel": "0.2.3",
     "@resvg/resvg-js": "^2.6.2",
+    "@rolldown/plugin-babel": "0.2.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",

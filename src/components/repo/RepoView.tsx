@@ -15,7 +15,7 @@ type RepoProps = {
 }
 
 export function RepoView({ handle, repo }: RepoProps) {
-  const { value } = repo
+  const value = repo
   const name = getRepoName(repo)
   const repoKey = getRepoRkey(repo)
   const repoDid = value.repoDid

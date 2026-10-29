@@ -1,20 +1,19 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as listVouchesSchema } from '@atcute/tangled/types/graph/listVouches'
-import { mainSchema as vouchSchema } from '@atcute/tangled/types/graph/vouch'
+import { mainSchema as listVouchesSchema } from '../lexicons/types/org/tangled/graph/listNetworkVouches'
+import { mainSchema as vouchSchema } from '../lexicons/types/org/tangled/graph/vouch'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
 import type { ListVouchesOptions, VouchList } from './types'
 
 export async function listVouches(did: Did, options: ListVouchesOptions = {}): Promise<VouchList> {
   const response = await ok(
-    rpc.get('sh.tangled.graph.listVouches', {
+    rpc.get('org.tangled.graph.listNetworkVouches', {
       params: {
-        subject: did,
+        actors: [did],
         limit: options.limit,
         cursor: options.cursor,
-        order: options.order,
       },
     }),
   )

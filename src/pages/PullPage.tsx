@@ -24,7 +24,7 @@ export function PullPage() {
   } = useParams()
   const [searchParams] = useSearchParams()
   const repoOwnerHandle = parseHandle(routeRepoOwner)
-  const pullOwnerHandle = parseHandle(routePullOwner)
+  const pullOwnerHandle = parseHandle(routePullOwner ?? routeRepoOwner)
   const { pageData, error } = useRepoRecordPage({
     loadPage: loadPullPage,
     recordKey: pullKey,
@@ -64,7 +64,7 @@ export function PullPage() {
   const { record: pull, recordAuthor, repo, repositoryOwner } = pageData
   const repositoryUrl = `/${repositoryOwner.miniDoc.handle}/${getRepoRkey(repo)}`
   const activeTab = searchParams.get('view') === 'changes' ? 'changes' : 'conversation'
-  const pullUrl = `/${repositoryOwner.miniDoc.handle}/${getRepoRkey(repo)}/pulls/${recordAuthor.miniDoc.handle}/${pullKey}`
+  const pullUrl = `/${repositoryOwner.miniDoc.handle}/${getRepoRkey(repo)}/pulls/${pullKey}`
 
   return (
     <main>
@@ -88,8 +88,8 @@ export function PullPage() {
                 <PullBranches pull={pull.value} />
                 <PullPipelineStatuses
                   pullUri={pull.uri}
-                  repoDid={repo.value.repoDid}
-                  spindle={repo.value.spindle}
+                  repoDid={repo.repoDid}
+                  spindle={repo.spindle}
                 />
               </>
             }
@@ -111,9 +111,8 @@ export function PullPage() {
           <div hidden={activeTab !== 'changes'}>
             <PullChanges
               isActive={activeTab === 'changes'}
-              pull={pull.value}
-              pullAuthorDid={recordAuthor.miniDoc.did}
-              pullAuthorPds={recordAuthor.miniDoc.pds}
+              pullUri={pull.uri}
+              repoDid={repo.repoDid}
             />
           </div>
         </section>
@@ -131,7 +130,7 @@ function PullBranches({ pull }: { pull: PullPageData['record']['value'] }) {
     >
       <Branch branch={source} label="Source" />
       <IconArrowRight size={18} stroke={1.75} className="text-ctp-overlay-1" aria-hidden="true" />
-      <Branch branch={pull.target.branch} label="Target" />
+      <Branch branch={pull.targetBranch ?? 'HEAD'} label="Target" />
     </div>
   )
 }

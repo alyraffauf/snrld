@@ -14,7 +14,7 @@ type RepoListItemProps = {
 }
 
 export function RepoListItem({ handle, repo }: RepoListItemProps) {
-  const { value } = repo
+  const value = repo
   const name = getRepoName(repo)
   const rkey = getRepoRkey(repo)
   const repoDid = value.repoDid

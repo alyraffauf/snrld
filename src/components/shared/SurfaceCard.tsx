@@ -1,16 +1,24 @@
-import type { ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 
-type SurfaceCardProps = {
+type SurfaceCardProps = HTMLAttributes<HTMLElement> & {
   as?: 'article' | 'div' | 'section'
   children: ReactNode
   className?: string
 }
 
-export function SurfaceCard({ as = 'div', children, className = '' }: SurfaceCardProps) {
+export function SurfaceCard({
+  as = 'div',
+  children,
+  className = '',
+  ...attributes
+}: SurfaceCardProps) {
   const Component = as
 
   return (
-    <Component className={`rounded border border-ctp-surface-1 bg-ctp-mantle ${className}`}>
+    <Component
+      {...attributes}
+      className={`rounded border border-ctp-surface-1 bg-ctp-mantle ${className}`}
+    >
       {children}
     </Component>
   )

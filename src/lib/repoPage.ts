@@ -9,7 +9,7 @@ export type RepoPageData = {
 
 export async function loadRepoPage(handle: Handle, repoKey: string): Promise<RepoPageData> {
   const identity = await resolveMiniDoc(handle)
-  const repoUri = `at://${identity.did}/sh.tangled.repo/${repoKey}` as ResourceUri
+  const repoUri = `at://${identity.did}/org.tangled.repo.declaration/${repoKey}` as ResourceUri
   const [actor, repo] = await Promise.all([resolveActor(identity.did), getRepo(repoUri)])
 
   return { actor, repo }

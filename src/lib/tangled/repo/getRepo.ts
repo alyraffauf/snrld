@@ -1,15 +1,14 @@
-import { ok } from '@atcute/client'
-import type { ResourceUri } from '@atcute/lexicons'
+import { ok } from '../response'
+import { parseResourceUri, type ResourceUri, type Did } from '@atcute/lexicons'
 import { rpc } from '../client'
-import type { Repo } from './types'
 import { validateRepo } from './validators'
-
-export async function getRepo(atUri: ResourceUri): Promise<Repo> {
-  const repo = await ok(
-    rpc.get('sh.tangled.repo.getRepo', {
-      params: { repo: atUri },
-    }),
+export async function getRepo(atUri: ResourceUri) {
+  const { repo, rkey } = parseResourceUri(atUri)
+  return validateRepo(
+    await ok(
+      rpc.get('org.tangled.temp.repo.getRepoByName', {
+        params: { owner: repo as Did, name: rkey ?? '' },
+      }),
+    ),
   )
-
-  return validateRepo(repo)
 }

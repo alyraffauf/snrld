@@ -1,8 +1,6 @@
-import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
-import { isDid } from '@atcute/lexicons/syntax'
+import { type Did, type Handle } from '@atcute/lexicons'
 import { IconGitPullRequest, IconMessageCircle } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoPulls } from '../../hooks/useRepoPulls'
 import { getRecordRkey, type Pull } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
@@ -61,11 +59,7 @@ export function RepoPulls({ isActive, repoOwnerHandle, repoDid, repoKey }: RepoP
 type PullListItemProps = { pull: Pull; repoKey: string; repoOwnerHandle: Handle }
 
 function PullListItem({ pull, repoKey, repoOwnerHandle }: PullListItemProps) {
-  const authorIdentifier = parseResourceUri(pull.uri).repo
-  const { actor, elementRef } = useVisibleActor(isDid(authorIdentifier) ? authorIdentifier : null)
-  const pullUrl = actor
-    ? `/${repoOwnerHandle}/${repoKey}/pulls/${actor.miniDoc.handle}/${getRecordRkey(pull.uri)}`
-    : undefined
+  const pullUrl = `/${repoOwnerHandle}/${repoKey}/pulls/${getRecordRkey(pull.uri)}`
   const stateClassName =
     pull.state === 'open'
       ? 'text-ctp-teal'
@@ -74,7 +68,7 @@ function PullListItem({ pull, repoKey, repoOwnerHandle }: PullListItemProps) {
         : 'text-ctp-overlay-1'
 
   return (
-    <li ref={elementRef}>
+    <li>
       {pullUrl === undefined ? (
         <PullCard pull={pull} stateClassName={stateClassName} />
       ) : (

@@ -1,5 +1,5 @@
 import { IconCornerLeftUp } from '@tabler/icons-react'
-import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
+import type { RepoTree as RepoTreeResponse } from '../../lib/tangled/git'
 import { useSearchParams } from 'react-router-dom'
 import type { Repo } from '../../lib/tangled'
 import { getRepoName } from '../../lib/tangled/repo'

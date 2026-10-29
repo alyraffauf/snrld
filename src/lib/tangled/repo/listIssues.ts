@@ -1,7 +1,7 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as issueListSchema } from '@atcute/tangled/types/repo/listIssues'
+import { mainSchema as issueListSchema } from '../lexicons/types/org/tangled/repo/listIssues'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
 import type { IssueList } from './types'
@@ -19,7 +19,7 @@ export async function listIssues(
   options: ListIssuesOptions = {},
 ): Promise<IssueList> {
   const response = await ok(
-    rpc.get('sh.tangled.repo.listIssues', {
+    rpc.get('org.tangled.repo.listIssues', {
       params: {
         subject: repoDid,
         cursor: options.cursor,

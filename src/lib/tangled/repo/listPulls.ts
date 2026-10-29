@@ -1,7 +1,7 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as pullListSchema } from '@atcute/tangled/types/repo/listPulls'
+import { mainSchema as pullListSchema } from '../lexicons/types/org/tangled/repo/listPulls'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
 import type { PullList } from './types'
@@ -16,13 +16,13 @@ export type ListPullsOptions = {
 
 export async function listPulls(repoDid: Did, options: ListPullsOptions = {}): Promise<PullList> {
   const response = await ok(
-    rpc.get('sh.tangled.repo.listPulls', {
+    rpc.get('org.tangled.repo.listPulls', {
       params: {
         subject: repoDid,
         cursor: options.cursor,
         limit: options.limit,
         order: options.order,
-        status: options.status,
+        status: options.status === 'merged' ? 'completed' : options.status,
       },
     }),
   )

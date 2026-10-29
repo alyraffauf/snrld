@@ -23,6 +23,8 @@ function App() {
       <Route element={<PageLayout />}>
         <Route index element={<HomePage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path=":repoOwner/:repo/issues/:issue" element={<IssuePage />} />
+        <Route path=":repoOwner/:repo/pulls/:pull" element={<PullPage />} />
         <Route path=":repoOwner/:repo/issues/:issueOwner/:issue" element={<IssuePage />} />
         <Route path=":repoOwner/:repo/pulls/:pullOwner/:pull" element={<PullPage />} />
         <Route path=":handle/:repo/issues" element={<RepoSectionRedirect section="issues" />} />

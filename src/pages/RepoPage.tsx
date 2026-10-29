@@ -84,8 +84,7 @@ export function RepoPage() {
             <div hidden={activeSection !== 'readme'}>
               <RepoReadme
                 readme={rootTree.readme}
-                repositoryName={getRepoRkey(repo)}
-                repositoryOwner={identity.handle}
+                repoDid={repo.repoDid}
                 repositoryRef={rootTree.ref}
               />
             </div>
@@ -105,32 +104,32 @@ export function RepoPage() {
           {shouldShowContentError && rootTreeError !== null && (
             <p role="alert">Could not load repository contents: {rootTreeError.message}</p>
           )}
-          {repo.value.repoDid !== undefined && (
+          {repo.repoDid !== undefined && (
             <div hidden={activeSection !== 'issues'}>
               <RepoIssues
                 isActive={activeSection === 'issues'}
                 repoOwnerHandle={identity.handle}
-                repoDid={repo.value.repoDid}
+                repoDid={repo.repoDid}
                 repoKey={getRepoRkey(repo)}
               />
             </div>
           )}
-          {repo.value.repoDid !== undefined && (
+          {repo.repoDid !== undefined && (
             <div hidden={activeSection !== 'pulls'}>
               <RepoPulls
                 isActive={activeSection === 'pulls'}
                 repoOwnerHandle={identity.handle}
-                repoDid={repo.value.repoDid}
+                repoDid={repo.repoDid}
                 repoKey={getRepoRkey(repo)}
               />
             </div>
           )}
-          {repo.value.repoDid !== undefined && (
+          {repo.repoDid !== undefined && (
             <div hidden={activeSection !== 'pipelines'}>
               <RepoPipelines
                 isActive={activeSection === 'pipelines'}
-                repoDid={repo.value.repoDid}
-                spindle={repo.value.spindle}
+                repoDid={repo.repoDid}
+                spindle={repo.spindle}
               />
             </div>
           )}

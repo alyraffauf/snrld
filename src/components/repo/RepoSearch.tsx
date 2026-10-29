@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { parseResourceUri } from '@atcute/lexicons'
 import { isDid } from '@atcute/lexicons/syntax'
 import { useNavigate } from 'react-router-dom'
 import { useRepoSearch } from '../../hooks/useRepoSearch'
@@ -53,7 +52,7 @@ export function RepoSearch({ initialQuery = '', size = 'page' }: RepoSearchProps
     setIsOpening(true)
     setOpenError(null)
     try {
-      const owner = await resolveMiniDoc(parseResourceUri(repo.uri).repo)
+      const owner = await resolveMiniDoc(repo.ownerDid)
       setQuery('')
       setIsSuggestionsOpen(false)
       navigate(`/${owner.handle}/${encodeURIComponent(getRepoRkey(repo))}`)
@@ -123,7 +122,7 @@ type RepoSearchResultProps = {
 }
 
 function RepoSearchResult({ repo, onSelect }: RepoSearchResultProps) {
-  const ownerIdentifier = parseResourceUri(repo.uri).repo
+  const ownerIdentifier = repo.ownerDid
   const { actor, elementRef } = useVisibleActor(isDid(ownerIdentifier) ? ownerIdentifier : null)
   const ownerLabel = actor?.miniDoc.handle ?? ownerIdentifier
 
@@ -152,9 +151,9 @@ function RepoSearchResult({ repo, onSelect }: RepoSearchResultProps) {
             {getRepoName(repo)}
           </span>
           <span className="block truncate text-xs text-ctp-overlay-1">{ownerLabel}</span>
-          {repo.value.description && (
+          {repo.description && (
             <span className="line-clamp-1 block text-xs text-ctp-overlay-1">
-              {repo.value.description}
+              {repo.description}
             </span>
           )}
         </span>

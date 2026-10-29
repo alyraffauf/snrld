@@ -1,8 +1,6 @@
-import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
-import { isDid } from '@atcute/lexicons/syntax'
+import { type Did, type Handle } from '@atcute/lexicons'
 import { IconCircleDot, IconMessageCircle } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import { useVisibleActor } from '../../hooks/useVisibleActor'
 import { useRepoIssues } from '../../hooks/useRepoIssues'
 import { getRecordRkey, type Issue } from '../../lib/tangled/repo'
 import { SurfaceCard } from '../shared/SurfaceCard'
@@ -59,14 +57,10 @@ export function RepoIssues({ isActive, repoOwnerHandle, repoDid, repoKey }: Repo
 type IssueListItemProps = { issue: Issue; repoKey: string; repoOwnerHandle: Handle }
 
 function IssueListItem({ issue, repoKey, repoOwnerHandle }: IssueListItemProps) {
-  const authorIdentifier = parseResourceUri(issue.uri).repo
-  const { actor, elementRef } = useVisibleActor(isDid(authorIdentifier) ? authorIdentifier : null)
-  const issueUrl = actor
-    ? `/${repoOwnerHandle}/${repoKey}/issues/${actor.miniDoc.handle}/${getRecordRkey(issue.uri)}`
-    : undefined
+  const issueUrl = `/${repoOwnerHandle}/${repoKey}/issues/${getRecordRkey(issue.uri)}`
 
   return (
-    <li ref={elementRef}>
+    <li>
       {issueUrl === undefined ? (
         <IssueCard issue={issue} isOpen={issue.state === 'open'} />
       ) : (

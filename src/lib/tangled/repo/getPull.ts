@@ -1,15 +1,11 @@
-import { ok } from '@atcute/client'
+import { getLatestPatchRecord } from './patches'
 import type { ResourceUri } from '@atcute/lexicons'
-import { rpc } from '../client'
-import type { PullRecord } from './types'
-import { validatePullRecord } from './validators'
-
-export async function getPull(pull: ResourceUri): Promise<PullRecord> {
-  const response = await ok(
-    rpc.get('sh.tangled.repo.getPull', {
-      params: { pull },
-    }),
-  )
-
-  return validatePullRecord(response)
+import { getIssue } from './getIssue'
+export async function getPull(uri: ResourceUri) {
+  const [ticket, patch] = await Promise.all([getIssue(uri), getLatestPatchRecord(uri)])
+  return {
+    ...ticket,
+    value: { ...ticket.value, source: patch?.source },
+    state: ticket.state === 'completed' ? 'merged' : ticket.state,
+  }
 }

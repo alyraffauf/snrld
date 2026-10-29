@@ -1,16 +1,10 @@
 import { Client, simpleFetchHandler } from '@atcute/client'
+import './lexicons'
 
-export const BOBBIN_URL = 'https://bobbin.aly.town'
-
+export const BOBBIN_URL = import.meta.env?.VITE_TANGLED_API_URL || 'https://api.tangled.org'
 export const rpc = new Client({
-  handler: simpleFetchHandler({ service: BOBBIN_URL }),
+  handler: simpleFetchHandler({
+    service: BOBBIN_URL,
+    fetch: (...args) => globalThis.fetch(...args),
+  }),
 })
-
-export function getKnotRpc(knot: string) {
-  const service =
-    knot.startsWith('http://') || knot.startsWith('https://') ? knot : `https://${knot}`
-
-  return new Client({
-    handler: simpleFetchHandler({ service }),
-  })
-}

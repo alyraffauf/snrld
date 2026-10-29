@@ -11,7 +11,7 @@ export function StringPage() {
   const { handle: routeHandle, string: routeString } = useParams()
   const handle = parseHandle(routeHandle)
   const { pageData, error } = useStringPage(handle, routeString)
-  useDocumentTitle(pageData?.stringRecord.value.filename)
+  useDocumentTitle(pageData?.stringRecord.value.snippet.name)
 
   if (handle === null || routeString === undefined) {
     return <ErrorPage title="String not found" message="That string address is not valid." />
@@ -39,7 +39,7 @@ export function StringPage() {
         miniDoc={identity}
         profile={profile}
         bskyProfile={bskyProfile}
-        label={stringRecord.value.filename}
+        label={stringRecord.value.snippet.name}
       />
       <section className="mt-8">
         <StringView string={stringRecord} />

@@ -1,7 +1,7 @@
 import type { Did } from '@atcute/lexicons'
 import { IconRoute } from '@tabler/icons-react'
 import { useRepoPipelines } from '../../hooks/useRepoPipelines'
-import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
+import type { Pipeline } from '../../lib/tangled/pipeline/types'
 import { LoadMoreButton } from '../shared/LoadMoreButton'
 import { SurfaceCard } from '../shared/SurfaceCard'
 import { PipelineWorkflowStatuses } from './PipelineWorkflowStatuses'
@@ -102,14 +102,14 @@ function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
 
 function getTriggerName(pipeline: Pipeline) {
   const type = pipeline.trigger.$type
-  if (type === 'sh.tangled.ci.trigger#pullRequest') return 'pull request'
-  if (type === 'sh.tangled.ci.trigger#push') return 'push'
-  return 'manual'
+  if (type === 'org.tangled.event.pullRequest') return 'pull request'
+  if (type === 'org.tangled.event.push') return 'push'
+  return type === 'org.tangled.ci.trigger.schedule' ? 'schedule' : 'manual'
 }
 
 function getTriggerReference(pipeline: Pipeline) {
   const { trigger } = pipeline
-  if (trigger.$type === 'sh.tangled.ci.trigger#push') return trigger.ref
-  if (trigger.$type === 'sh.tangled.ci.trigger#pullRequest') return trigger.targetBranch
-  return trigger.ref ?? trigger.sha.slice(0, 7)
+  if (trigger.$type === 'org.tangled.event.push') return trigger.ref
+  if (trigger.$type === 'org.tangled.event.pullRequest') return trigger.targetBranch
+  return trigger.ref ?? trigger.commit.slice(0, 7)
 }

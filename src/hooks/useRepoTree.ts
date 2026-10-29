@@ -1,4 +1,4 @@
-import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
+import type { RepoTree as RepoTreeResponse } from '../lib/tangled/git'
 import { useEffect, useRef, useState } from 'react'
 import type { Repo } from '../lib/tangled'
 import { getRepoTree } from '../lib/tangled/repo'

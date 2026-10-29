@@ -1,10 +1,10 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { rpc } from '../client'
 
 export async function countFollowsBy(did: Did): Promise<number> {
   const response = await ok(
-    rpc.get('sh.tangled.graph.countFollowsBy', {
+    rpc.get('org.tangled.graph.countFollowsBy', {
       params: { subject: did },
     }),
   )

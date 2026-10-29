@@ -13,7 +13,6 @@ const SERVER_HOST = '127.0.0.1'
 export default defineConfig(({ mode }) => ({
   plugins: [
     oauthMetadata(loadEnv(mode, process.cwd(), 'VITE_PUBLIC_URL').VITE_PUBLIC_URL),
-    spindleProxy(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
@@ -74,36 +73,4 @@ function oauthMetadata(publicOrigin: string | undefined): Plugin {
       })
     },
   }
-}
-
-function spindleProxy(): Plugin {
-  return {
-    name: 'spindle-proxy',
-    configureServer(server) {
-      server.middlewares.use('/spindle', async (request, response, next) => {
-        if (request.method !== 'GET') return next()
-
-        try {
-          const upstreamUrl = getUpstreamUrl(request.url)
-          const upstreamResponse = await fetch(upstreamUrl)
-          response.statusCode = upstreamResponse.status
-          const contentType = upstreamResponse.headers.get('content-type')
-          if (contentType !== null) response.setHeader('content-type', contentType)
-          response.end(Buffer.from(await upstreamResponse.arrayBuffer()))
-        } catch (error) {
-          next(error)
-        }
-      })
-    },
-  }
-}
-
-function getUpstreamUrl(requestUrl: string | undefined): string {
-  const [encodedHostname, ...pathParts] = (requestUrl ?? '/').slice(1).split('/')
-  if (encodedHostname === undefined || encodedHostname.length === 0) {
-    throw new Error('Missing Spindle hostname')
-  }
-
-  const hostname = decodeURIComponent(encodedHostname)
-  return `https://${hostname}/${pathParts.join('/')}`
 }

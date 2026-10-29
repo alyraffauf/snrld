@@ -1,9 +1,9 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Cid, Did, ResourceUri } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import type {} from '@atcute/tangled'
-import type { Main as TangledProfile } from '@atcute/tangled/types/actor/profile'
-import { mainSchema as profileSchema } from '@atcute/tangled/types/actor/profile'
+import type {} from '../lexicons'
+import type { Main as TangledProfile } from '../lexicons/types/org/tangled/actor/profile'
+import { mainSchema as profileSchema } from '../lexicons/types/org/tangled/actor/profile'
 import { rpc } from '../client'
 
 export type Profile = {
@@ -14,7 +14,7 @@ export type Profile = {
 
 export async function getProfile(did: Did): Promise<Profile> {
   const profile = await ok(
-    rpc.get('sh.tangled.actor.getProfile', {
+    rpc.get('org.tangled.actor.getProfile', {
       params: { actor: createProfileUri(did) },
     }),
   )
@@ -28,7 +28,7 @@ export async function getProfile(did: Did): Promise<Profile> {
 }
 
 function createProfileUri(did: Did) {
-  return `at://${did}/sh.tangled.actor.profile/self` as const
+  return `at://${did}/org.tangled.actor.profile/self` as const
 }
 
 function normalizeProfile(profile: unknown): unknown {

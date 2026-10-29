@@ -1,15 +1,15 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as starSchema } from '@atcute/tangled/types/feed/star'
-import { mainSchema as starsBySchema } from '@atcute/tangled/types/feed/listStarsBy'
+import { mainSchema as starSchema } from '../lexicons/types/org/tangled/feed/star'
+import { mainSchema as starsBySchema } from '../lexicons/types/org/tangled/feed/listStarsBy'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
 import type { ListStarsOptions, StarList } from './types'
 
 export async function listStarsBy(did: Did, options: ListStarsOptions = {}): Promise<StarList> {
   const response = await ok(
-    rpc.get('sh.tangled.feed.listStarsBy', {
+    rpc.get('org.tangled.feed.listStarsBy', {
       params: {
         subject: did,
         cursor: options.cursor,

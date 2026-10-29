@@ -1,4 +1,4 @@
-import type { $output as RepoTreeResponse } from '@atcute/tangled/types/repo/tree'
+import type { RepoTree as RepoTreeResponse } from '../../lib/tangled/git'
 import { isDirectoryMode } from '../../lib/tangled/repo'
 
 type TreeEntry = RepoTreeResponse['files'][number]

@@ -72,7 +72,7 @@ export function useCursorList<T>(
           key,
           data: {
             items: [...currentState.data.items, ...nextPage.items],
-            cursor: nextPage.cursor,
+            cursor: nextPage.cursor === data.cursor ? undefined : nextPage.cursor,
           },
         }
       })
@@ -89,7 +89,7 @@ export function useCursorList<T>(
     } finally {
       setIsLoadingMore(false)
     }
-  }, [data?.cursor, isLoadingMore, key, limit])
+  }, [data, isLoadingMore, key, limit])
 
   return {
     data,

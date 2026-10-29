@@ -1,5 +1,5 @@
 import { type RepoCommit } from '../../lib/tangled/repo'
-import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
+import type { Pipeline } from '../../lib/tangled/pipeline/types'
 import { PipelineWorkflowStatuses } from './PipelineWorkflowStatuses'
 
 type RepoCommitProps = {

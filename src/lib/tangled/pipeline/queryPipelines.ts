@@ -1,7 +1,8 @@
-import { Client, ok, simpleFetchHandler, type FetchHandler } from '@atcute/client'
+import { ok } from '../response'
+import { Client, simpleFetchHandler, type FetchHandler } from '@atcute/client'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as queryPipelinesSchema } from '@atcute/tangled/types/ci/queryPipelines'
+import { mainSchema as queryPipelinesSchema } from '../lexicons/types/org/tangled/ci/queryPipelines'
 import { removeNullCursor } from '../utils'
 import type { PipelineList, QueryPipelinesOptions } from './types'
 
@@ -12,7 +13,7 @@ export async function queryPipelines(
 ): Promise<PipelineList> {
   const rpc = new Client({ handler: getSpindleFetchHandler(spindle) })
   const response = await ok(
-    rpc.get('sh.tangled.ci.queryPipelines', { params: { repo, ...options } }),
+    rpc.get('org.tangled.ci.queryPipelines', { params: { repo, ...options } }),
   )
   const validation = safeParse(
     queryPipelinesSchema.output.schema,
@@ -38,12 +39,15 @@ function normalizePipelineResponse(value: unknown): unknown {
 }
 
 function getSpindleFetchHandler(spindle: string): FetchHandler {
-  const spindleUrl =
-    spindle.startsWith('http://') || spindle.startsWith('https://') ? spindle : `https://${spindle}`
+  return simpleFetchHandler({ service: spindleServiceUrl(spindle) })
+}
 
-  if (!import.meta.env.DEV) return simpleFetchHandler({ service: spindleUrl })
-
-  const hostname = new URL(spindleUrl).hostname
-  const proxyUrl = `${window.location.origin}/spindle/${encodeURIComponent(hostname)}`
-  return (pathname, init) => fetch(`${proxyUrl}${pathname}`, init)
+export function spindleServiceUrl(identifier: string): string {
+  if (identifier.startsWith('did:web:')) {
+    const [host, ...path] = identifier.slice(8).split(':').map(decodeURIComponent)
+    return new URL(`https://${host}/${path.join('/')}`).toString().replace(/\/$/, '')
+  }
+  const url = new URL(identifier.includes('://') ? identifier : `https://${identifier}`)
+  if (!['https:', 'http:'].includes(url.protocol)) throw new Error('Invalid Spindle URL')
+  return url.toString().replace(/\/$/, '')
 }

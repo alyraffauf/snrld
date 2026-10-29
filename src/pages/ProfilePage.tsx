@@ -142,7 +142,12 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
               >
                 {vouchesError && <SectionError error={vouchesError} />}
                 {vouches === null && vouchesError === null && <ProfileVouchSkeletons count={2} />}
-                {vouches !== null && recentVouches.length === 0 && <p>No vouches yet.</p>}
+                {vouches !== null && recentVouches.length === 0 && (
+                  <p>
+                    No network vouches are visible. Tangled now scopes vouches to the authenticated
+                    viewer’s network.
+                  </p>
+                )}
                 {recentVouches.length > 0 && <VouchList vouches={recentVouches} />}
               </ProfileSection>
             </div>
@@ -225,7 +230,12 @@ function ProfileContent({ activeSection, pageData }: ProfileContentProps) {
             <ProfileSection title="Vouches">
               {vouchesError && <SectionError error={vouchesError} />}
               {vouches === null && vouchesError === null && <ProfileVouchSkeletons />}
-              {vouches?.items.length === 0 && <p>No vouches yet.</p>}
+              {vouches?.items.length === 0 && (
+                <p>
+                  No network vouches are visible. Tangled now scopes vouches to the authenticated
+                  viewer’s network.
+                </p>
+              )}
               {vouches && vouches.items.length > 0 && <VouchList vouches={vouches.items} />}
               {hasMoreVouches && (
                 <LoadMoreButton

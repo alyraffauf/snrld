@@ -25,7 +25,7 @@ function ConfiguredPullPipelineStatuses({
 
   const matchingPipelines = pipelines.items.filter(
     (pipeline) =>
-      pipeline.trigger.$type === 'sh.tangled.ci.trigger#pullRequest' &&
+      pipeline.trigger.$type === 'org.tangled.event.pullRequest' &&
       pipeline.trigger.pull === pullUri,
   )
   if (matchingPipelines.length === 0) return null

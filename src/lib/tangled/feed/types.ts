@@ -1,11 +1,8 @@
 import type { Cid, Did, ResourceUri } from '@atcute/lexicons'
-import type { Main as TangledComment } from '@atcute/tangled/types/feed/comment'
-import type { Main as TangledStar } from '@atcute/tangled/types/feed/star'
-import type { $output as CommentListResponse } from '@atcute/tangled/types/feed/listComments'
+import type { Main as TangledStar } from '../lexicons/types/org/tangled/feed/star'
+import type { $output as CommentListResponse } from '../lexicons/types/org/tangled/feed/listComments'
 
-export type CommentRecord = Omit<CommentListResponse['items'][number], 'value'> & {
-  value: TangledComment
-}
+export type CommentRecord = CommentListResponse['items'][number]
 
 export type CommentList = {
   items: CommentRecord[]
@@ -37,10 +34,10 @@ export type ListStarsOptions = {
 
 export function getRepoDidsFromStars(stars: StarList): Did[] {
   return stars.items.flatMap(({ value }) => {
-    if (value.subject.$type !== 'sh.tangled.feed.star#repo') {
+    if (value.subject.$type !== 'org.tangled.feed.star#repo') {
       return []
     }
 
-    return [value.subject.did]
+    return [value.subject.identity]
   })
 }

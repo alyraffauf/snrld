@@ -1,64 +1,75 @@
-import { safeParse } from '@atcute/lexicons'
-import { mainSchema as repoSchema } from '@atcute/tangled/types/repo'
-import { mainSchema as issueSchema } from '@atcute/tangled/types/repo/issue'
-import { mainSchema as pullSchema } from '@atcute/tangled/types/repo/pull'
-import type { Issue, IssueRecord, Pull, PullRecord, Repo, TangledRecord } from './types'
+import { parseResourceUri, safeParse, type Did } from '@atcute/lexicons'
+import { isDid } from '@atcute/lexicons/syntax'
+import { mainSchema as repoSchema } from '../lexicons/types/org/tangled/repo/manifest'
+import { mainSchema as ticketSchema } from '../lexicons/types/org/tangled/track/ticket'
+import type { Repo, Issue, TangledRecord } from './types'
 
-export function validateRepo(record: TangledRecord<unknown>): Repo {
-  const validation = safeParse(repoSchema, normalizeRepoRecord(record.value))
-  if (!validation.ok) {
-    throw new Error(`Bobbin returned an invalid repo record: ${record.uri}: ${validation.message}`)
+export function validateRepo(
+  record: TangledRecord<unknown> & { knot?: string; git?: Repo['git'] },
+): Repo {
+  const validation = safeParse(repoSchema, record.value)
+  const identity = parseResourceUri(record.uri)
+  if (
+    !validation.ok ||
+    identity.collection !== 'org.tangled.repo.manifest' ||
+    identity.rkey !== 'self' ||
+    !isDid(identity.repo)
+  ) {
+    throw new Error(`Invalid repository manifest: ${record.uri}`)
   }
-
-  return { ...record, value: validation.value }
-}
-
-export function validateIssueRecord(record: TangledRecord<unknown>): IssueRecord {
-  const validation = safeParse(issueSchema, record.value)
-  if (!validation.ok) {
-    throw new Error(`Bobbin returned an invalid issue record: ${record.uri}: ${validation.message}`)
+  const value = validation.value
+  return {
+    uri: record.uri,
+    manifestUri: record.uri,
+    cid: record.cid,
+    repoDid: identity.repo,
+    ownerDid: value.declaration.owner,
+    name: value.declaration.name,
+    declarationUri: `at://${value.declaration.owner}/org.tangled.repo.declaration/${value.declaration.name.toLowerCase()}`,
+    knot: record.knot,
+    git: record.git,
+    spindle: value.spindle,
+    description: value.description,
+    website: value.website,
+    topics: value.topics,
+    createdAt: value.createdAt,
   }
-
-  return { ...record, value: validation.value }
 }
 
-export function validateIssue(item: Omit<Issue, 'value'> & TangledRecord<unknown>): Issue {
-  return { ...item, value: validateIssueRecord(item).value }
-}
-
-export function validatePullRecord(record: TangledRecord<unknown>): PullRecord {
-  const validation = safeParse(pullSchema, record.value)
-  if (!validation.ok) {
-    throw new Error(`Bobbin returned an invalid pull record: ${record.uri}: ${validation.message}`)
+export function validateIssue(
+  item: TangledRecord<unknown> & { author?: string; state?: string; commentCount?: number },
+): Issue {
+  const value = normalizeTicketTitle(item.value)
+  const validation = safeParse(ticketSchema, value)
+  if (!validation.ok || !item.author || !isDid(item.author))
+    throw new Error(`Invalid ticket: ${item.uri}`)
+  const ticket = validation.value
+  return {
+    ...item,
+    author: item.author as Did,
+    state: item.state ?? ticket.state,
+    commentCount: item.commentCount ?? 0,
+    value: {
+      ...ticket,
+      title: ticket.title.text,
+      body: ticket.body?.text,
+      markup: { title: ticket.title, body: ticket.body },
+    },
   }
-
-  return { ...record, value: validation.value }
+}
+export function validatePull(item: Parameters<typeof validateIssue>[0]): Issue {
+  const ticket = validateIssue(item)
+  return { ...ticket, state: ticket.state === 'completed' ? 'merged' : ticket.state }
 }
 
-export function validatePull(item: Omit<Pull, 'value'> & TangledRecord<unknown>): Pull {
-  return { ...item, value: validatePullRecord(item).value }
-}
-
-function normalizeRepoRecord(value: unknown): unknown {
-  if (!isRecord(value)) return value
-
-  const normalized = { ...value }
-  if (typeof normalized.description === 'string') {
-    const graphemes = Array.from(
-      new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(normalized.description),
-      ({ segment }) => segment,
-    )
-
-    if (graphemes.length === 0) {
-      delete normalized.description
-    } else if (graphemes.length > 140) {
-      normalized.description = graphemes.slice(0, 140).join('')
-    }
+export function normalizeTicketTitle(value: unknown): unknown {
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    'title' in value &&
+    typeof value.title === 'string'
+  ) {
+    value = { ...value, title: { $type: 'org.tangled.markup.markdown#inline', text: value.title } }
   }
-
-  return normalized
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
+  return value
 }

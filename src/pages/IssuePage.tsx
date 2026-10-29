@@ -19,7 +19,7 @@ export function IssuePage() {
     issue: issueKey,
   } = useParams()
   const repoOwnerHandle = parseHandle(routeRepoOwner)
-  const issueOwnerHandle = parseHandle(routeIssueOwner)
+  const issueOwnerHandle = parseHandle(routeIssueOwner ?? routeRepoOwner)
   const { pageData, error } = useRepoRecordPage({
     loadPage: loadIssuePage,
     recordKey: issueKey,

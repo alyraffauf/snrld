@@ -1,50 +1,42 @@
 import type { Cid, Did, ResourceUri } from '@atcute/lexicons'
-import type { Main as TangledRepo } from '@atcute/tangled/types/repo'
-import type { Main as TangledIssue } from '@atcute/tangled/types/repo/issue'
-import type { $output as IssueListResponse } from '@atcute/tangled/types/repo/listIssues'
-import type { Main as TangledPull } from '@atcute/tangled/types/repo/pull'
-import type { $output as PullListResponse } from '@atcute/tangled/types/repo/listPulls'
+import type { Main as Manifest } from '../lexicons/types/org/tangled/repo/manifest'
+import type { Main as TicketRecord } from '../lexicons/types/org/tangled/track/ticket'
 
-export type TangledRecord<TValue> = {
-  cid?: Cid
+export type TangledRecord<TValue> = { cid?: Cid; uri: ResourceUri; value: TValue }
+export type Repo = {
   uri: ResourceUri
-  value: TValue
+  manifestUri: ResourceUri
+  declarationUri: ResourceUri
+  repoDid: Did
+  ownerDid: Did
+  name: string
+  cid?: Cid
+  knot?: string
+  spindle?: string
+  description?: string
+  website?: string
+  topics?: string[]
+  createdAt: string
+  git?: { defaultBranch?: string; isEmpty?: boolean }
 }
-
-export type Repo = TangledRecord<TangledRepo>
-
+export type RepoManifest = TangledRecord<Manifest>
 export function getRepoDid(repo: Repo): Did {
-  const repoDid = repo.value.repoDid
-  if (repoDid === undefined) {
-    throw new Error(`Repository ${repo.uri} does not have a repository DID`)
-  }
-
-  return repoDid
+  return repo.repoDid
 }
-
-export type IssueRecord = TangledRecord<TangledIssue>
-
-export type Issue = Omit<IssueListResponse['items'][number], 'value'> & {
-  value: TangledIssue
+export type Ticket = Omit<TicketRecord, 'title' | 'body'> & {
+  title: string
+  body?: string
+  source?: { repo: Did; branch: string }
+  markup: { title: TicketRecord['title']; body?: TicketRecord['body'] }
 }
-
-export type PullRecord = TangledRecord<TangledPull>
-
-export type Pull = Omit<PullListResponse['items'][number], 'value'> & {
-  value: TangledPull
+export type IssueRecord = TangledRecord<Ticket> & {
+  author: Did
+  state: string
+  commentCount: number
 }
-
-export type RepoList = {
-  items: Repo[]
-  cursor?: string
-}
-
-export type IssueList = {
-  items: Issue[]
-  cursor?: string
-}
-
-export type PullList = {
-  items: Pull[]
-  cursor?: string
-}
+export type PullRecord = IssueRecord
+export type Issue = IssueRecord
+export type Pull = PullRecord
+export type RepoList = { items: Repo[]; cursor?: string }
+export type IssueList = { items: Issue[]; cursor?: string }
+export type PullList = { items: Pull[]; cursor?: string }

@@ -1,4 +1,4 @@
-import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
+import type { Pipeline } from '../../lib/tangled/pipeline/types'
 
 type PipelineWorkflowStatusesProps = {
   pipelines: readonly Pipeline[]

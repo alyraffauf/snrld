@@ -1,11 +1,10 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import type { Did } from '@atcute/lexicons'
 import { safeParse } from '@atcute/lexicons'
-import { mainSchema as reposListSchema } from '@atcute/tangled/types/repo/listRepos'
+import { mainSchema as reposListSchema } from '../lexicons/types/org/tangled/repo/listRepos'
 import { rpc } from '../client'
 import { removeNullCursor } from '../utils'
-import { getRepoRkey } from './repoIdentity'
-import type { Repo, RepoList } from './types'
+import type { RepoList } from './types'
 import { validateRepo } from './validators'
 
 export type ListReposOptions = {
@@ -16,7 +15,7 @@ export type ListReposOptions = {
 
 export async function listRepos(did: Did, options: ListReposOptions = {}): Promise<RepoList> {
   const response = await ok(
-    rpc.get('sh.tangled.repo.listRepos', {
+    rpc.get('org.tangled.repo.listRepos', {
       params: { subject: did, cursor: options.cursor, limit: options.limit, order: options.order },
     }),
   )
@@ -26,34 +25,6 @@ export async function listRepos(did: Did, options: ListReposOptions = {}): Promi
     throw new Error(`Bobbin returned an invalid repo list: ${listValidation.message}`)
   }
 
-  const items = deduplicateRepos(listValidation.value.items.map((repo) => validateRepo(repo)))
+  const items = listValidation.value.items.map((repo) => validateRepo(repo))
   return { items, cursor: listValidation.value.cursor }
-}
-
-function deduplicateRepos(repos: Repo[]): Repo[] {
-  const repoIndexesByDid = new Map<string, number>()
-  const uniqueRepos: Repo[] = []
-
-  for (const repo of repos) {
-    const repoDid = repo.value.repoDid
-    if (repoDid === undefined) {
-      uniqueRepos.push(repo)
-      continue
-    }
-
-    const existingIndex = repoIndexesByDid.get(repoDid)
-    if (existingIndex === undefined) {
-      repoIndexesByDid.set(repoDid, uniqueRepos.length)
-      uniqueRepos.push(repo)
-      continue
-    }
-
-    if (isCurrentRepoRecord(repo)) uniqueRepos[existingIndex] = repo
-  }
-
-  return uniqueRepos
-}
-
-function isCurrentRepoRecord(repo: Repo): boolean {
-  return repo.value.name !== undefined && getRepoRkey(repo) === repo.value.name
 }

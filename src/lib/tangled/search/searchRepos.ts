@@ -1,14 +1,14 @@
-import { ok } from '@atcute/client'
+import { ok } from '../response'
 import { parseResourceUri, type ResourceUri } from '@atcute/lexicons'
 import { rpc } from '../client'
 import type { Repo } from '../repo'
 import { validateRepo } from '../repo/validators'
 
-const REPOSITORY_COLLECTION = 'sh.tangled.repo'
+const REPOSITORY_COLLECTION = 'org.tangled.repo.manifest'
 
 export async function searchRepos(query: string, signal: AbortSignal, limit = 8): Promise<Repo[]> {
   const response = await ok(
-    rpc.get('sh.tangled.search.query', {
+    rpc.get('org.tangled.search.query', {
       signal,
       params: {
         q: query,

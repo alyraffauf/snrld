@@ -95,3 +95,7 @@ Run `bun run format` to apply formatting changes.
 ## Data source
 
 The client currently reads public data from [Bobbin](https://bobbin.klbr.net), the Tangled XRPC service.
+
+## Tangled v1
+
+The default API is `https://api.tangled.org`. Set `VITE_TANGLED_API_URL` before building to use another compatible server. [API contracts and verification](BOBBIN_XRPCS.md) describe schema regeneration and read endpoints.

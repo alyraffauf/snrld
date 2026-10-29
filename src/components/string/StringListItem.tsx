@@ -1,3 +1,4 @@
+import { StringContent } from './StringContent'
 import { Link } from 'react-router-dom'
 import { parseResourceUri } from '@atcute/lexicons'
 import type { StringRecord } from '../../lib/tangled'
@@ -23,7 +24,7 @@ export function StringListItem({ handle, stringRecord }: StringListItemProps) {
         className="group h-full p-4 transition-colors hover:border-ctp-lavender"
       >
         <h3 className="truncate font-mono text-base font-semibold text-ctp-text">
-          {value.filename}
+          {value.snippet.name}
         </h3>
 
         {value.description && (
@@ -33,7 +34,7 @@ export function StringListItem({ handle, stringRecord }: StringListItemProps) {
         )}
 
         <p className="mt-3 line-clamp-4 whitespace-pre-wrap font-mono text-sm leading-snug text-ctp-overlay-1">
-          {value.contents}
+          <StringContent record={stringRecord} />
         </p>
       </SurfaceCard>
     </Link>

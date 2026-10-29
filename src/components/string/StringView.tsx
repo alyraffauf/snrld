@@ -1,3 +1,4 @@
+import { StringContent } from './StringContent'
 import type { StringRecord } from '../../lib/tangled/index'
 
 type StringProps = {
@@ -16,7 +17,9 @@ export function StringView({ string }: StringProps) {
       )}
 
       <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words border border-ctp-surface-1 bg-ctp-mantle p-5 font-mono text-sm leading-relaxed text-ctp-text sm:p-6">
-        <code>{value.contents}</code>
+        <code>
+          <StringContent record={string} />
+        </code>
       </pre>
     </>
   )

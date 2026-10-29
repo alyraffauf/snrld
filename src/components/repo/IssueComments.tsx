@@ -14,7 +14,7 @@ const COMMENT_SKELETON_COUNT = 3
 
 type IssueCommentsProps = {
   isActive?: boolean
-  issueUri: CommentRecord['value']['subject']['uri']
+  issueUri: CommentRecord['subject']['uri']
 }
 
 export function IssueComments({ isActive = true, issueUri }: IssueCommentsProps) {
@@ -101,7 +101,7 @@ type CommentViewProps = {
 }
 
 function CommentView({ comment }: CommentViewProps) {
-  const authorIdentifier = parseResourceUri(comment.uri).repo
+  const authorIdentifier = comment.editor ?? parseResourceUri(comment.uri).repo
   const authorDid = isDid(authorIdentifier) ? authorIdentifier : null
   const { actor, elementRef } = useVisibleActor(authorDid)
   const authorLabel = actor?.miniDoc.handle ?? authorIdentifier
@@ -130,12 +130,12 @@ function CommentView({ comment }: CommentViewProps) {
               {authorLabel}
             </Link>
           )}
-          <time className="text-ctp-overlay-1" dateTime={comment.value.createdAt}>
-            {new Date(comment.value.createdAt).toLocaleString()}
+          <time className="text-ctp-overlay-1" dateTime={comment.createdAt}>
+            {new Date(comment.createdAt).toLocaleString()}
           </time>
         </header>
         <MarkdownContent className="mt-4 border-t border-ctp-surface-1 pt-4 text-sm text-ctp-subtext-1">
-          {comment.value.body.text}
+          {comment.body.text}
         </MarkdownContent>
       </SurfaceCard>
     </div>

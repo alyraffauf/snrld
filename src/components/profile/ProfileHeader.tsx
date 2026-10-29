@@ -14,7 +14,7 @@ export function ProfileHeader({ miniDoc, profile, blueskyProfile }: ProfileHeade
   const { value } = profile
   const { followers, following } = useProfileFollowCounts(miniDoc.did)
   const profileLinks = [
-    ...(value.bluesky
+    ...(blueskyProfile
       ? [{ href: `https://witchsky.app/profile/${miniDoc.handle}`, label: 'witchsky' }]
       : []),
     ...(value.links ?? []).map((link) => ({ href: link, label: getLinkLabel(link) })),

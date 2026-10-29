@@ -1,5 +1,5 @@
 import type { Did } from '@atcute/lexicons'
-import type { Main as Pipeline } from '@atcute/tangled/types/ci/pipeline'
+import type { Pipeline } from '../../lib/tangled/pipeline/types'
 import type { Repo } from '../../lib/tangled'
 import type { RepoCommit } from '../../lib/tangled/repo'
 import { useRepoCommits } from '../../hooks/useRepoCommits'
@@ -32,12 +32,12 @@ export function RepoLog({ branch, isActive, repo }: RepoLogProps) {
 
         {commits.length === 0 ? (
           <p className="px-4 py-4 text-sm text-ctp-subtext-1">No commits found.</p>
-        ) : repo.value.repoDid !== undefined && repo.value.spindle !== undefined ? (
+        ) : repo.repoDid !== undefined && repo.spindle !== undefined ? (
           <PipelineAwareCommitList
             commits={commits}
             isActive={isActive}
-            repoDid={repo.value.repoDid}
-            spindle={repo.value.spindle}
+            repoDid={repo.repoDid}
+            spindle={repo.spindle}
           />
         ) : (
           <CommitList commits={commits} />

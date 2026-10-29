@@ -17,7 +17,7 @@ type RepoSearchResultProps = {
 }
 
 export function RepoSearchResult({ repo, handle, actor }: RepoSearchResultProps) {
-  const { value } = repo
+  const value = repo
   const name = getRepoName(repo)
   const rkey = getRepoRkey(repo)
 

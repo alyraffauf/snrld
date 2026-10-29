@@ -1,5 +1,5 @@
 import type { Cid, ResourceUri } from '@atcute/lexicons'
-import type { Main as TangledVouch } from '@atcute/tangled/types/graph/vouch'
+import type { Main as TangledVouch } from '../lexicons/types/org/tangled/graph/vouch'
 
 export type VouchRecord = {
   cid?: Cid

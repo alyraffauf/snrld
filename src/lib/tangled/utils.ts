@@ -4,5 +4,5 @@ export function removeNullCursor(value: unknown): unknown {
   }
 
   const { cursor, ...rest } = value as Record<string, unknown>
-  return cursor === null ? rest : value
+  return cursor === null || cursor === '' ? rest : value
 }

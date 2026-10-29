@@ -1,4 +1,4 @@
-import { parseResourceUri, type Did, type Handle } from '@atcute/lexicons'
+import { type Did, type Handle } from '@atcute/lexicons'
 import { resolveMiniDoc } from '../lib/actor'
 import { getRepoDidsFromStars, listStarsBy } from '../lib/tangled/feed'
 import { listVouches, type VouchList } from '../lib/tangled/graph'
@@ -71,7 +71,7 @@ async function loadStarredRepo(repoDid: Did): Promise<StarredRepo | null> {
   const repo = await getRepoByRepoDid(repoDid)
   if (repo === null) return null
 
-  const owner = await resolveMiniDoc(parseResourceUri(repo.uri).repo)
+  const owner = await resolveMiniDoc(repo.ownerDid)
   return { handle: owner.handle, repo }
 }
 

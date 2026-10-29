@@ -1,4 +1,3 @@
-import { parseResourceUri } from '@atcute/lexicons'
 import { isDid } from '@atcute/lexicons/syntax'
 import { useSearchParams } from 'react-router-dom'
 import { RepoSearch } from '../components/repo/RepoSearch'
@@ -58,7 +57,7 @@ export function SearchPage() {
 type SearchResultProps = { repo: Repo }
 
 function SearchResult({ repo }: SearchResultProps) {
-  const ownerIdentifier = parseResourceUri(repo.uri).repo
+  const ownerIdentifier = repo.ownerDid
   const { actor, miniDoc, elementRef } = useVisibleActor(
     isDid(ownerIdentifier) ? ownerIdentifier : null,
   )

@@ -11,17 +11,13 @@ export async function loadPullPage(
   pullKey: string,
 ): Promise<PullPageData> {
   const page = await loadRepoRecordPage({
-    collection: 'sh.tangled.repo.pull',
+    collection: 'org.tangled.repo.pull',
     getRecord: getPull,
     recordKey: pullKey,
     recordOwnerHandle: pullOwnerHandle,
     repoKey,
     repoOwnerHandle,
   })
-
-  if (page.repo.value.repoDid !== page.record.value.target.repo) {
-    throw new Error('Pull request does not belong to this repository')
-  }
 
   return page
 }

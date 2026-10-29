@@ -1,10 +1,10 @@
 import type { Cid, ResourceUri } from '@atcute/lexicons'
-import { ShTangledString } from '@atcute/tangled'
+import { OrgTangledSnippetString } from '../lexicons'
 
 export type StringRecord = {
   cid?: Cid
   uri: ResourceUri
-  value: ShTangledString.Main
+  value: OrgTangledSnippetString.Main
 }
 
 export type StringList = {
